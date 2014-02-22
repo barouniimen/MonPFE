@@ -1,0 +1,198 @@
+* {
+	margin: 0;
+	padding: 0;
+}
+
+body {
+	padding-bottom: 30px;
+	font: 12px Arial, Helvetica, sans-serif;
+	color: #B9B3AD;
+	background: #000000;
+}
+
+h1 {
+	padding: 120px 0 0 30px;
+	font: normal 54px Georgia, Times, serif;
+	color: #FFFFFF;
+}
+
+h1 a,h1 a:hover {
+	color: #FFFFFF;
+	text-decoration: none;
+}
+
+h2 {
+	font-weight: normal;
+	text-shadow: -1px 1px 1px #36322F;
+}
+
+p {
+	padding: .8em 0;
+	line-height: 1.8em;
+	text-align: justify;
+}
+
+p#subtitle {
+	padding: 0 0 0 30px;
+	font-size: 14px;
+	text-transform: uppercase;
+	color: #CE5454;
+}
+
+a {
+	color: #D9463D;
+	text-decoration: none;
+}
+
+a:hover {
+	color: #EF5548;
+}
+
+/* page */
+#page {
+	width: 960px;
+	margin: 0 auto;
+}
+
+/* header */
+#header {
+	height: 350px;
+}
+
+/* topbar */
+#topbar {
+	height: 101px;
+	text-align: left;
+}
+
+#topbar ul {
+	list-style: none;
+}
+
+#topbar ul li {
+	display: inline;
+	font-size: 14px;
+	line-height: 72px;
+}
+
+#topbar ul li a {
+	padding: 0 7px;
+	text-shadow: 1px -1px 1px #7B2323;
+	color: #EEC2C2;
+}
+
+#topbar ul li a:hover {
+	color: #FFFFFF;
+}
+
+/* identity */
+#identity {
+	padding: 15px 10px 10px 10px;
+	text-align: left;
+	float: left;
+}
+
+/* languageSwitcher */
+#languageSwitcher {
+	padding: 15px 10px 10px 10px;
+	float: right;
+	text-align: right;
+}
+
+.languageFlag {
+	width: 19px;
+}
+
+.languageFlag:HOVER {
+	width: 18px;
+	
+}
+
+/* main */
+#main {
+	
+}
+
+/* sidebar */
+
+#sidebar {
+	float: left;
+	width: 305px;
+	font-size: 12px;
+	
+	margin-bottom: 15px;
+	padding-bottom: 10px;
+	
+}
+
+#sidebar .box2 {
+	padding: 30px;
+	background: #36322F;
+}
+
+#sidebar td {
+	text-align: left;
+	height: 35px;
+}
+
+.largeInput{
+	
+	width: 230px;
+}
+
+/* login */
+#login {
+	margin-bottom: 15px;
+	padding-bottom: 9px;
+}
+
+
+/* content */
+#content {
+	float: right;
+	width: 625px;
+	padding-bottom: 9px;
+	margin-bottom: 15px;
+
+}
+
+#content #contheader h2 {
+	height: 58px;
+	padding-right: 30px;
+	font-size: 24px;
+	line-height: 52px;
+	text-align: right;
+}
+
+#content2 {
+	padding: 40px 30px 10px 30px;
+	background: #36322F;
+	min-height:638px;
+}
+
+#content2 h2 {
+	font-size: 24px;
+	text-shadow: none;
+}
+
+#content h2 a {
+	color: #B9B3AD;
+}
+
+.clearing {
+	clear: both;
+	height: 5px;
+	overflow: hidden;
+}
+
+/* footer */
+#footer {
+	padding: 40px 30px 80px 30px;
+}
+
+#footer p {
+	font-size: 11px;
+	text-align: center;
+	text-transform: uppercase;
+	color: #7C7C7C;
+}
