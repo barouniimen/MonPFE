@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="2.0"
+	xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd">
+	<persistence-unit name="myUnit">
+	<jta-data-source>java:jboss/datasources/Gestion_RapportsDS</jta-data-source>
+	<class>tn.esprit.pfeged.persistence.Message</class>
+	<class>tn.esprit.pfeged.persistence.Teacher</class>
+	<class>tn.esprit.pfeged.persistence.RegistrationPK</class>
+	<class>tn.esprit.pfeged.persistence.Project</class>
+	<class>tn.esprit.pfeged.persistence.StorageSpace</class>
+	<class>tn.esprit.pfeged.persistence.TeacherRolePK</class>
+	<class>tn.esprit.pfeged.persistence.TeachingUnit</class>
+	<class>tn.esprit.pfeged.persistence.Student</class>
+	<class>tn.esprit.pfeged.persistence.TeacherRole</class>
+	<class>tn.esprit.pfeged.persistence.Speciality</class>
+	<class>tn.esprit.pfeged.persistence.ReportKeyWordPk</class>
+	<class>tn.esprit.pfeged.persistence.CompanyCoach</class>
+	<class>tn.esprit.pfeged.persistence.ClassGroup</class>
+	<class>tn.esprit.pfeged.persistence.Event</class>
+	<class>tn.esprit.pfeged.persistence.User</class>
+	<class>tn.esprit.pfeged.persistence.ReportKeyWord</class>
+	<class>tn.esprit.pfeged.persistence.UserMessagePK</class>
+	<class>tn.esprit.pfeged.persistence.KeyWord</class>
+	<class>tn.esprit.pfeged.persistence.KeyWordCategory</class>
+	<class>tn.esprit.pfeged.persistence.Report</class>
+	<class>tn.esprit.pfeged.persistence.UserMessage</class>
+	<class>tn.esprit.pfeged.persistence.Registration</class>
+	<class>tn.esprit.pfeged.persistence.Company</class>
+		<properties>
+			<property name="hibernate.hbm2ddl.auto" value="create" />
+			<property name="hibernate.show_sql" value="true"/>
+		</properties>
+	</persistence-unit>
+</persistence>
