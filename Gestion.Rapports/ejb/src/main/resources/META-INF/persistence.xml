@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="2.0"
+	xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd">
+	<persistence-unit name="myUnit">
+	<jta-data-source>java:jboss/datasources/Gestion_RapportsDS</jta-data-source>
+	<class>edu.esprit.pfe.store.ejb.domain.Option</class>
+	<class>edu.esprit.pfe.store.ejb.domain.SysAdmin</class>
+	<class>edu.esprit.pfe.store.ejb.domain.Technologie</class>
+	<class>edu.esprit.pfe.store.ejb.domain.GraduationProjectTechnologiesPK</class>
+	<class>edu.esprit.pfe.store.ejb.domain.GraduationProjectReport</class>
+	<class>edu.esprit.pfe.store.ejb.domain.User</class>
+	<class>edu.esprit.pfe.store.ejb.domain.Student</class>
+	<class>edu.esprit.pfe.store.ejb.domain.GraduationProjectTechnologies</class>
+	
+		<properties>
+			<property name="hibernate.hbm2ddl.auto" value="update" />
+			<property name="hibernate.show_sql" value="true"/>
+		</properties>
+	</persistence-unit>
+</persistence>

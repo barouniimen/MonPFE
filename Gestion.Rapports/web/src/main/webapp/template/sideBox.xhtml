@@ -1,0 +1,38 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+	    <h2>
+	    	<h:outputText value="#{msg['esprit.pfe.store.registration.form.title']}" rendered="#{!authBean.loggedIn}" />
+	    	<h:outputText value="#{msg['esprit.pfe.store.admin.sidebox.title']}" rendered="#{authBean.loggedIn}" />
+	    		
+	    </h2>
+	    
+	    <h:form id="registrationForm" rendered="#{!authBean.loggedIn}">
+	    <p:growl id="registrationGrowl" life="2000" />
+		    
+		    <div class="box2">
+		    
+		    	<br/><br/><br/><br/><br/><br/><br/>
+		    	New here? Create a free account!
+		    	<br/><br/><br/><br/><br/><br/><br/><br/>
+		    	
+			</div>
+
+		</h:form>
+		
+		
+		<h:form id="adminSideBox" rendered="#{authBean.loggedIn}">
+			<div class="box2">
+			
+				<br/><br/><br/><br/><br/><br/><br/>
+				... Admin SIDE BOX Under Consruction ...
+				<br/><br/><br/><br/><br/><br/><br/><br/>
+			
+			</div>
+		</h:form>		
+		
+</ui:composition>    
+              

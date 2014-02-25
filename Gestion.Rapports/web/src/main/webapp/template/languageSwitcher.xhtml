@@ -1,0 +1,21 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui">
+                
+	<h:form id="languageSwitcherForm">
+		<h:commandLink action="#{languageSwitcherbean.performLanguageSwith('fr')}">
+        		<h:graphicImage name="fr.png" library="images" styleClass="languageFlag"/>
+		</h:commandLink>
+		
+		<h:outputText value=" &#160;" />
+		
+		<h:commandLink action="#{languageSwitcherbean.performLanguageSwith('en')}" >
+			<h:graphicImage name="en.png" library="images" styleClass="languageFlag"/>
+		</h:commandLink>
+		
+	</h:form>
+                	
+
+</ui:composition>

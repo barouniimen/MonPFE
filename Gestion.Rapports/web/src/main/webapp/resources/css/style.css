@@ -1,0 +1,225 @@
+/*"reset" pour mettre toutes les marges à zéro (intérieures padding et extérieures margin). 
+Cela doit permettre d'avoir tous les navigateurs avec, à peu près, le même état de départ.*/
+* {
+	margin: 0;
+	padding: 0;
+}
+
+
+/*je n'ai pas pu l'utiliser jusque là!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+.logoEsprit {
+	background-color: transparent;
+	background-image: url("images/logo.png");
+	background-repeat:no-repeat;
+	height: 98px;
+	width: 200px;
+}*/
+
+#positionLogo{
+	float: left;
+	width: 10px;
+	height:10px;
+	margin: 10px;
+}
+
+#positionTitreHeader{
+
+	
+}
+
+body {
+	/*espacement du body avec le bord inférieur de la page*/
+	padding-bottom: 30px;
+	
+	padding-top: 30px;
+	/*taille 12px fixe = 75% (des 16px) */
+	font: 75% Arial, Helvetica, sans-serif;
+	/*couleur de police = grisatre */
+	color: #B9B3AD;
+	/*fond aucune couleur*/
+	background:#F8F8F8;
+}
+
+h1 {
+	padding: 120px 0 0 30px;
+	font: normal 338% Georgia, Times, serif;
+	color: #BB0000 ;
+}
+
+h1 a,h1 a:hover {
+	color:#BB0000;
+	text-decoration: none;
+}
+
+h2 {
+	font-weight: normal;
+	text-shadow: -1px 1px 1px #36322F;
+}
+
+p {
+	padding: .8em 0;
+	line-height: 1.8em;
+	text-align: justify;
+}
+
+p#subtitle {
+	padding: 0 0 0 30px;
+	font-size: 88%;
+	text-transform: uppercase;
+	color: white;
+}
+
+a {
+	color: #D9463D;
+	text-decoration: none;
+}
+
+a:hover {
+	color: #EF5548;
+}
+
+/* page */
+#page {
+	width: 960px; /*j'ai essayé 100% mais ce qui se passe est que les composants changent de place pour rester collés aux bords de la fenêtre
+					et ceci en cas de zoom et non en cas de redimensionnement de la fenêtre*/
+	margin: 0 auto;
+	
+}
+
+/* header */
+#header {
+	padding: 0;
+	height: 200px;
+	background-color: #F8F8F8;
+}
+
+/* topbar */
+#topbar {
+	height: 101px;
+	text-align: left;
+}
+
+#topbar ul {
+	list-style: none;
+}
+
+#topbar ul li {
+	display: inline;
+	font-size: 88%;
+	line-height: 72px;
+}
+
+#topbar ul li a {
+	padding: 0 7px;
+	text-shadow: 1px -1px 1px #7B2323;
+	color: #EEC2C2;
+}
+
+#topbar ul li a:hover {
+	color: #FFFFFF;
+}
+
+/* identity */
+#identity {
+	padding: 15px 10px 10px 10px;
+	text-align: left;
+	float: left;
+}
+
+/* languageSwitcher */
+#languageSwitcher {
+	padding: 15px 10px 10px 10px;
+	float: right;
+	text-align: right;
+}
+
+.languageFlag {
+	width: 19px;
+}
+
+.languageFlag:HOVER {
+	width: 18px;
+}
+
+/* main */
+#main {
+	
+}
+
+/* sidebar */
+#sidebar {
+	float: left;
+	width: 305px;
+	font-size: 75%;
+	margin-bottom: 15px;
+	padding-bottom: 10px;
+}
+
+#sidebar .box2 {
+	padding: 30px;
+	background: #36322F;
+}
+
+#sidebar td {
+	text-align: left;
+	height: 35px;
+}
+
+.largeInput {
+	width: 230px;
+}
+
+/* login */
+#login {
+	margin-bottom: 15px;
+	padding-bottom: 9px;
+}
+
+/* content */
+#content {
+	float: right;
+	width: 625px;
+	padding-bottom: 9px;
+	margin-bottom: 15px;
+}
+
+#content #contheader h2 {
+	height: 58px;
+	padding-right: 30px;
+	font-size: 150%;
+	line-height: 52px;
+	text-align: right;
+}
+
+#content2 {
+	padding: 40px 30px 10px 30px;
+	background: #36322F;
+	min-height: 638px;
+}
+
+#content2 h2 {
+	font-size: 150%;
+	text-shadow: none;
+}
+
+#content h2 a {
+	color: #B9B3AD;
+}
+
+.clearing {
+	clear: both;
+	height: 5px;
+	overflow: hidden;
+}
+
+/* footer */
+#footer {
+	padding: 40px 30px 80px 30px;
+}
+
+#footer p {
+	font-size: 69%;
+	text-align: center;
+	text-transform: uppercase;
+	color: #7C7C7C;
+}
