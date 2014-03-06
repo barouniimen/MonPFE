@@ -1,0 +1,21 @@
+  <ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+	<h:form id="menuForm" rendered="#{authBean.loggedIn}">
+            <ul>
+                <li><a href="#">Home Page</a></li>
+                <li><a href="#">Edit Profile</a></li>
+                <li><a href="#">Add My PFE</a></li>
+                <li><a href="#">Contact</a></li>
+                <li>
+					<h:commandLink action="#{authBean.performLogout}" value="Logout" />	
+				</li>
+            </ul>
+	</h:form>
+
+
+</ui:composition>
+  

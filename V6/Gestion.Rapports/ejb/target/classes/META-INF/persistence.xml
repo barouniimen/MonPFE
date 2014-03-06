@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="2.0"
+	xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd">
+	<persistence-unit name="myUnit">
+		<jta-data-source>java:jboss/datasources/Gestion_RapportsDS</jta-data-source>
+		<class>org.esprit.gestion.rapports.persistence.KeyWord</class>
+		<class>org.esprit.gestion.rapports.persistence.Registration</class>
+		<class>org.esprit.gestion.rapports.persistence.Project</class>
+		<class>org.esprit.gestion.rapports.persistence.Student</class>
+		<class>org.esprit.gestion.rapports.persistence.Company</class>
+		<class>org.esprit.gestion.rapports.persistence.Comments</class>
+		<class>org.esprit.gestion.rapports.persistence.UserMessage</class>
+		<class>org.esprit.gestion.rapports.persistence.RegistrationPK</class>
+		<class>org.esprit.gestion.rapports.persistence.Speciality</class>
+		<class>org.esprit.gestion.rapports.persistence.CompanyCoach</class>
+		<class>org.esprit.gestion.rapports.persistence.SubmissionEvent</class>
+		<class>org.esprit.gestion.rapports.persistence.ReportKeyWord</class>
+		<class>org.esprit.gestion.rapports.persistence.User</class>
+		<class>org.esprit.gestion.rapports.persistence.ReportKeyWordPk</class>
+		<class>org.esprit.gestion.rapports.persistence.UserMessagePK</class>
+		<class>org.esprit.gestion.rapports.persistence.Message</class>
+		<class>org.esprit.gestion.rapports.persistence.StorageSpace</class>
+		<class>org.esprit.gestion.rapports.persistence.KeyWordCategory</class>
+		<class>org.esprit.gestion.rapports.persistence.Teacher</class>
+		<class>org.esprit.gestion.rapports.persistence.PresentationEvent</class>
+		<class>org.esprit.gestion.rapports.persistence.Report</class>
+		<class>org.esprit.gestion.rapports.persistence.ClassGroup</class>
+		<class>org.esprit.gestion.rapports.persistence.TeachingUnit</class>
+		<class>org.esprit.gestion.rapports.persistence.TeacherRolePK</class>
+		<class>org.esprit.gestion.rapports.persistence.TeacherRole</class>
+
+		<properties>
+			<property name="hibernate.hbm2ddl.auto" value="update" />
+			<property name="hibernate.show_sql" value="true" />
+		</properties>
+	</persistence-unit>
+</persistence>

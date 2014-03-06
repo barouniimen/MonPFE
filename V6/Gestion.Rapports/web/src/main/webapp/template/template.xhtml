@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+
+	<title><ui:insert name="pageTitle" /></title>
+	<h:outputStylesheet library="css" name="style.css" />
+	<link rel="stylesheet" type="text/css"
+		href="../resources/css/style.css" />
+	<link rel="shortcut icon" type="image/x-icon"
+		href="#{request.contextPath}/resources/icon/favicon.ico" />
+
+</h:head>
+
+<h:body>
+	<!-- Page -->
+	<div id="page">
+		<!-- Header -->
+		<div id="header">
+			<ui:include src="/template/header.xhtml" />
+		</div>
+		<!-- end Header -->
+
+		<!-- topbar -->
+		<div id="topbar">
+			<div id="navmenu">
+				<ui:include src="/template/menu.xhtml" />
+			</div>
+		</div>
+		<!-- end topbar -->
+
+		<!-- main -->
+		<div id="main">
+			<!-- sidebar -->
+			<div id="sidebar">
+				<div id="loginSpace">
+					<ui:include src="/template/loginBox.xhtml" />
+				</div>
+				<!-- login -->
+				<div id="box">
+					<ui:include src="/template/sideBox.xhtml" />
+				</div>
+			</div>
+			<!-- end sidebar -->
+
+			<!-- content -->
+			<div id="content">
+				<div id="contheader" >
+					<h2>
+						<ui:insert name="pageContentHeader" />
+					</h2>
+				</div>
+				<div id="content2">
+					<ui:insert name="pageContent" />
+				</div>
+				<!-- content2 -->
+			</div>
+			<!-- content -->
+
+			
+		</div>
+		<!-- end main -->
+
+		<!-- footer -->
+		<div id="footer" class="mainStyle">
+			<ui:include src="/template/footer.xhtml" />
+		</div>
+		<!-- end footer -->
+		
+	</div>
+	<!-- end page -->
+</h:body>
+</html>
