@@ -1,0 +1,30 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" template="/template/template.xhtml">
+
+	<ui:define name="pageTitle">Esprit PFE Store</ui:define>
+
+	<ui:define name="pageContentHeader">
+		<h:outputText value="Bienvenue sur Esprit PFE Plateforme" />
+	</ui:define>
+
+	<ui:define name="pageContent">
+
+		<h2>
+			<h:outputText value="Présentation de la plateforme" />
+		</h2>
+		<div class="Text">
+		<!-- <f:loadBundle basename="propFiles.messages" var="msg"/> -->
+			<h:outputText
+				value="test"
+				escape="false" />
+		</div>
+
+
+		<br />
+		<br />
+	</ui:define>
+
+</ui:composition>

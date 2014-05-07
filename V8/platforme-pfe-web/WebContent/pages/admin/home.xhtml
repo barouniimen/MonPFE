@@ -1,0 +1,68 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<title><ui:insert name="pageTitle" /></title>
+	<h:outputStylesheet library="css" name="style.css" />
+	<link rel="shortcut icon" type="image/x-icon"
+		href="#{request.contextPath}/resources/icon/favicon.ico" />
+
+</h:head>
+<body>
+	<!-- Header -->
+	<div id="header">
+		<ui:include src="/template/header.xhtml" />
+		<h:form>
+			<p:commandLink action="#{authBean.performLogout()}"
+				value="Déconnexion" style="float:right !important;" />
+		</h:form>
+
+
+	</div>
+	<!-- end Header -->
+
+	<!-- content -->
+
+	<p:tabView id="tabView">
+
+		<p:tab id="projets" title="Projets">
+			<p:spacer style="margin-top:5%;"></p:spacer>
+			<ui:include  src="/pages/admin/projects.xhtml" />
+		</p:tab>
+
+		<p:tab id="Soutenances" title="Soutenances">
+			<p:spacer style="margin-top:5%;"></p:spacer>
+			<ui:include src="/pages/admin/soutenances.xhtml" />
+		</p:tab>
+		<p:tab id="depot" title="Sessions de dépôt">
+			<p:spacer style="margin-top:5%;"></p:spacer>
+			<ui:include src="/pages/admin/depot.xhtml" />
+		</p:tab>
+		<p:tab id="stockage" title="Espaces de stockage">
+			<p:spacer style="margin-top:5%;"></p:spacer>
+			<ui:include src="/pages/admin/stockage.xhtml" />
+		</p:tab>
+		<p:tab id="message" title="Messages">
+			<p:spacer style="margin-top:5%;"></p:spacer>
+			<ui:include src="/pages/admin/message.xhtml" />
+		</p:tab>
+		<p:tab id="recherche" title="Rechercher rapport">
+			<p:spacer style="margin-top:5%;"></p:spacer>
+			<ui:include src="/pages/admin/recherche.xhtml" />
+		</p:tab>
+	</p:tabView>
+	<!-- end content -->
+
+	<!-- footer -->
+	<div id="footer" class="mainStyle">
+		<ui:include src="/template/footer.xhtml" />
+	</div>
+	<!-- end footer -->
+
+</body>
+</html>
