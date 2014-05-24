@@ -1,0 +1,82 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+
+	<p:panel header="Informations Projet">
+
+		<p:messages id="msgUpdateProj" showDetail="true" autoUpdate="true"
+			closable="true" />
+		<h:panelGrid columns="5" cellspacing="10" >
+
+			<h:outputLabel value="Sujet" for="sujetProj"
+				style="font-weight: bold;" />
+			<p:spacer width="30" height="10" />
+			<h:outputText value="#{projectsBean.selectedProject.projTopic}" />
+			<p:spacer width="30" height="10" />
+			<p:inputText id="sujetProj"
+				value="#{updateProjectFormBean.projToUpdate.projTopic}"
+				maxlength="150"
+				title="Ne d#{msg['encodage.e.accent.grave']}passe pas les 150 caractères"
+				required="true" requiredMessage="le champ sujet est obligatoire" />
+
+			<h:outputLabel
+				value="Ann#{msg['encodage.e.accent.grave']}e universitaire"
+				for="year" style="font-weight: bold;" />
+			<p:spacer width="30" height="10" />
+			<h:outputText value="#{projectsBean.selectedProject.academicYear}" />
+			<p:spacer width="30" height="10" />
+			<p:inputMask mask="2999 - 2999" id="year"
+				value="#{updateProjectFormBean.projToUpdate.academicYear}"
+				title="De la forme: 2013 - 2014" required="true"
+				requiredMessage="le champ ann#{msg['encodage.e.accent.aigu']}e universitaire est obligatoire" />
+
+			<h:outputLabel value="Date de d#{msg['encodage.e.accent.grave']}but"
+				for="calendar" style="font-weight: bold;" />
+			<p:spacer width="30" height="10" />
+			<h:outputText value="#{projectsBean.selectedProject.startDate}" />
+			<p:spacer width="30" height="10" />
+			<p:calendar id="calendar"
+				value="#{updateProjectFormBean.projToUpdate.startDate}"
+				required="true" requiredMessage="Champ obligatoire" />
+
+
+			<h:outputLabel value="Etat de validation" for="selectVstate"
+				style="font-weight: bold;" />
+			<p:spacer width="30" height="10" />
+			<h:outputText
+				value="#{projectsBean.selectedProject.projState.description}" />
+			<p:spacer width="30" height="10" />
+			<h:selectOneMenu id="selectVstate"
+				value="#{updateProjectFormBean.projToUpdate.projState.description}">
+				<f:selectItem
+					itemLabel="S#{msg['encodage.e.accent.grave']}lectionnez un #{msg['encodage.e.accent.grave']}tat de validation"
+					itemValue="WAITING" />
+				<f:selectItems value="#{projectsBean.liststates}" var="stateList"
+					itemLabel="#{stateList.description}" itemValue="#{stateList}" />
+			</h:selectOneMenu>
+
+			<h:outputLabel value="Domaines" for="domaineProj"
+				style="font-weight: bold;" />
+			<p:spacer width="30" height="10" />
+			<ui:repeat var="domToUpdate"
+				value="#{projectsBean.projDomainList}">
+				<li><h:outputText value="#{domToUpdate.domainName}" /></li>
+				<br />
+			</ui:repeat>
+			<p:spacer width="30" height="10" />
+			<h:selectManyCheckbox id="domaineProj"
+				value="#{updateProjectFormBean.listDomTarget}" required="true"
+				requiredMessage="Vous devez sélectionner au moins un domaine">
+				<f:selectItems value="#{updateProjectFormBean.listDomSource}"
+					var="dom" itemLabel="#{dom}" itemValue="#{dom}" />
+
+			</h:selectManyCheckbox>
+
+		</h:panelGrid>
+
+	</p:panel>
+
+</ui:composition>

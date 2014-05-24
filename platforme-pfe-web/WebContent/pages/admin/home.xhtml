@@ -1,0 +1,120 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<title>Espace Administrateur</title>
+	<h:outputStylesheet library="css" name="style.css" />
+	<link rel="shortcut icon" type="image/x-icon"
+		href="#{request.contextPath}/resources/icon/favicon.ico" />
+
+</h:head>
+<body>
+
+	<p:layout fullPage="true">
+
+		<p:layoutUnit position="north" size="120">
+			<!-- Header -->
+			<p:commandLink action="#{authBean.performLogout()}"
+				value="Déconnexion"
+				style="float:right !important;margin-top:4%; margin-right:30px; margin-bottom: 10px;font-size: 120%;color:#666666;text-decoration: underline;" />
+
+			<ui:include src="/template/header.xhtml" />
+
+			<!-- end Header -->
+		</p:layoutUnit>
+
+		<p:layoutUnit position="south" size="70">
+			<!-- footer -->
+			<div id="footer" class="mainStyle">
+				<ui:include src="/template/footer.xhtml" />
+			</div>
+			<!-- end footer -->
+		</p:layoutUnit>
+
+		<p:layoutUnit id="manageDB" position="west" size="320"
+			header="Ajouter des données" resizable="true" collapsible="true"
+			styleClass="myLayoutStyleClass">
+			<br />
+			<div style="margin-right: 10px;">
+
+				<br />
+				<ui:include src="/pages/admin/ManageDB/addClassGroup.xhtml" />
+				<br />
+				<ui:include src="/pages/admin/ManageDB/addSpeciality.xhtml" />
+				<br />
+				<ui:include src="/pages/admin/ManageDB/addStudent.xhtml" />
+				<br />
+				<ui:include src="/pages/admin/ManageDB/addDomain.xhtml" />
+			</div>
+		</p:layoutUnit>
+
+		<p:layoutUnit position="center">
+			<!-- content -->
+
+			<p:tabView id="tabView">
+
+				<p:tab id="currentProject" title="Projets en cours">
+					<p:spacer style="margin-top:5%;"></p:spacer>
+					<ui:include src="/pages/admin/ManageProjects/projects.xhtml" />
+				</p:tab>
+				<p:tab id="oldProject" title="Projets archivés">
+					<p:spacer style="margin-top:5%;"></p:spacer>
+					
+				</p:tab>
+				<p:tab id="Soutenances" title="Soutenances">
+					<p:spacer style="margin-top:5%;"></p:spacer>
+					<ui:include
+						src="/pages/admin/ManageEvents/ManagePresentation/soutenances.xhtml" />
+				</p:tab>
+				<p:tab id="depot" title="Sessions de dépôt">
+					<p:spacer style="margin-top:5%;"></p:spacer>
+					<ui:include src="/pages/admin/ManageEvents/ManageDepot/depot.xhtml" />
+				</p:tab>
+				<p:tab id="stockage" title="Espaces de stockage">
+					<p:spacer style="margin-top:5%;"></p:spacer>
+					<ui:include src="/pages/admin/ManageStorageSpace/stockage.xhtml" />
+				</p:tab>
+				<p:tab id="message" title="Messages">
+					<p:spacer style="margin-top:5%;"></p:spacer>
+					<ui:include src="/pages/admin/ManageMessages/message.xhtml" />
+				</p:tab>
+				<p:tab id="recherche" title="Rechercher rapport">
+					<p:spacer style="margin-top:5%;"></p:spacer>
+					<ui:include src="/pages/admin/ViewReports/recherche.xhtml" />
+				</p:tab>
+			</p:tabView>
+			<!-- end content -->
+
+		</p:layoutUnit>
+
+	</p:layout>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

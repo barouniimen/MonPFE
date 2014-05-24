@@ -1,0 +1,31 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+
+	<p:panel header="Informations Projet">
+
+		<p:messages id="msgUpdateSt" showDetail="true" autoUpdate="true"
+			closable="true" />
+		<h:panelGrid columns="5" cellspacing="10" >
+
+			<h:outputLabel value="Nom et prénom" for="nameSt"
+				style="font-weight: bold;" />
+			<p:spacer width="30" height="10" />
+			<h:outputText value="#{projectsBean.selectedProject.studentFirstName}" />
+			<p:spacer width="30" height="10" />
+			<p:inputText id="nameSt"
+				value="#{updateProjectFormBean.projToUpdate.projTopic}"
+				maxlength="150"
+				title="Ne d#{msg['encodage.e.accent.grave']}passe pas les 150 caractères"
+				required="true" requiredMessage="le champ sujet est obligatoire" />
+
+
+
+		</h:panelGrid>
+
+	</p:panel>
+
+</ui:composition>

@@ -1,0 +1,63 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+
+	<p:panel toggleable="true" header="Ajouter un étudiant"
+		collapsed="true">
+		<p:growl autoUpdate="true" showDetail="true" />
+<h:form>
+		<h:panelGrid columns="2" columnClasses="label, value">
+			
+				<h:outputText value="Nom" />
+				<h:inputText value="#{addStudentBean.studentToDB.lastName}" />
+
+				<h:outputText value="prénom" />
+				<h:inputText value="#{addStudentBean.studentToDB.firstName}" />
+
+				<h:outputText value="Code d'inscription" />
+				<h:inputText
+					value="#{addStudentBean.studentToDB.registrationNumber}" />
+
+				<h:outputText value="Login" />
+				<h:inputText value="#{addStudentBean.studentToDB.login}" />
+
+				<h:outputText value="Mot de passe" />
+				<h:inputText value="#{addStudentBean.studentToDB.password}" />
+
+				<h:outputText value="E-mail" />
+				<p:inputText value="#{addStudentBean.studentToDB.email}">
+					<f:validator validatorId="custom.emailValidator" />
+				</p:inputText>
+
+				<h:outputText value="Numéro de téléphone" />
+				<h:inputText value="#{addStudentBean.studentToDB.phoneNumber}" />
+
+				<h:outputText value="Espace de stockage alloué" />
+				<h:inputText value="#{addStudentBean.space.allocatedSpace}" />
+
+				<h:outputText
+					value="Ann#{msg['encodage.e.accent.grave']}e universitaire" />
+				<p:inputMask mask="2999 - 2999"
+					value="#{addStudentBean.academicYear}"
+					title="De la forme: 2013 - 2014" />
+				<h:outputText value="Classe" />
+				<h:selectOneMenu id="selectClass"
+					value="#{addStudentBean.selectedClass.id}">
+					<f:selectItem
+						itemLabel="S#{msg['encodage.e.accent.grave']}lectionnez une classe"
+						itemValue="-1" />
+					<f:selectItems value="#{addStudentBean.listClassFromDB}"
+						var="class" itemLabel="#{class.reference}" itemValue="#{class.id}" />
+				</h:selectOneMenu>
+
+				<p:commandButton id="addClass" value="Ajouter"
+					actionListener="#{addStudentBean.addStudent}" />
+
+		</h:panelGrid>
+</h:form>
+	</p:panel>
+
+</ui:composition>

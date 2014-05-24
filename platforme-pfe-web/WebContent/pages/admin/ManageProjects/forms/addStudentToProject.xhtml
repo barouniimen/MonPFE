@@ -1,0 +1,28 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+	<p:panel header="Informations Etudiant">
+		<p:messages id="msgAddStudent" showDetail="true" autoUpdate="true"
+			closable="true" />
+		<h:panelGrid columns="2" columnClasses="label, value">
+			<h:outputLabel
+				value="Code d'inscription"
+				for="selectStudent" />
+			<br /><br /><br /><br />
+
+			<h:outputLabel value="Nom et pr#{msg['encodage.e.accent.grave']}nom:"
+				for="SelectedStudentname" />
+			<h:outputText id="SelectedStudentname"
+				value="#{addProjectFormBean.selectedStudentName}" />
+			
+			<h:outputLabel value="Classe:"
+				for="SelectedStudentClass" />
+			<h:outputText id="SelectedStudentClass"
+				value="#{addProjectFormBean.selectedStudentClass.reference}" />
+		</h:panelGrid>
+	</p:panel>
+
+</ui:composition>

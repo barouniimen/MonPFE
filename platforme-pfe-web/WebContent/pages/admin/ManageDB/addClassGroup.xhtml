@@ -1,0 +1,38 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+
+	<p:panel toggleable="true" header="Ajouter une classe" collapsed="true">
+		<p:growl id="growl" autoUpdate="true" showDetail="true" />
+<h:form>
+		<h:panelGrid columns="2" columnClasses="label, value">
+			
+
+				<h:outputText value="Référence" />
+				<h:inputText value="#{addClassGroupBean.classGroupToDB.reference}" />
+
+				<h:outputText value="Spécilaité" />
+				<h:selectOneMenu id="selectSpecilaity"
+					value="#{addClassGroupBean.specialitySelected.id}">
+					<f:selectItem
+						itemLabel="S#{msg['encodage.e.accent.grave']}lectionnez une sp#{msg['encodage.e.accent.grave']}cialit#{msg['encodage.e.accent.grave']}"
+						itemValue="-1" />
+					<f:selectItems value="#{addClassGroupBean.listSpecialityFromDB}"
+						var="spec" itemLabel="#{spec.title}" itemValue="#{spec.id}" />
+				</h:selectOneMenu>
+
+
+				<p:commandButton id="addClass" value="Ajouter"
+					actionListener="#{addClassGroupBean.addClass}" />
+			
+
+
+
+		</h:panelGrid>
+</h:form>
+	</p:panel>
+
+</ui:composition>

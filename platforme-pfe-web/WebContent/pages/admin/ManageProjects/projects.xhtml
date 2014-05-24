@@ -1,0 +1,200 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+	<h:form id="formProj">
+
+		<!-- ******************************************************** Context Menu *******************************************************************************  -->
+
+		<p:contextMenu for="managedProj" style="width:200px">
+			<p:menuitem value="Modifier" icon="ui-icon-pencil"
+			actionListener="#{projectsBean.findDomainList}" 
+				oncomplete="EditProjDialog.show() " update=":tabView" />
+
+			<p:menuitem value="Affecter un encadrant" icon="ui-icon-person"
+				oncomplete="CoachDialog.show() " update=":tabView" />
+
+			<p:menuitem value="Affecter un rapporteur" icon="ui-icon-person"
+				oncomplete="CorrectorDialog.show() " update=":tabView" />
+
+			<p:menuitem value="Supprimer" icon="ui-icon-trash"
+			oncomplete="confirmationRemove.show()" update=":tabView:confirmDialogRemove" />
+		</p:contextMenu>
+
+
+		<!-- ********************************************************** DataTable *********************************************************************************  -->
+		<p:dataTable id="managedProj" var="proj"
+			value="#{projectsBean.managedProj}"
+			selection="#{projectsBean.selectedProject}" rowKey="#{proj.idPorj}"
+			selectionMode="single" rows="20"
+			emptyMessage="Aucun projet a afficher" paginator="true"
+			paginatorPosition="bottom" liveResize="true">
+
+
+
+			<f:facet name="header">
+
+				<!-- *************************************************** Ajouter un projet *******************************************************************  -->
+				<div
+					style="float: left; padding-top: 2px; text-decoration: underline;">
+					<p:commandLink id="buttonAddProject" value="Ajouter un projet"
+						oncomplete="AddProjDialog.show(); return false;" />
+				</div>
+
+
+				<!-- *************************************************** Rechercher un projet *****************************************************************  -->
+				<div style="text-align: right; margin-left: 60%;">
+					<p:outputPanel>
+						<p:inputText widgetVar="filterProjects" id="globalFilter"
+							onkeyup="managedProj.filter()"
+							onblur="this.value='Rechercher...';" onclick="this.value='';"
+							value="Rechercher..." />
+					</p:outputPanel>
+				</div>
+			</f:facet>
+
+			<!-- *************************************************************** DATA *************************************************************************  -->
+			<p:column headerText="Sujet" style="max-width: 150px;"
+				styleClass="wrap">
+				<h:outputText value="#{proj.projTopic}" />
+
+			</p:column>
+
+			<p:column headerText="Date de d#{msg['encodage.e.accent.grave']}but"
+				style="width:25%" styleClass="wrap">
+				<h:outputText
+					value=" #{projectsBean.dateFormat.format(proj.startDate)} ">
+
+				</h:outputText>
+			</p:column>
+
+			<p:column headerText="Etudiant" style="width:24%" styleClass="wrap">
+				<h:outputText value=" #{proj.studentName}" />
+				<p:spacer width="5"></p:spacer>
+				<h:outputText value="#{proj.studentFirstName} " />
+			</p:column>
+
+			<p:column headerText="Entreprise" style="width:24%" styleClass="wrap">
+				<h:outputText value="#{proj.companyName}" />
+
+			</p:column>
+
+			<p:column headerText="Etat de validation" style="width:24%"
+				styleClass="wrap">
+				<h:outputText value="#{proj.projState.description}" />
+
+			</p:column>
+
+			<p:column
+				headerText="Encadrant c#{msg['encodage.o.chapeau']}t#{msg['encodage.e.accent.grave']} entreprise"
+				style="width:24%" styleClass="wrap">
+				<h:outputText value=" #{proj.companyCoachName}" />
+				<p:spacer width="5"></p:spacer>
+				<h:outputText value="#{proj.companyCoachFirstName}" />
+
+			</p:column>
+
+			<p:column
+				headerText="Encadrant c#{msg['encodage.o.chapeau']}te #{msg['encodage.e.accent.grave']}cole"
+				style="width:24%" styleClass="wrap">
+				<h:outputText value=" #{proj.coachName}" />
+				<p:spacer width="5"></p:spacer>
+				<h:outputText value="#{proj.coachFirstName}" />
+
+			</p:column>
+
+			<p:column headerText="Rapporteur" style="width:24%" styleClass="wrap">
+				<h:outputText value=" #{proj.correctorName}" />
+				<p:spacer width="5"></p:spacer>
+				<h:outputText value="#{proj.correctorFirstName} " />
+			</p:column>
+		</p:dataTable>
+
+	</h:form>
+	<!-- *************************************** Delete project Confirm Dialog *******************************************************  -->
+	<p:confirmDialog id="confirmDialogRemove" closeOnEscape="true"
+		message="Vous #{msg['encodage.e.chapeau']}tes sur le point de supprimer le projet: [#{projectsBean.selectedProject.projTopic}] . Voulez-vous continuer ?"
+		header="Confirmez la suppression ..." severity="alert"
+		widgetVar="confirmationRemove" appendToBody="true">
+		<h:form id="removeForm">
+			<p:commandButton id="confirmRemove" value="Continuer"
+				actionListener="#{projectsBean.deleteProject}" />
+			<p:commandButton id="declineRemove" value="Annuler"
+				onclick="confirmationRemove.hide()" />
+		</h:form>
+
+	</p:confirmDialog>
+
+	<!-- ************************************************ Edit project Dialog *************************************************************  -->
+	<p:dialog id="dialogEdit" header="Modifier le projet: #{projectsBean.selectedProject.projTopic}"
+		widgetVar="EditProjDialog" resizable="false" hideEffect="explode"
+		closable="true" listener="#{projectsBean.handleClose}">
+
+		<h:form id="EditForm">
+			<p:growl id="growlEdit" showDetail="true" life="1" />
+			<ui:include
+				src="/pages/admin/ManageProjects/forms/updateProjectWizard.xhtml" />
+
+		</h:form>
+	</p:dialog>
+
+
+	<!-- ********************************************* Add project Dialog **********************************************************  -->
+	<p:dialog id="dialogAdd" header="Ajouter un projet"
+		widgetVar="AddProjDialog" height="450px">
+		<p:ajax event="close" listener="#{projectsBean.handleClose}" />
+		<h:form id="addForm">
+			<p:growl id="growlMsg" showDetail="true" />
+			<ui:include
+				src="/pages/admin/ManageProjects/forms/addProjectWizard.xhtml" />
+		</h:form>
+	</p:dialog>
+
+
+	<!-- ********************************************* Add coach Dialog **********************************************************  -->
+	<p:dialog id="dialogAddCoach" header="Ajouter un encadrant"
+		widgetVar="CoachDialog" height="400px" width="350px">
+		<p:ajax event="close" listener="#{projectsBean.handleClose}" />
+		<h:form id="addCoachForm">
+			<p:growl id="growlMsgCoach" showDetail="true" />
+			<ui:include src="/pages/admin/ManageProjects/forms/affectCoachToProject.xhtml" />
+		</h:form>
+	</p:dialog>
+
+
+	<!-- ********************************************* Add corrector Dialog **********************************************************  -->
+	<p:dialog id="dialogAddCorrector" header="Ajouter un rapporteur"
+		widgetVar="CorrectorDialog" height="450px">
+		<p:ajax event="close" listener="#{projectsBean.handleClose}" />
+		<h:form id="addCorrectorForm">
+			<p:growl id="growlMsgCorrector" showDetail="true" />
+			<ui:include
+				src="/pages/admin/ManageProjects/forms/affectCorrectorToProject.xhtml" />
+		</h:form>
+	</p:dialog>
+
+
+	<!-- ******************************************* Script Add project button *******************************************************  -->
+	<script type="text/javascript">
+    function handleLoginRequest(xhr, status, args) {
+    	if(args.validationFailed )  {
+        	wizAdd.loadStep(wizAdd.cfg.steps[0], true);
+       } 
+        else {
+            
+            AddProjDialog.hide();
+            location.reload();
+            
+        }
+    }
+
+    
+</script>
+
+
+
+
+
+</ui:composition>

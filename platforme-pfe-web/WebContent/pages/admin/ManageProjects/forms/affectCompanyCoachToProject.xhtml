@@ -1,0 +1,106 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+	<p:panel id="panelInfoCompCoach"
+		header="Informations encadrant c#{msg['encodage.o.chapeau']}t#{msg['encodage.e.accent.grave']} entreprise"
+		toggleable="true"
+		toggleTitle="R#{msg['encodage.e.accent.grave']}duire le panel">
+
+		<p:messages id="msgAddCompCoach" showDetail="true" autoUpdate="true"
+			closable="true" />
+		<h:panelGrid columns="2" cellpadding="2">
+
+			<h:outputLabel value="Nom" for="compCoachName"
+				rendered="#{addProjectFormBean.newCompCoach}" />
+			<h:inputText id="compCoachName"
+				value="#{addProjectFormBean.compCoachFromInput.lastName}"
+				rendered="#{addProjectFormBean.newCompCoach}" />
+
+			<h:outputLabel value="Pr#{msg['encodage.e.accent.grave']}nom"
+				for="firstName" rendered="#{addProjectFormBean.newCompCoach}" />
+			<h:inputText id="firstName"
+				value="#{addProjectFormBean.compCoachFromInput.firstName}"
+				rendered="#{addProjectFormBean.newCompCoach}" />
+
+			<h:outputLabel value="E-mail" for="email"
+				rendered="#{addProjectFormBean.newCompCoach}" />
+			<p:inputText id="email" value="#{addProjectFormBean.compCoachEmail}"
+				rendered="#{addProjectFormBean.newCompCoach}">
+				<f:validator validatorId="custom.emailValidator" />
+			</p:inputText>
+
+			<h:outputLabel value="Poste" for="position"
+				rendered="#{addProjectFormBean.newCompCoach}" />
+			<h:inputText id="position"
+				value="#{addProjectFormBean.compCoachFromInput.position}"
+				rendered="#{addProjectFormBean.newCompCoach}" />
+
+			<h:outputLabel for="phone"
+				value="Num#{msg['encodage.e.accent.grave']}ro de t#{msg['encodage.e.accent.grave']}l#{msg['encodage.e.accent.grave']}phone"
+				rendered="#{addProjectFormBean.newCompCoach}" />
+			<p:inputText id="phone"
+				value="#{addProjectFormBean.compCoachFromInput.phoneNumber}"
+				rendered="#{addProjectFormBean.newCompCoach}">
+			</p:inputText>
+
+
+			<h:outputLabel
+				value="S#{msg['encodage.e.accent.grave']}lectionnez un encadrant"
+				for="selectCompCoach"
+				rendered="#{addProjectFormBean.notNewCompCoach}" />
+			<h:selectOneMenu id="selectCompCoach"
+				value="#{addProjectFormBean.compCoachFromList.id}"
+				rendered="#{addProjectFormBean.notNewCompCoach}"
+				valueChangeListener="#{addProjectFormBean.populateCompCoachInfo}">
+				<f:selectItem
+					itemLabel="S#{msg['encodage.e.accent.grave']}lectionnez un encadrant"
+					itemValue="-1" />
+				<f:selectItems value="#{addProjectFormBean.existingCompCoach}"
+					var="compCoach"
+					itemLabel="#{compCoach.firstName}#{msg['message.espace']}#{compCoach.lastName}"
+					itemValue="#{compCoach.id}" />
+				<p:ajax update="positionSelect phoneSelect mailSelect"
+					event="change" />
+			</h:selectOneMenu>
+
+			<h:outputLabel value="Poste" for="positionSelect"
+				rendered="#{addProjectFormBean.notNewCompCoach}" />
+			<h:outputText id="positionSelect"
+				value="#{addProjectFormBean.compCoachPositionForList}"
+				rendered="#{addProjectFormBean.notNewCompCoach}" />
+			<h:outputLabel value="Numéro de téléphone" for="phoneSelect"
+				rendered="#{addProjectFormBean.notNewCompCoach}" />
+			<h:outputText id="phoneSelect"
+				value="#{addProjectFormBean.compCoachPhoneForList}"
+				rendered="#{addProjectFormBean.notNewCompCoach}" />
+			<h:outputLabel value="Email" for="mailSelect"
+				rendered="#{addProjectFormBean.notNewCompCoach}" />
+			<h:outputText id="mailSelect"
+				value="#{addProjectFormBean.compCoachEmailForList}"
+				rendered="#{addProjectFormBean.notNewCompCoach}" />
+			<br />
+			<br />
+			<br />
+			<br />
+			<p:commandLink value="Ajouter un nouvel encadrant"
+				actionListener="#{addProjectFormBean.addCompCoachRendered}"
+				update="panelInfoCompCoach"
+				disabled="#{addProjectFormBean.newCompCoach}"
+				style="color: #DC143C;font-weight: bold;text-decoration: underline;" />
+
+			<br />
+			<p:commandLink
+				value="Choisir parmis les encadrants de l'entreprise existants"
+				actionListener="#{addProjectFormBean.selectCompCoachRendered}"
+				update="panelInfoCompCoach"
+				disabled="#{addProjectFormBean.notNewCompCoach}"
+				style="color: #DC143C;font-weight: bold;text-decoration: underline;" />
+
+		</h:panelGrid>
+
+	</p:panel>
+
+</ui:composition>

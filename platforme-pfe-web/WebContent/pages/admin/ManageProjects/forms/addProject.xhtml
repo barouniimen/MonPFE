@@ -1,0 +1,57 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+
+	<p:panel header="Informations Projet">
+		<p:messages id="msgAddProj" showDetail="true" autoUpdate="true"
+			closable="true" />
+		<h:panelGrid columns="2" columnClasses="label, value"
+			styleClass="grid">
+
+			<h:outputLabel value="Sujet" for="sujetProj" />
+			<p:inputText id="sujetProj"
+				value="#{addProjectFormBean.projToAdd.projTopic}" maxlength="150"
+				title="Ne d#{msg['encodage.e.accent.grave']}passe pas les 150 caractères"
+				required="true" requiredMessage="le champ sujet est obligatoire" />
+
+			<h:outputLabel
+				value="Ann#{msg['encodage.e.accent.grave']}e universitaire"
+				for="year" />
+			<p:inputMask mask="2999 - 2999" id="year"
+				value="#{addProjectFormBean.projToAdd.academicYear}"
+				title="De la forme: 2013 - 2014" required="true"
+				requiredMessage="le champ ann#{msg['encodage.e.accent.aigu']}e universitaire est obligatoire" />
+
+			<h:outputLabel value="Date de d#{msg['encodage.e.accent.grave']}but"
+				for="calendar" />
+			<p:calendar id="calendar"
+				value="#{addProjectFormBean.projToAdd.startDate}" required="true"
+				requiredMessage="Champ obligatoire" />
+
+
+			<h:outputLabel value="Etat de validation" for="selectVstate" />
+			<h:selectOneMenu id="selectVstate"
+				value="#{addProjectFormBean.projToAdd.projState}">
+				<f:selectItem
+					itemLabel="S#{msg['encodage.e.accent.grave']}lectionnez un #{msg['encodage.e.accent.grave']}tat de validation"
+					itemValue="WAITING" />
+				<f:selectItems value="#{projectsBean.liststates}" var="stateList"
+					itemLabel="#{stateList.description}" itemValue="#{stateList}" />
+			</h:selectOneMenu>
+
+
+			<h:outputLabel value="Domaines" for="domaineProj" />
+			<h:selectManyCheckbox id="domaineProj"
+				value="#{addProjectFormBean.listDomTarget}" required="true"
+				requiredMessage="Vous devez sélectionner au moins un domaine">
+				<f:selectItems value="#{addProjectFormBean.listDomSource}" var="dom"
+					itemLabel="#{dom}" itemValue="#{dom}" />
+
+			</h:selectManyCheckbox>
+		</h:panelGrid>
+	</p:panel>
+
+</ui:composition>

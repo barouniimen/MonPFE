@@ -1,0 +1,82 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+	<p:panel id="panelInfoCompany" header="Informations entreprise"
+		toggleable="true"
+		toggleTitle="R#{msg['encodage.e.accent.grave']}duire le panel">
+		<p:messages id="msgAddComp" showDetail="true" autoUpdate="true"
+			closable="true" />
+
+		<h:panelGrid columns="3" cellpadding="2">
+
+
+			<h:outputLabel
+				value="S#{msg['encodage.e.accent.grave']}lectionnez une entreprise"
+				for="selectCompany" rendered="#{addProjectFormBean.notNewCompany}" />
+			<h:outputText value="#{projectsBean.selectedProject.companyName}"
+				rendered="#{addProjectFormBean.notNewCompany}" />
+			<h:selectOneMenu id="selectCompany"
+				value="#{addProjectFormBean.companyNameFromlist}"
+				valueChangeListener="#{addProjectFormBean.populateCompanyInfo}"
+				rendered="#{addProjectFormBean.notNewCompany}">
+				<f:selectItem
+					itemLabel="S#{msg['encodage.e.accent.grave']}lectionnez une entreprise"
+					itemValue="nothing" />
+				<f:selectItems value="#{addProjectFormBean.existingCompanies}"
+					var="company" itemLabel="#{company.name}"
+					itemValue="#{company.name}" />
+				<p:ajax update="existCompAdress" event="change" />
+			</h:selectOneMenu>
+
+			<h:outputLabel value="Adresse" for="existCompAdress"
+				rendered="#{addProjectFormBean.notNewCompany}" />
+			<h:outputText value="#{projectsBean.selectedProject.companyAdress}"
+				rendered="#{addProjectFormBean.notNewCompany}" /> />
+			<h:outputText id="existCompAdress"
+				value="#{addProjectFormBean.companyAdressFromList}"
+				rendered="#{addProjectFormBean.notNewCompany}" />
+
+
+
+			<h:outputLabel value="Nom" for="compName"
+				rendered="#{addProjectFormBean.newCompany}" />
+			<h:outputText value="#{projectsBean.selectedProject.companyName}"
+				rendered="#{addProjectFormBean.newCompany}" />	
+			<h:inputText id="compName"
+				value="#{addProjectFormBean.companyNameFromInput}"
+				rendered="#{addProjectFormBean.newCompany}" />
+
+			<h:outputLabel value="Adresse" for="adressId"
+				rendered="#{addProjectFormBean.newCompany}" />
+				<h:outputText value="#{projectsBean.selectedProject.companyAdress}"
+				rendered="#{addProjectFormBean.newCompany}" />	
+			<h:inputText id="adressId"
+				value="#{addProjectFormBean.companyAdressFromInput}"
+				rendered="#{addProjectFormBean.newCompany}" />
+
+
+			<br />
+			<br />
+			<br />
+			<br />
+			<p:commandLink value="Ajouter une nouvelle entreprise"
+				actionListener="#{addProjectFormBean.addCompanyRendered}"
+				update="panelInfoCompany"
+				disabled="#{addProjectFormBean.newCompany}"
+				style="color: #DC143C;font-weight: bold;text-decoration: underline;" />
+
+			<br />
+			<p:commandLink value="Choisir parmis les entreprises existantes"
+				actionListener="#{addProjectFormBean.selectCompanyRendered}"
+				update="panelInfoCompany"
+				disabled="#{addProjectFormBean.notNewCompany}"
+				style="color: #DC143C;font-weight: bold;text-decoration: underline;" />
+
+		</h:panelGrid>
+
+	</p:panel>
+
+</ui:composition>
