@@ -10,7 +10,6 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
-import javax.faces.event.ValueChangeEvent;
 import javax.inject.Inject;
 
 import org.esprit.gestion.rapports.persistence.ClassGroup;
@@ -27,6 +26,8 @@ public class AddClassGroupBean {
 	private ClassGroup classGroupToDB;
 	private List<Speciality> listSpecialityFromDB;
 	private Speciality specialitySelected;
+	private boolean newSpeciality;
+	private boolean notNewSpeciality;
 
 	/***** EJB service ****/
 	@Inject
@@ -48,14 +49,25 @@ public class AddClassGroupBean {
 		listSpecialityFromDB = new ArrayList<Speciality>();
 		listSpecialityFromDB = specialityServ.retrieveList(
 				listSpecialityFromDB, "ALL");
+		
+		//init render vars
+		setNewSpeciality(false);
+		setNotNewSpeciality(false);
 
 	}
 
 	/*********************************** action listeners ******************************/
-	public void updateSelectedSpeciality(ValueChangeEvent event) {
-		System.out.println("change!!!");
-
+	
+	public void renderNewSpeciality(){
+		setNewSpeciality(true);
+		setNotNewSpeciality(false);
 	}
+	
+	public void renderNotNewSpeciality(){
+		setNewSpeciality(false);
+		setNotNewSpeciality(true);
+	}
+	
 
 	public void addClass(ActionEvent event) {
 		String resultCreate;
@@ -105,6 +117,22 @@ public class AddClassGroupBean {
 
 	public void setSpecialitySelected(Speciality specialitySelected) {
 		this.specialitySelected = specialitySelected;
+	}
+
+	public boolean isNewSpeciality() {
+		return newSpeciality;
+	}
+
+	public void setNewSpeciality(boolean newSpeciality) {
+		this.newSpeciality = newSpeciality;
+	}
+
+	public boolean isNotNewSpeciality() {
+		return notNewSpeciality;
+	}
+
+	public void setNotNewSpeciality(boolean notNewSpeciality) {
+		this.notNewSpeciality = notNewSpeciality;
 	}
 
 }

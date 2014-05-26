@@ -145,7 +145,6 @@ public class ProjectsBean implements Serializable {
 	}
 	
 	public void deleteProject(ActionEvent event) {
-		System.out.println("delete!!!!!");
 		Project projectToDelete = new Project();
 		projectToDelete.setId(selectedProject.getIdPorj());
 		projFacade.deleteProject(projectToDelete);

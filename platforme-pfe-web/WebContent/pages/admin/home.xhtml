@@ -17,7 +17,7 @@
 
 	<p:layout fullPage="true">
 
-		<p:layoutUnit position="north" size="120">
+		<p:layoutUnit position="north" size="110">
 			<!-- Header -->
 			<p:commandLink action="#{authBean.performLogout()}"
 				value="Déconnexion"
@@ -28,7 +28,7 @@
 			<!-- end Header -->
 		</p:layoutUnit>
 
-		<p:layoutUnit position="south" size="70">
+		<p:layoutUnit position="south" size="60">
 			<!-- footer -->
 			<div id="footer" class="mainStyle">
 				<ui:include src="/template/footer.xhtml" />
@@ -36,10 +36,9 @@
 			<!-- end footer -->
 		</p:layoutUnit>
 
-		<p:layoutUnit id="manageDB" position="west" size="320"
-			header="Ajouter des données" resizable="true" collapsible="true"
+		<p:layoutUnit id="manageDB" position="west" size="340"
+			header="Gérer la base de données" resizable="true" collapsible="true"
 			styleClass="myLayoutStyleClass">
-			<br />
 			<div style="margin-right: 10px;">
 
 				<br />
@@ -49,7 +48,17 @@
 				<br />
 				<ui:include src="/pages/admin/ManageDB/addStudent.xhtml" />
 				<br />
+				<ui:include src="/pages/admin/ManageDB/addTeacher.xhtml" />
+				<br />
+				<ui:include src="/pages/admin/ManageDB/addTeachingUnit.xhtml" />
+				<br />
 				<ui:include src="/pages/admin/ManageDB/addDomain.xhtml" />
+				<br />
+				<ui:include
+					src="/pages/admin/ManageDB/affectTeachingUnitToDomain.xhtml" />
+				<br />
+				<ui:include
+					src="/pages/admin/ManageDB/affectTecherToTeachingUnit.xhtml" />
 			</div>
 		</p:layoutUnit>
 
@@ -64,7 +73,7 @@
 				</p:tab>
 				<p:tab id="oldProject" title="Projets archivés">
 					<p:spacer style="margin-top:5%;"></p:spacer>
-					
+
 				</p:tab>
 				<p:tab id="Soutenances" title="Soutenances">
 					<p:spacer style="margin-top:5%;"></p:spacer>

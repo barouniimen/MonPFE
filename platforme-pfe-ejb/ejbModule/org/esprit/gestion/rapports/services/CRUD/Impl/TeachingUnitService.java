@@ -1,5 +1,6 @@
 package org.esprit.gestion.rapports.services.CRUD.Impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -71,8 +72,14 @@ public class TeachingUnitService implements IServiceLocal<TeachingUnit>,
 	 */
 	@Override
 	public List<TeachingUnit> retrieveList(Object object, String searchBy) {
-		// TODO Auto-generated method stub
-		return null;
+		List<TeachingUnit> returnList = new ArrayList<TeachingUnit>();
+		/************************** searchBy = all *************************/
+		if(searchBy=="ALL"){
+			TypedQuery<TeachingUnit> query = em.createNamedQuery("Teachingunit.findAll", TeachingUnit.class);
+			returnList = query.getResultList();
+		}
+		
+		return returnList;
 	}
 
 }

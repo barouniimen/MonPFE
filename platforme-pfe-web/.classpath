@@ -11,7 +11,6 @@
 			<attribute name="owner.project.facets" value="jst.jsf;jst.web"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.web.container"/>
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/platforme-pfe-ejb">
 		<attributes>

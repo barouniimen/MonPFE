@@ -5,16 +5,17 @@
 	xmlns:p="http://primefaces.org/ui">
 
 
-	<p:panel toggleable="true" header="Ajouter une spécialité" collapsed="true">
+	<p:panel toggleable="true" header="Ajouter une spécialité"
+		collapsed="true">
 
 		<h:panelGrid columns="2" columnClasses="label, value">
 			<h:form>
 
 				<h:outputText value="Titre" />
-				<br/>
+				<br />
 				<h:inputText value="#{addSpecialityBean.specialityToDB.title}" />
-<br/>
-<br/>
+				<br />
+				<br />
 				<p:commandButton id="addSpec" value="Ajouter"
 					actionListener="#{addSpecialityBean.addSpeciality}" />
 			</h:form>

@@ -17,6 +17,7 @@ import org.primefaces.context.RequestContext;
 public class AddSpecialityBean {
 
 	private Speciality specialityToDB;
+
 	
 	@EJB
 	private ISpecialityFacadeLocal specialityFacade;
@@ -27,10 +28,13 @@ public class AddSpecialityBean {
 	@PostConstruct
 	public void init() {
 		specialityToDB = new Speciality();
+		
 	}
 
 	/*********************************** actionListener *************************************/
 
+	
+	
 	public void addSpeciality(ActionEvent event) {
 		String resultCreate;
 		
@@ -63,5 +67,6 @@ public class AddSpecialityBean {
 	public void setSpecialityToDB(Speciality specialityToDB) {
 		this.specialityToDB = specialityToDB;
 	}
+
 
 }

@@ -30,7 +30,6 @@ import org.esprit.gestion.rapports.services.facades.Interfaces.ICompanyCoachFaca
 import org.esprit.gestion.rapports.services.facades.Interfaces.ICompanyFacadeLocal;
 import org.esprit.gestion.rapports.services.facades.Interfaces.IProjectFacadeLocal;
 import org.esprit.gestion.rapports.services.facades.Interfaces.IStudentFacadeLocal;
-import org.primefaces.context.RequestContext;
 import org.primefaces.event.FlowEvent;
 import org.primefaces.model.DualListModel;
 

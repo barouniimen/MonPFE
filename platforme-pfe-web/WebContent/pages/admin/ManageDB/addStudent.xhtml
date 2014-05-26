@@ -8,9 +8,9 @@
 	<p:panel toggleable="true" header="Ajouter un étudiant"
 		collapsed="true">
 		<p:growl autoUpdate="true" showDetail="true" />
-<h:form>
-		<h:panelGrid columns="2" columnClasses="label, value">
-			
+		<h:form>
+			<h:panelGrid columns="2" columnClasses="label, value">
+
 				<h:outputText value="Nom" />
 				<h:inputText value="#{addStudentBean.studentToDB.lastName}" />
 
@@ -56,8 +56,8 @@
 				<p:commandButton id="addClass" value="Ajouter"
 					actionListener="#{addStudentBean.addStudent}" />
 
-		</h:panelGrid>
-</h:form>
+			</h:panelGrid>
+		</h:form>
 	</p:panel>
 
 </ui:composition>
