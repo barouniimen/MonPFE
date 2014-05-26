@@ -1,0 +1,33 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+
+	<p:panel toggleable="true" header="Ajouter une UP"
+		collapsed="true">
+
+		<h:panelGrid columns="2" columnClasses="label, value">
+			<h:form>
+
+				<h:outputText value="Nom" />
+				<br />
+				<h:inputText value="#{addTeachingUnitBean.teachUnitToDB.name}" />
+				<br />
+				<h:outputText value="Local" />
+				<br />
+				<h:inputText value="#{addTeachingUnitBean.teachUnitToDB.localization}" />
+				<br />
+				<br />
+				<p:commandButton id="addTunit" value="Ajouter"
+					actionListener="#{addTeachingUnitBean.addTeachingUnit}" />
+			</h:form>
+
+
+
+		</h:panelGrid>
+
+	</p:panel>
+
+</ui:composition>
