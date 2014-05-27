@@ -43,7 +43,7 @@ public class AddDomainBean {
 			}
 		} else if (resultCreate.equals("exist")) {
 			FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_ERROR,
-					"Existe!!", "Le domaine!");
+					"Existe!!", "Le domaine existe déjà!");
 			FacesContext.getCurrentInstance().addMessage(null, msg);
 		}
 

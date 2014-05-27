@@ -11,7 +11,18 @@
 			<h:outputLabel
 				value="Code d'inscription"
 				for="selectStudent" />
-			<br /><br /><br /><br />
+			<h:selectOneMenu id="selectStudent"
+				value="#{addProjectFormBean.studentToProject.id}"
+				valueChangeListener="#{addProjectFormBean.populateStudentInfo}"
+				required="true" requiredMessage="Veuillez sélectionner un étudiant}">
+				<f:selectItem
+					itemLabel="S#{msg['encodage.e.accent.grave']}lectionnez un #{msg['encodage.e.accent.grave']}tudiant"
+					itemValue="-1" />
+				<f:selectItems value="#{addProjectFormBean.studentList}"
+					var="student" itemLabel="#{student.registrationNumber}"
+					itemValue="#{student.id}" />
+				<p:ajax update="SelectedStudentname SelectedStudentClass" event="change" />
+			</h:selectOneMenu>
 
 			<h:outputLabel value="Nom et pr#{msg['encodage.e.accent.grave']}nom:"
 				for="SelectedStudentname" />

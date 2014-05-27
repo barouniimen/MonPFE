@@ -47,12 +47,12 @@ public class ProjectsBean implements Serializable {
 	private IDomainFacadeLocal domainFacade;
 
 	// vars ------------------------------------------
-	private final static ValidationState[] listStates;
 	private ManagedProjects selectedProject;
 	private List<Project> listproj;
 	private List<ManagedProjects> managedProj;
 	private Project project;
-
+	private final static ValidationState[] listStates;
+	
 	// intit listStates--------------------------------
 	static {
 		listStates = new ValidationState[6];

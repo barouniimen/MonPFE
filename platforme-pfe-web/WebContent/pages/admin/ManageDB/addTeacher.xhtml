@@ -5,12 +5,75 @@
 	xmlns:p="http://primefaces.org/ui">
 
 
-	<p:panel toggleable="true" header="Ajouter un enseignant"
-		collapsed="true">
+	<p:panel  toggleable="true"
+		header="Ajouter un enseignant" collapsed="true">
 		<p:growl id="growlTeacher" autoUpdate="true" showDetail="true" />
-		<h:form>
+		<h:form id="panelAddTeacher">
 			<h:panelGrid columns="2" columnClasses="label, value">
+				<h:outputText value="Nom" />
+				<h:inputText value="#{addTeacherBean.teacherToDB.lastName}" />
 
+				<h:outputText value="prénom" />
+				<h:inputText value="#{addTeacherBean.teacherToDB.firstName}" />
+
+				<h:outputText value="Login" />
+				<h:inputText value="#{addTeacherBean.teacherToDB.login}" />
+
+				<h:outputText value="Mot de passe" />
+				<h:inputText value="#{addTeacherBean.teacherToDB.password}" />
+
+				<h:outputText value="E-mail" />
+				<p:inputText value="#{addTeacherBean.teacherToDB.email}"
+					style="width:150px!important;">
+					<f:validator validatorId="custom.emailValidator" />
+				</p:inputText>
+
+				<h:outputText value="Numéro de téléphone" />
+				<h:inputText value="#{addTeacherBean.teacherToDB.phoneNumber}" />
+
+				<h:outputText value="Heures d'encadrement actuelles" />
+				<h:inputText value="#{addTeacherBean.teacherToDB.coachingHours}" />
+
+				<h:outputLabel value="Grade" for="selectGrade" />
+				<h:selectOneMenu id="selectGrade"
+					value="#{addTeacherBean.teacherToDB.grade}"
+					style="width:160px!important;">
+					<f:selectItem
+						itemLabel="S#{msg['encodage.e.accent.grave']}lectionnez un grade"
+						itemValue="AD" />
+					<f:selectItems value="#{addTeacherBean.listgrades}" var="gradeList"
+						itemLabel="#{gradeList.description}" itemValue="#{gradeList}" />
+				</h:selectOneMenu>
+
+				<br />
+				<p:commandLink value="Affecter à une U.P"
+					actionListener="#{addTeacherBean.renderAffectToUP}"
+					update="panelAddTeacher" disabled="#{addTeacherBean.affectToUP}"
+					style="color: #DC143C;font-weight: bold;text-decoration: underline;" />
+
+
+				<br />
+				<p:commandLink value="Ne pas affecter à une U.P"
+					actionListener="#{addTeacherBean.notRenderAffectToUP}"
+					update="panelAddTeacher" disabled="#{addTeacherBean.notAffectToUP}"
+					style="color: #DC143C;font-weight: bold;text-decoration: underline;" />
+
+				<h:outputLabel value="Unité Pédagogique" for="selectUP" rendered="#{addTeacherBean.affectToUP}"/>
+				<h:outputText value="Aucune UP dans la base de données" rendered="#{addTeacherBean.noUPdispo}"/>
+				
+				<h:selectOneMenu id="selectUP"
+					value="#{addTeacherBean.selectedTeachUnit.id}" rendered="#{addTeacherBean.upDispo}"
+					style="width:160px!important;">
+					<f:selectItem
+						itemLabel="S#{msg['encodage.e.accent.grave']}lectionnez une UP"
+						itemValue="-1" />
+					<f:selectItems value="#{addTeacherBean.listTeachUnitFromDB}" var="upList"
+						itemLabel="#{upList.name}" itemValue="#{upList.id}" />
+				</h:selectOneMenu>
+
+
+				<p:commandButton actionListener="#{addTeacherBean.addTeacher}"
+					value="Ajouter" />
 
 			</h:panelGrid>
 		</h:form>

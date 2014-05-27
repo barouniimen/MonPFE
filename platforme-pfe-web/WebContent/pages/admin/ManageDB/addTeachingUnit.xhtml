@@ -5,11 +5,10 @@
 	xmlns:p="http://primefaces.org/ui">
 
 
-	<p:panel toggleable="true" header="Ajouter une UP"
-		collapsed="true">
+	<p:panel toggleable="true" header="Ajouter une UP" collapsed="true">
 
 		<h:panelGrid columns="2" columnClasses="label, value">
-			<h:form>
+			<h:form id="panelAddUp">
 
 				<h:outputText value="Nom" />
 				<br />
@@ -17,9 +16,35 @@
 				<br />
 				<h:outputText value="Local" />
 				<br />
-				<h:inputText value="#{addTeachingUnitBean.teachUnitToDB.localization}" />
+				<h:inputText
+					value="#{addTeachingUnitBean.teachUnitToDB.localization}" />
 				<br />
+
+				<p:commandLink value="Affecter à un Domaine"
+					actionListener="#{addTeachingUnitBean.renderAffectToDom}"
+					update="panelAddUp" disabled="#{addTeachingUnitBean.affectToDom}"
+					style="color: #DC143C;font-weight: bold;text-decoration: underline;" />
 				<br />
+				<p:commandLink value="Ne pas affecter à un Domaine"
+					actionListener="#{addTeachingUnitBean.notRenderAffectToDom}"
+					update="panelAddUp"
+					disabled="#{addTeachingUnitBean.notAffectToDom}"
+					style="color: #DC143C;font-weight: bold;text-decoration: underline;" />
+				<br />
+				<h:outputText value="Sélectionnez une UP"
+					rendered="#{addTeachingUnitBean.affectToDom}" />
+				<h:outputText value="Il n'existe aucun domaien dans la BD"
+					rendered="#{addTeachingUnitBean.notExistDom}" />
+				<h:selectOneMenu id="selectDomToUp"
+					value="#{addTeachingUnitBean.selectedDomain.id}"
+					style="width:160px!important;"
+					rendered="#{addTeachingUnitBean.existDom}">
+					<f:selectItem
+						itemLabel="S#{msg['encodage.e.accent.grave']}lectionnez un domaine"
+						itemValue="-1" />
+					<f:selectItems value="#{addTeachingUnitBean.listDomToSelect}"
+						var="dom" itemLabel="#{dom.domainName}" itemValue="#{dom.id}" />
+				</h:selectOneMenu>
 				<p:commandButton id="addTunit" value="Ajouter"
 					actionListener="#{addTeachingUnitBean.addTeachingUnit}" />
 			</h:form>

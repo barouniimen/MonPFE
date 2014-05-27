@@ -13,4 +13,6 @@ public interface IDomainFacadeLocal {
 	public String addDomain(Domain domain);
 	
 	public List<Domain> listProjectDomain(Project project);
+	
+	public List<Domain> allDomains();
 }

@@ -8,7 +8,7 @@ public enum TeacherGrade {
 	AD("Assistant D\u00E9l\u00E9gu\u00E9"),
 	AT("Assistant Technologue"),
 	T("Technologue"),
-	PES("Professeur de l'enseignement secondaire"),
+	PES("Professeur de l'enseignement sup\u00E9rieur"),
 	VAC("Vacataire");
 	
 	private String description;

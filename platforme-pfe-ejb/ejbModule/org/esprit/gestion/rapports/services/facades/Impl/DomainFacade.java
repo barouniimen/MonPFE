@@ -68,4 +68,17 @@ public class DomainFacade implements IDomainFacadeLocal, IDomainFacadeRemote{
 		return returnList;
 	}
 
+
+	@Override
+	public List<Domain> allDomains() {
+		List<Domain> returnList = new ArrayList<Domain>();
+		
+		returnList = domainServ.retrieveList(null, "ALL");
+		if(returnList.isEmpty()){
+			return null;
+		}
+		
+		return returnList;
+	}
+
 }

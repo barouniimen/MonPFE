@@ -10,77 +10,99 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
-import javax.inject.Inject;
 
-import org.esprit.gestion.rapports.persistence.ClassGroup;
-import org.esprit.gestion.rapports.persistence.StorageSpace;
-import org.esprit.gestion.rapports.persistence.Student;
-import org.esprit.gestion.rapports.services.CRUD.Interfaces.IServiceLocal;
-import org.esprit.gestion.rapports.services.CRUD.Util.ClassGroupeQualifier;
-import org.esprit.gestion.rapports.services.facades.Interfaces.IStudentFacadeLocal;
+import org.esprit.gestion.rapports.persistence.Teacher;
+import org.esprit.gestion.rapports.persistence.TeacherGrade;
+import org.esprit.gestion.rapports.persistence.TeachingUnit;
+import org.esprit.gestion.rapports.services.facades.Interfaces.ITeacherFacadeLocal;
+import org.esprit.gestion.rapports.services.facades.Interfaces.ITeachingUnitFacadeLocal;
 import org.primefaces.context.RequestContext;
 
 @ManagedBean
 @ViewScoped
 public class AddTeacherBean {
+	private Teacher teacherToDB;
+	private List<TeachingUnit> allTeachingUnit;
+	private final static TeacherGrade[] listGrades;
+	private boolean affectToUP;
+	private boolean notAffectToUP;
+	private List<TeachingUnit> listTeachUnitFromDB;
+	private boolean noUPdispo;
+	private boolean upDispo;
+	private TeachingUnit selectedTeachUnit;
 
-	private Student studentToDB;
-	private int classId;
-	private String academicYear;
-	private StorageSpace space;
-	private ClassGroup selectedClass;
-	private List<ClassGroup> listClassFromDB;
+	// intit listStates--------------------------------
+	static {
+		listGrades = new TeacherGrade[6];
+		listGrades[0] = TeacherGrade.AD;
+		listGrades[1] = TeacherGrade.AT;
+		listGrades[2] = TeacherGrade.PES;
+		listGrades[3] = TeacherGrade.ST;
+		listGrades[4] = TeacherGrade.T;
+		listGrades[5] = TeacherGrade.VAC;
+	}
 
+	/****************** EJB facade ******************/
 	@EJB
-	private IStudentFacadeLocal studentFacade;
-
-	@Inject
-	@ClassGroupeQualifier
-	IServiceLocal<ClassGroup> classServ;
+	ITeacherFacadeLocal teacherFacade;
+	@EJB
+	ITeachingUnitFacadeLocal tUnitFacade;
 
 	/************************************* init method *****************************************/
 	@PostConstruct
 	public void init() {
-		studentToDB = new Student();
-		space = new StorageSpace();
-		selectedClass = new ClassGroup();
-		listClassFromDB = new ArrayList<ClassGroup>();
-		listClassFromDB = classServ.retrieveList(null, "ALL");
+		teacherToDB = new Teacher();
+		allTeachingUnit = new ArrayList<TeachingUnit>();
+		affectToUP = false;
+		notAffectToUP = false;
+		noUPdispo = false;
+		upDispo = false;
+		selectedTeachUnit = new TeachingUnit();
 
 	}
 
 	/*********************************** actionListener *************************************/
+	public void renderAffectToUP(ActionEvent event) {
+		affectToUP = true;
+		notAffectToUP = false;
+		//retreive list of UP
+		listTeachUnitFromDB = new ArrayList<TeachingUnit>();
+		listTeachUnitFromDB = tUnitFacade.listAllTeachUnit();
+		if(listTeachUnitFromDB == null){
+			noUPdispo = true;
+			upDispo = false;
+		}
+		else{
+			noUPdispo = false;
+			upDispo = true;
+		}
+	}
 
-	public void addStudent(ActionEvent event) {
-		//TODO verifications de saisie!!!
-		
-		String resultCreate;
-		studentToDB.setStorageSpace(space);
-		classId = selectedClass.getId();
+	public void notRenderAffectToUP(ActionEvent event) {
+		affectToUP = false;
+		notAffectToUP = true;
+	}
 
-		resultCreate = studentFacade.addStudent(studentToDB, classId,
-				academicYear);
-
-		if (resultCreate.equals("reussi")) {
+	public void addTeacher(ActionEvent event) {
+		String addResult;
+		teacherToDB.setTeachingUnit(selectedTeachUnit);
+		System.out.println("teaching unit id: "+teacherToDB.getTeachingUnit().getId());
+		addResult = teacherFacade.addTeacher(teacherToDB);
+		if (addResult == "success") {
 			try {
 				RequestContext.getCurrentInstance().execute(
 						" location.reload();");
 			} catch (Exception e) {
 			}
-		} else if (resultCreate.equals("regNbreExist")) {
-			FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_ERROR,
-					"Existe!!", "Le code d'inscription existe!");
-			FacesContext.getCurrentInstance().addMessage(null, msg);
-		} else if (resultCreate.equals("loginExist")) {
+		} else if (addResult.equals("loginExist")) {
 			FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_ERROR,
 					"Existe!!", "Le login est déjà utilisé!");
 			FacesContext.getCurrentInstance().addMessage(null, msg);
-		} else if (resultCreate.equals("passExist")) {
+		} else if (addResult.equals("passExist")) {
 			FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_ERROR,
 					"Existe!!", "Le mot de passe est déjà utilisé!");
 			FacesContext.getCurrentInstance().addMessage(null, msg);
 		}
-
 	}
 
 	/************************************* constructor ***************************************/
@@ -88,54 +110,74 @@ public class AddTeacherBean {
 		super();
 	}
 
-	public Student getStudentToDB() {
-		return studentToDB;
-	}
-
-	public void setStudentToDB(Student studentToDB) {
-		this.studentToDB = studentToDB;
-	}
-
-	public int getClassId() {
-		return classId;
-	}
-
-	public void setClassId(int classId) {
-		this.classId = classId;
-	}
-
-	public String getAcademicYear() {
-		return academicYear;
-	}
-
-	public void setAcademicYear(String academicYear) {
-		this.academicYear = academicYear;
-	}
-
-	public StorageSpace getSpace() {
-		return space;
-	}
-
-	public void setSpace(StorageSpace space) {
-		this.space = space;
-	}
-
-	public ClassGroup getSelectedClass() {
-		return selectedClass;
-	}
-
-	public void setSelectedClass(ClassGroup selectedClass) {
-		this.selectedClass = selectedClass;
-	}
-
-	public List<ClassGroup> getListClassFromDB() {
-		return listClassFromDB;
-	}
-
-	public void setListClassFromDB(List<ClassGroup> listClassFromDB) {
-		this.listClassFromDB = listClassFromDB;
-	}
-
 	/*********************************** getter & setter ***************************************/
+
+	public Teacher getTeacherToDB() {
+		return teacherToDB;
+	}
+
+	public void setTeacherToDB(Teacher teacherToDB) {
+		this.teacherToDB = teacherToDB;
+	}
+
+	public TeacherGrade[] getListgrades() {
+		return listGrades;
+	}
+
+	public List<TeachingUnit> getAllTeachingUnit() {
+		return allTeachingUnit;
+	}
+
+	public void setAllTeachingUnit(List<TeachingUnit> allTeachingUnit) {
+		this.allTeachingUnit = allTeachingUnit;
+	}
+
+	public boolean isAffectToUP() {
+		return affectToUP;
+	}
+
+	public void setAffectToUP(boolean affectToUP) {
+		this.affectToUP = affectToUP;
+	}
+
+	public boolean isNotAffectToUP() {
+		return notAffectToUP;
+	}
+
+	public void setNotAffectToUP(boolean notAffectToUP) {
+		this.notAffectToUP = notAffectToUP;
+	}
+
+	public List<TeachingUnit> getListTeachUnitFromDB() {
+		return listTeachUnitFromDB;
+	}
+
+	public void setListTeachUnitFromDB(List<TeachingUnit> listTeachUnitFromDB) {
+		this.listTeachUnitFromDB = listTeachUnitFromDB;
+	}
+
+	public boolean isNoUPdispo() {
+		return noUPdispo;
+	}
+
+	public void setNoUPdispo(boolean noUPdispo) {
+		this.noUPdispo = noUPdispo;
+	}
+
+	public boolean isUpDispo() {
+		return upDispo;
+	}
+
+	public void setUpDispo(boolean upDispo) {
+		this.upDispo = upDispo;
+	}
+
+	public TeachingUnit getSelectedTeachUnit() {
+		return selectedTeachUnit;
+	}
+
+	public void setSelectedTeachUnit(TeachingUnit selectedTeachUnit) {
+		this.selectedTeachUnit = selectedTeachUnit;
+	}
 
 }
