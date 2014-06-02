@@ -18,4 +18,6 @@ public interface IStudentFacadeRemote {
 
 	public List<Student> listStudentsWithoutProject();
 	public String addStudent(Student student, int classId, String academicYear);
+	public boolean studentHaveProject(Student student);
+	public List<Student> listAllStudent();
 }

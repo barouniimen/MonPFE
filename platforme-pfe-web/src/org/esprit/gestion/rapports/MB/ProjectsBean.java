@@ -33,7 +33,6 @@ public class ProjectsBean implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private SimpleDateFormat dateFormat;
 	private List<Domain> projDomainList;
-	
 
 	// EJB_CRUD----------------------------------------
 	@Inject
@@ -52,7 +51,7 @@ public class ProjectsBean implements Serializable {
 	private List<ManagedProjects> managedProj;
 	private Project project;
 	private final static ValidationState[] listStates;
-	
+
 	// intit listStates--------------------------------
 	static {
 		listStates = new ValidationState[6];
@@ -77,7 +76,7 @@ public class ProjectsBean implements Serializable {
 		managedProj = formatProjList(listproj, managedProj);
 		dateFormat = new SimpleDateFormat("dd-M-yyyy");
 
-		//init project domain list
+		// init project domain list
 		projDomainList = new ArrayList<Domain>();
 	}
 
@@ -132,18 +131,19 @@ public class ProjectsBean implements Serializable {
 
 	/****************** Listners *********************/
 	public void handleClose() {
-		
+
 		try {
 			RequestContext.getCurrentInstance().execute(" location.reload();");
-			} catch (Exception e) {
+		} catch (Exception e) {
 		}
 	}
-	public void findDomainList(ActionEvent event){
+
+	public void findDomainList(ActionEvent event) {
 		Project proj = new Project();
 		proj.setId(selectedProject.getIdPorj());
 		projDomainList = domainFacade.listProjectDomain(proj);
 	}
-	
+
 	public void deleteProject(ActionEvent event) {
 		Project projectToDelete = new Project();
 		projectToDelete.setId(selectedProject.getIdPorj());
@@ -171,6 +171,8 @@ public class ProjectsBean implements Serializable {
 	public ManagedProjects getSelectedProject() {
 		return selectedProject;
 	}
+
+	
 
 	public void setSelectedProject(ManagedProjects selectedProject) {
 		this.selectedProject = selectedProject;
@@ -219,6 +221,5 @@ public class ProjectsBean implements Serializable {
 	public void setProjDomainList(List<Domain> projDomainList) {
 		this.projDomainList = projDomainList;
 	}
-
 
 }

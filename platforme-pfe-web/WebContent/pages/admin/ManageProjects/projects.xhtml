@@ -6,13 +6,10 @@
 
 	<h:form id="formProj">
 
-		<!-- ******************************************************** Context Menu *******************************************************************************  -->
+		<!-- ******************************************************** Context Menu ************************************************************************  -->
 
 		<p:contextMenu for="managedProj" style="width:200px">
-			<p:menuitem value="Modifier" icon="ui-icon-pencil"
-			actionListener="#{projectsBean.findDomainList}" 
-				oncomplete="EditProjDialog.show() " update=":tabView" />
-
+		
 			<p:menuitem value="Affecter un encadrant" icon="ui-icon-person"
 				oncomplete="CoachDialog.show() " update=":tabView" />
 
@@ -20,7 +17,8 @@
 				oncomplete="CorrectorDialog.show() " update=":tabView" />
 
 			<p:menuitem value="Supprimer" icon="ui-icon-trash"
-			oncomplete="confirmationRemove.show()" update=":tabView:confirmDialogRemove" />
+				oncomplete="confirmationRemove.show()"
+				update=":tabView:confirmDialogRemove" />
 		</p:contextMenu>
 
 
@@ -128,12 +126,12 @@
 	</p:confirmDialog>
 
 	<!-- ************************************************ Edit project Dialog *************************************************************  -->
-	<p:dialog id="dialogEdit" header="Modifier le projet: #{projectsBean.selectedProject.projTopic}"
+	<p:dialog id="dialogEdit"
+		header="Modifier le projet: #{projectsBean.selectedProject.projTopic}"
 		widgetVar="EditProjDialog" resizable="false" hideEffect="explode"
 		closable="true" listener="#{projectsBean.handleClose}">
 
 		<h:form id="EditForm">
-			<p:growl id="growlEdit" showDetail="true" life="1" />
 			<ui:include
 				src="/pages/admin/ManageProjects/forms/updateProjectWizard.xhtml" />
 
@@ -146,7 +144,6 @@
 		widgetVar="AddProjDialog" height="450px">
 		<p:ajax event="close" listener="#{projectsBean.handleClose}" />
 		<h:form id="addForm">
-			<p:growl id="growlMsg" showDetail="true" />
 			<ui:include
 				src="/pages/admin/ManageProjects/forms/addProjectWizard.xhtml" />
 		</h:form>
@@ -155,12 +152,12 @@
 
 	<!-- ********************************************* Add coach Dialog **********************************************************  -->
 	<p:dialog id="dialogAddCoach" header="Ajouter un encadrant"
-		widgetVar="CoachDialog" height="400px" width="350px">
+		widgetVar="CoachDialog" height="300px" width="400px">
 		<p:ajax event="close" listener="#{projectsBean.handleClose}" />
-		<h:form id="addCoachForm">
-			<p:growl id="growlMsgCoach" showDetail="true" />
-			<ui:include src="/pages/admin/ManageProjects/forms/affectCoachToProject.xhtml" />
-		</h:form>
+
+		<ui:include
+			src="/pages/admin/ManageProjects/forms/affectCoachToProject.xhtml" />
+
 	</p:dialog>
 
 
@@ -169,7 +166,6 @@
 		widgetVar="CorrectorDialog" height="450px">
 		<p:ajax event="close" listener="#{projectsBean.handleClose}" />
 		<h:form id="addCorrectorForm">
-			<p:growl id="growlMsgCorrector" showDetail="true" />
 			<ui:include
 				src="/pages/admin/ManageProjects/forms/affectCorrectorToProject.xhtml" />
 		</h:form>

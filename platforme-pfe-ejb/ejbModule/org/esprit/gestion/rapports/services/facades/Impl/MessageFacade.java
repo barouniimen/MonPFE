@@ -19,6 +19,7 @@ import org.esprit.gestion.rapports.persistence.UserMessage;
 import org.esprit.gestion.rapports.persistence.UserMessagePK;
 import org.esprit.gestion.rapports.services.CRUD.Interfaces.IServiceLocal;
 import org.esprit.gestion.rapports.services.CRUD.Util.MessagesQualifier;
+import org.esprit.gestion.rapports.services.CRUD.Util.ProjectQualifier;
 import org.esprit.gestion.rapports.services.CRUD.Util.StudentQualifier;
 import org.esprit.gestion.rapports.services.CRUD.Util.TeacherQualifier;
 import org.esprit.gestion.rapports.services.CRUD.Util.TecherRoleQualifier;
@@ -53,6 +54,10 @@ public class MessageFacade implements IMessageFacadeLocal, IMessageFacadeRemote 
 	@Inject
 	@TecherRoleQualifier
 	IServiceLocal<TeacherRole> teacherRoleServ;
+
+	@Inject
+	@ProjectQualifier
+	IServiceLocal<Project> projServ;
 
 	@Override
 	public void send(String content, String subject, int idSender,
@@ -95,8 +100,8 @@ public class MessageFacade implements IMessageFacadeLocal, IMessageFacadeRemote 
 
 		// initialiser message
 		Date sendingDate = new Date();
-		Message message = new Message(subject, content, receiverName, senderName, sendingDate, type);
-				
+		Message message = new Message(subject, content, receiverName,
+				senderName, sendingDate, type);
 
 		// persister message
 		msgServ.create(message);
@@ -145,15 +150,26 @@ public class MessageFacade implements IMessageFacadeLocal, IMessageFacadeRemote 
 	 * projCoach: idReciever = idCoach additionalObj = Project idSender
 	 * = null (admin)
 	 * */
-	public void sendAffectCoach(Project project, int idReciever) {
+	public void sendAffectCoach(int iDproject, int idReciever) {
+
+		// retrieve project
+		Project project = new Project();
+		project.setId(iDproject);
+		project = (Project) projServ.retrieve(project, "ID");
 
 		Student student = project.getStudent();
+
 		CompanyCoach compcoach = project.getCompanycoach();
+
 		Company comp = compcoach.getCompany();
+
 		String topic = project.getTopic();
+
 		String studentName = student.getFirstName() + " "
 				+ student.getLastName();
+
 		String compName = comp.getName();
+
 		String content = ("Vous avez \u00E9t\u00E9 affect\u00E9 comme encadrant au projet intitul\u00E9: "
 				+ topic
 				+ " r\u00E9alis\u00E9 par :"
@@ -164,6 +180,7 @@ public class MessageFacade implements IMessageFacadeLocal, IMessageFacadeRemote 
 		Teacher coachSearched = new Teacher();
 		coachSearched.setId(idReciever);
 		coachSearched = (Teacher) teacherServ.retrieve(coachSearched, "ID");
+
 		String receiver = (coachSearched.getFirstName() + " " + coachSearched
 				.getLastName()).toString();
 
@@ -182,9 +199,6 @@ public class MessageFacade implements IMessageFacadeLocal, IMessageFacadeRemote 
 		// Persistence: Message
 		msgServ.create(message);
 
-		// récupérer l'id
-		message = (Message) msgServ.retrieve(message, "CONTENT");
-
 		// initialisation: UserMessage (liaison avec user)
 		UserMessagePK pk = new UserMessagePK();
 		pk.setUserId(idReciever);
@@ -194,6 +208,9 @@ public class MessageFacade implements IMessageFacadeLocal, IMessageFacadeRemote 
 
 		// Persistence: UserMessage
 		userMsgServ.create(userMsg);
+		
+		//set coach to waiting!!
+		
 
 	}
 
@@ -207,8 +224,9 @@ public class MessageFacade implements IMessageFacadeLocal, IMessageFacadeRemote 
 				+ project.getStudent().getLastName();
 		Date sendingDate = new Date();
 		MessageType type = MessageType.ByADMIN;
-		Message msg = new Message("Affectation d'encadrant annul\u00E9e [URGETN]",
-				content, receiver, "administrateur", sendingDate, type);
+		Message msg = new Message(
+				"Affectation d'encadrant annul\u00E9e [URGETN]", content,
+				receiver, "administrateur", sendingDate, type);
 
 		// persister message
 		msgServ.create(msg);
@@ -350,8 +368,8 @@ public class MessageFacade implements IMessageFacadeLocal, IMessageFacadeRemote 
 				+ studentName
 				+ " pour le compte de :"
 				+ compName
-				+ ". Le projet est r\u00E9f\u00E9renc\u00E9 sous : " + project.getId())
-				.toString();
+				+ ". Le projet est r\u00E9f\u00E9renc\u00E9 sous : " + project
+				.getId()).toString();
 
 		// Rechercher le nom du reciever (Teacher)
 		Teacher correctorSearched = new Teacher();
@@ -400,8 +418,9 @@ public class MessageFacade implements IMessageFacadeLocal, IMessageFacadeRemote 
 				+ project.getStudent().getLastName();
 		Date sendingDate = new Date();
 		MessageType type = MessageType.ByADMIN;
-		Message msg = new Message("Affectation de rapporteur annul\u00E9e [URGETN]",
-				content, receiver, "administrateur", sendingDate, type);
+		Message msg = new Message(
+				"Affectation de rapporteur annul\u00E9e [URGETN]", content,
+				receiver, "administrateur", sendingDate, type);
 
 		// persister message
 		msgServ.create(msg);

@@ -44,13 +44,14 @@
 
 
 			<h:outputLabel value="Domaines" for="domaineProj" />
-			<h:selectManyCheckbox id="domaineProj"
+		
+			<p:selectManyCheckbox id="domaineProj"
 				value="#{addProjectFormBean.listDomTarget}" required="true"
-				requiredMessage="Vous devez sélectionner au moins un domaine">
+				requiredMessage="Vous devez sélectionner au moins un domaine" layout="grid" columns="3">
 				<f:selectItems value="#{addProjectFormBean.listDomSource}" var="dom"
 					itemLabel="#{dom}" itemValue="#{dom}" />
-
-			</h:selectManyCheckbox>
+			</p:selectManyCheckbox>
+	
 		</h:panelGrid>
 	</p:panel>
 

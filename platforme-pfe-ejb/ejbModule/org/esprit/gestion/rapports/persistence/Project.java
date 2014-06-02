@@ -181,6 +181,101 @@ public class Project implements Serializable {
 		this.submissionEvent = submissionEvent;
 	}
 
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((academicYear == null) ? 0 : academicYear.hashCode());
+		result = prime * result
+				+ ((companycoach == null) ? 0 : companycoach.hashCode());
+		result = prime * result + id;
+		result = prime
+				* result
+				+ ((presentationEvent == null) ? 0 : presentationEvent
+						.hashCode());
+		result = prime * result
+				+ ((projectDomains == null) ? 0 : projectDomains.hashCode());
+		result = prime * result + ((reports == null) ? 0 : reports.hashCode());
+		result = prime * result
+				+ ((startDate == null) ? 0 : startDate.hashCode());
+		result = prime * result + ((student == null) ? 0 : student.hashCode());
+		result = prime * result
+				+ ((submissionEvent == null) ? 0 : submissionEvent.hashCode());
+		result = prime * result
+				+ ((teacherRoles == null) ? 0 : teacherRoles.hashCode());
+		result = prime * result + ((topic == null) ? 0 : topic.hashCode());
+		result = prime * result
+				+ ((validationState == null) ? 0 : validationState.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Project other = (Project) obj;
+		if (academicYear == null) {
+			if (other.academicYear != null)
+				return false;
+		} else if (!academicYear.equals(other.academicYear))
+			return false;
+		if (companycoach == null) {
+			if (other.companycoach != null)
+				return false;
+		} else if (!companycoach.equals(other.companycoach))
+			return false;
+		if (id != other.id)
+			return false;
+		if (presentationEvent == null) {
+			if (other.presentationEvent != null)
+				return false;
+		} else if (!presentationEvent.equals(other.presentationEvent))
+			return false;
+		if (projectDomains == null) {
+			if (other.projectDomains != null)
+				return false;
+		} else if (!projectDomains.equals(other.projectDomains))
+			return false;
+		if (reports == null) {
+			if (other.reports != null)
+				return false;
+		} else if (!reports.equals(other.reports))
+			return false;
+		if (startDate == null) {
+			if (other.startDate != null)
+				return false;
+		} else if (!startDate.equals(other.startDate))
+			return false;
+		if (student == null) {
+			if (other.student != null)
+				return false;
+		} else if (!student.equals(other.student))
+			return false;
+		if (submissionEvent == null) {
+			if (other.submissionEvent != null)
+				return false;
+		} else if (!submissionEvent.equals(other.submissionEvent))
+			return false;
+		if (teacherRoles == null) {
+			if (other.teacherRoles != null)
+				return false;
+		} else if (!teacherRoles.equals(other.teacherRoles))
+			return false;
+		if (topic == null) {
+			if (other.topic != null)
+				return false;
+		} else if (!topic.equals(other.topic))
+			return false;
+		if (validationState != other.validationState)
+			return false;
+		return true;
+	}
+
 	
 
 

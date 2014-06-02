@@ -17,7 +17,7 @@ public interface IMessageFacadeRemote {
 	 */
 	public void send(String content, String subject, int idSender, int idReciever);
 
-	public void sendAffectCoach(Project project, int idReciever);
+	public void sendAffectCoach(int iDproject, int idReciever);
 	
 	public void sendAffectCorrector( Project project, int idReciever);
 	

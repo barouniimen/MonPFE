@@ -66,9 +66,10 @@ public class ProjectFacade implements IProjectFacadeLocal, IProjectFacadeRemote 
 
 	
 	@Override
-	public void assignCoachToProject(Teacher teacher, Project project) {
+	public void assignCoachToProject(Teacher teacher, int iDproject) {
 		int idReciever = teacher.getId();
-		msgFacade.sendAffectCoach( project,idReciever);
+		msgFacade.sendAffectCoach( iDproject,idReciever);
+		
 		//TODO activate waiting => une facade adminUtil (méthode qui parcours les messages envoyés,
 		//non lus et compare les dates d'envoi par rapport à la date en cours
 			}
@@ -132,7 +133,6 @@ public class ProjectFacade implements IProjectFacadeLocal, IProjectFacadeRemote 
 	@Override
 	public String addProjectToDB(Project project, boolean isNewComCoach) {
 		String operationResult = null;
-		int idProj;
 		List<ProjectDomain> projDomList = new ArrayList<ProjectDomain>();
 		projDomList = project.getProjectDomains();
 		
@@ -145,28 +145,29 @@ public class ProjectFacade implements IProjectFacadeLocal, IProjectFacadeRemote 
 		
 		//create project
 		projServ.create(project);
-		System.out.println("create proj ok!!!!");
+		System.out.println("id proj "+project.getId());
+		System.out.println("student "+project.getStudent());
+
+		//create cx with student
+		Student student = new Student();
+		student = project.getStudent();
+		student.setProject(project);
+		studentServ.update(student);
 		
 		//create connexion with domains
-			
-		//TODO modifier le reteive => le topic peut �tre en doublet!
-		idProj = ((Project) projServ.retrieve(project, "TOPIC")).getId();
-		System.out.println("id proj found!!"+idProj);
-		
 		for (int i = 0; i < projDomList.size(); i++) {
-			System.out.println("domain "+i+" "+"en cours de traitement!!!");
+			
 			//find domain id
 			Domain domain = new Domain();
 			int idDomain;
 			domain.setDomainName(projDomList.get(i).getDomain().getDomainName());
 			domain = (Domain) domServ.retrieve(domain, "NAME");
 			idDomain = domain.getId();
-			System.out.println("domain id found!!!"+idDomain);
 			ProjectDomain projDom = new ProjectDomain();
 			//create projectDom pk (domID + projID)
 			ProjectDomainPK pk = new ProjectDomainPK();
 			pk.setDomainId(idDomain);
-			pk.setProjId(idProj);
+			pk.setProjId(project.getId());
 			projDom.setPk(pk);
 			//create projDom
 			projDomServ.create(projDom);
@@ -180,6 +181,12 @@ public class ProjectFacade implements IProjectFacadeLocal, IProjectFacadeRemote 
 	public void deleteProject(Project projectToDelete) {
 		Project proj = new Project();
 		proj = (Project) projServ.retrieve(projectToDelete, "ID");
+		Student studentToDelete = new Student();
+		studentToDelete = proj.getStudent();
+		studentToDelete.setProject(null);
+		studentServ.update(studentToDelete);
+		System.out.println("student updated!!!");
+		
 		for (int i = 0; i < proj.getProjectDomains().size(); i++) {
 			ProjectDomain projDom = new ProjectDomain();
 			projDom = proj.getProjectDomains().get(i);

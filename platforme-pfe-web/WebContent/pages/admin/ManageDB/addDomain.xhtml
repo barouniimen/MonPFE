@@ -5,7 +5,7 @@
 	xmlns:p="http://primefaces.org/ui">
 
 
-	<p:panel toggleable="true" header="Ajouter un domaine de (projet / UP)"
+	<p:panel toggleable="true" header="Ajouter un domaine de (projet / U.E)"
 		collapsed="true">
 
 		<h:panelGrid columns="2" columnClasses="label, value">
@@ -17,6 +17,8 @@
 				<br /><br />
 				<p:commandButton value="Ajouter"
 					actionListener="#{addDomainBean.addDomain}" />
+					<p:commandButton value="Annuler"
+					onclick="location.reload();" />
 			</h:form>
 
 

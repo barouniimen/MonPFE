@@ -46,7 +46,7 @@ public class StudentFacade implements IStudentFacadeLocal, IStudentFacadeRemote 
 		// find students without projects
 		for (int i = 0; i < allStudentsList.size(); i++) {
 			if (allStudentsList.get(i).getProject() == null) {
-				returnList.add(allStudentsList.get(i));	
+				returnList.add(allStudentsList.get(i));
 				j++;
 			}
 		}
@@ -68,7 +68,8 @@ public class StudentFacade implements IStudentFacadeLocal, IStudentFacadeRemote 
 			if (allStudents.get(i).getRegistrationNumber().toLowerCase()
 					.equals(student.getRegistrationNumber().toLowerCase())) {
 				resultState = "regNbreExist";
-			} else if (allStudents.get(i).getLogin().toLowerCase().equals(student.getLogin().toLowerCase())) {
+			} else if (allStudents.get(i).getLogin().toLowerCase()
+					.equals(student.getLogin().toLowerCase())) {
 				resultState = "loginExist";
 			} else if (allStudents.get(i).getPassword().toLowerCase()
 					.equals(student.getPassword().toLowerCase())) {
@@ -86,10 +87,10 @@ public class StudentFacade implements IStudentFacadeLocal, IStudentFacadeRemote 
 
 			// create student
 			studentServ.create(student);
-			
+
 			// find student id
 			int studentId = student.getId();
-			
+
 			RegistrationPK pk = new RegistrationPK();
 			pk.setClassGroupId(classId);
 			pk.setUserId(studentId);
@@ -104,5 +105,28 @@ public class StudentFacade implements IStudentFacadeLocal, IStudentFacadeRemote 
 		}
 
 		return resultState;
+	}
+
+	@Override
+	public boolean studentHaveProject(Student student) {
+		boolean hasProj;
+
+		student = (Student) studentServ.retrieve(student, "ID");
+		if (student.getProject() == null) {
+			hasProj = false;
+		}
+
+		else
+			hasProj = true;
+
+		return hasProj;
+	}
+
+	@Override
+	public List<Student> listAllStudent() {
+		List<Student> returnList = new ArrayList<Student>();
+		returnList = studentServ.retrieveList(null, "ALL");
+
+		return returnList;
 	}
 }

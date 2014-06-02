@@ -24,8 +24,10 @@ public class AddTeachingUnitBean {
 	private TeachingUnit teachUnitToDB;
 	private boolean notAffectToDom;
 	private boolean affectToDom;
-	private List<Domain> listDomToSelect;
-	private Domain selectedDomain;
+	private List<Domain> listDomSource;
+	private List<String> listDomTargetId;
+	private List<Domain> listDomTarget;
+
 	private boolean notExistDom;
 	private boolean existDom;
 
@@ -43,34 +45,58 @@ public class AddTeachingUnitBean {
 		affectToDom = false;
 		notExistDom = false;
 		existDom = false;
+
 	}
 
 	/******************************** action listeners ***************************************/
 	public void renderAffectToDom(ActionEvent event) {
 		notAffectToDom = false;
 		affectToDom = true;
-		listDomToSelect = new ArrayList<Domain>();
-		selectedDomain = new Domain();
-		listDomToSelect = domainFacade.allDomains();
-		if (listDomToSelect == null) {
+
+		// init domains to select
+		listDomSource = new ArrayList<Domain>();
+
+		listDomSource = domainFacade.allDomains();
+
+		if (listDomSource == null) {
 			notExistDom = true;
 			existDom = false;
 		} else {
 			notExistDom = false;
 			existDom = true;
+			listDomTargetId = new ArrayList<String>();
+
 		}
+
 	}
 
 	public void notRenderAffectToDom(ActionEvent event) {
 		notAffectToDom = true;
 		affectToDom = false;
+		existDom = false;
+		notExistDom = false;
 	}
 
 	public void addTeachingUnit(ActionEvent event) {
 		String addResult;
 
-		addResult = teachUnitFacade.addTeachingUnit(teachUnitToDB,
-				selectedDomain.getId());
+		if (affectToDom) {
+
+			listDomTarget = new ArrayList<Domain>();
+
+			for (int i = 0; i < listDomTargetId.size(); i++) {
+				int id = Integer.parseInt(listDomTargetId.get(i));
+				Domain dom = new Domain();
+				dom.setId(id);
+				listDomTarget.add(dom);
+
+			}
+
+			addResult = teachUnitFacade.addTeachingUnit(teachUnitToDB,
+					listDomTarget);
+		} else {
+			addResult = teachUnitFacade.addTeachingUnit(teachUnitToDB, null);
+		}
 
 		if (addResult == "name exist") {
 			FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_ERROR,
@@ -119,22 +145,6 @@ public class AddTeachingUnitBean {
 		this.affectToDom = affectToDom;
 	}
 
-	public List<Domain> getListDomToSelect() {
-		return listDomToSelect;
-	}
-
-	public void setListDomToSelect(List<Domain> listDomToSelect) {
-		this.listDomToSelect = listDomToSelect;
-	}
-
-	public Domain getSelectedDomain() {
-		return selectedDomain;
-	}
-
-	public void setSelectedDomain(Domain selectedDomain) {
-		this.selectedDomain = selectedDomain;
-	}
-
 	public boolean isNotExistDom() {
 		return notExistDom;
 	}
@@ -149,6 +159,30 @@ public class AddTeachingUnitBean {
 
 	public void setExistDom(boolean existDom) {
 		this.existDom = existDom;
+	}
+
+	public List<Domain> getListDomSource() {
+		return listDomSource;
+	}
+
+	public void setListDomSource(List<Domain> listDomSource) {
+		this.listDomSource = listDomSource;
+	}
+
+	public List<String> getListDomTargetId() {
+		return listDomTargetId;
+	}
+
+	public void setListDomTargetId(List<String> listDomTargetId) {
+		this.listDomTargetId = listDomTargetId;
+	}
+
+	public List<Domain> getListDomTarget() {
+		return listDomTarget;
+	}
+
+	public void setListDomTarget(List<Domain> listDomTarget) {
+		this.listDomTarget = listDomTarget;
 	}
 
 }

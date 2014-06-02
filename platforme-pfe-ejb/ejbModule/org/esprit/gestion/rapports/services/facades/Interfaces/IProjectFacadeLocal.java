@@ -22,7 +22,7 @@ public interface IProjectFacadeLocal {
 	 * @return returns true if operation success false if the connection already
 	 *         exists
 	 */
-	public void assignCoachToProject(Teacher teacher, Project project);
+	public void assignCoachToProject(Teacher teacher, int iDproject);
 
 	/**
 	 * 

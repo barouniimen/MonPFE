@@ -43,6 +43,9 @@ public class AddProjectFormBean {
 	private Student studentToProject;
 	private String selectedStudentName;
 	private ClassGroup selectedStudentClass;
+	private String regNbreStudentToFind;
+	private boolean regNbreFound;
+	private boolean stHasProj;
 
 	// var add project-------------------------------------------------------
 	private List<Domain> listDomFromDB;
@@ -77,7 +80,7 @@ public class AddProjectFormBean {
 	private Company compToDB;
 	private CompanyCoach compCoachToDB;
 	private Student studentToDB;
-	
+
 	// var Update project
 	private ManagedProjects selectedProj;
 
@@ -109,7 +112,7 @@ public class AddProjectFormBean {
 		// ----------------------------------------------------------------------
 		projToAdd = new ManagedProjects();
 		listDomFromDB = new ArrayList<Domain>();
-		
+
 		listDomFromDB = domainServ.retrieveList(null, "ALL");
 		listDomSource = new ArrayList<String>();
 		listDomTarget = new ArrayList<String>();
@@ -127,8 +130,8 @@ public class AddProjectFormBean {
 		studentToProject = new Student();
 		selectedStudentName = null;
 		studentList = new ArrayList<Student>();
-		studentList = studentFacade.listStudentsWithoutProject();
-
+		studentList = studentFacade.listAllStudent();
+		
 		// ----------------------------------------------------------------------
 		// COMPANIES:
 		// ----------------------------------------------------------------------
@@ -169,7 +172,6 @@ public class AddProjectFormBean {
 	// ----------------------------------------------------------------------
 	// button close
 	// ----------------------------------------------------------------------
-	
 
 	// ----------------------------------------------------------------------
 	// button Cancel
@@ -348,7 +350,7 @@ public class AddProjectFormBean {
 		// end company && compcoach init
 
 		// Student init
-		if (studentToProject.getId() == -1) {
+		if (studentToProject == null) {
 
 			studentToDB = null;
 
@@ -370,7 +372,8 @@ public class AddProjectFormBean {
 		projToDB.setStudent(studentToDB);
 		// end init project
 		for (int j = 0; j < projToDB.getProjectDomains().size(); j++) {
-			System.out.println("proj dom: "+j+" "+projToDB.getProjectDomains().get(j));
+			System.out.println("proj dom: " + j + " "
+					+ projToDB.getProjectDomains().get(j));
 		}
 
 		// add project to DB-----------------------------------------
@@ -382,17 +385,28 @@ public class AddProjectFormBean {
 	// when selecting a student
 	// ----------------------------------------------------------------------
 	public void populateStudentInfo(ValueChangeEvent event) {
-		int id = (int) event.getNewValue();
-		studentToProject.setId(id);
+		studentToProject = null;
+		regNbreFound = false;
+
 		for (int i = 0; i < studentList.size(); i++) {
-			if (studentList.get(i).getId() == id) {
+
+			if (studentList.get(i).getRegistrationNumber()
+					.equals(event.getNewValue())) {
+		
+				regNbreFound = true;
 				studentToProject = studentList.get(i);
+				setSelectedStudentName(studentToProject.getFirstName() + " "
+						+ studentToProject.getLastName());
+				selectedStudentClass = classGpeFacade
+						.findByAcademicYearForStudent(studentToProject,
+								projToAdd.getAcademicYear());
 			}
+
+			
+				
+
+			
 		}
-		setSelectedStudentName(studentToProject.getFirstName() + " "
-				+ studentToProject.getLastName());
-		selectedStudentClass = classGpeFacade.findByAcademicYearForStudent(
-				studentToProject, projToAdd.getAcademicYear());
 
 	}
 
@@ -429,6 +443,41 @@ public class AddProjectFormBean {
 			}
 		}
 
+		
+		//STUDENT
+		
+		else if(event.getOldStep().equals("student")){
+			
+			if(regNbreFound){
+				if(studentFacade.studentHaveProject(studentToProject)){
+					FacesMessage msg = new FacesMessage(
+							FacesMessage.SEVERITY_ERROR, "Déjà affecté",
+							"Cet étudiant a déjà un projet!");
+					FacesContext.getCurrentInstance().addMessage(null, msg);
+					selectedStudentClass = null;
+					selectedStudentName = null;
+					return event.getOldStep();
+				}
+				else
+					return event.getNewStep();
+				
+			}
+		
+			else {
+				//warning not found
+				FacesMessage msg = new FacesMessage(
+						FacesMessage.SEVERITY_ERROR, "Code inexistant",
+						"Ce code d'inscription n'existe pas!");
+				FacesContext.getCurrentInstance().addMessage(null, msg);
+				selectedStudentClass = null;
+				selectedStudentName = null;
+				return event.getOldStep();
+			}
+			
+			
+		}
+		
+		
 		// COMPANY FROM INPUT
 		else if (event.getOldStep().equals("company") && newCompany == true) {
 			if (companyNameFromInput.length() > 10) {
@@ -625,7 +674,6 @@ public class AddProjectFormBean {
 
 	}
 
-	
 	/********************************** validation methods *************************************/
 	// ----------------------------------------------------------------------
 	// String with only carcters
@@ -988,6 +1036,30 @@ public class AddProjectFormBean {
 
 	public void setSelectedProj(ManagedProjects selectedProj) {
 		this.selectedProj = selectedProj;
+	}
+
+	public String getRegNbreStudentToFind() {
+		return regNbreStudentToFind;
+	}
+
+	public void setRegNbreStudentToFind(String regNbreStudentToFind) {
+		this.regNbreStudentToFind = regNbreStudentToFind;
+	}
+
+	public boolean isRegNbreFound() {
+		return regNbreFound;
+	}
+
+	public void setRegNbreFound(boolean regNbreFound) {
+		this.regNbreFound = regNbreFound;
+	}
+
+	public boolean isStHasProj() {
+		return stHasProj;
+	}
+
+	public void setStHasProj(boolean stHasProj) {
+		this.stHasProj = stHasProj;
 	}
 
 }

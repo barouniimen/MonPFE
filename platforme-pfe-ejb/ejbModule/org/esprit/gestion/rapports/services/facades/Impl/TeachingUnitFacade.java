@@ -6,6 +6,7 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import org.esprit.gestion.rapports.persistence.Domain;
 import org.esprit.gestion.rapports.persistence.TeachingUnit;
 import org.esprit.gestion.rapports.persistence.TeachingUnitDomain;
 import org.esprit.gestion.rapports.persistence.TeachingUnitDomainPK;
@@ -28,21 +29,26 @@ public class TeachingUnitFacade implements ITeachingUnitFacadeLocal,
 	IServiceLocal<TeachingUnitDomain> teachUnitDomServ;
 
 	@Override
-	public String addTeachingUnit(TeachingUnit tUnit, int idDom) {
+	public String addTeachingUnit(TeachingUnit tUnit, List<Domain> listDom) {
 		String addResult = "init";
-		System.out.println("id dom: "+idDom);
+		System.out.println("id dom: " + listDom.get(0).getId());
 		List<TeachingUnit> allTeachUnit = new ArrayList<TeachingUnit>();
 
 		allTeachUnit = tUnitServ.retrieveList(null, "ALL");
 		if (allTeachUnit.isEmpty()) {
-
 			tUnitServ.create(tUnit);
-			TeachingUnitDomainPK pk = new TeachingUnitDomainPK(tUnit.getId(),
-					idDom);
-			TeachingUnitDomain tudom = new TeachingUnitDomain();
-			tudom.setPk(pk);
-			teachUnitDomServ.create(tudom);
+			if (listDom != null) {
+				for (int i = 0; i < listDom.size(); i++) {
+					TeachingUnitDomainPK pk = new TeachingUnitDomainPK(
+							tUnit.getId(), listDom.get(i).getId());
+					TeachingUnitDomain tudom = new TeachingUnitDomain();
+					tudom.setPk(pk);
+					teachUnitDomServ.create(tudom);
+
+				}
+			}
 			addResult = "success";
+
 		}
 
 		else {
@@ -60,12 +66,16 @@ public class TeachingUnitFacade implements ITeachingUnitFacadeLocal,
 			}
 			if (addResult == "init") {
 				tUnitServ.create(tUnit);
-				System.out.println("id t unit created!!! " + tUnit.getId());
-				TeachingUnitDomainPK pk = new TeachingUnitDomainPK(
-						tUnit.getId(), idDom);
-				TeachingUnitDomain tudom = new TeachingUnitDomain();
-				tudom.setPk(pk);
-				teachUnitDomServ.create(tudom);
+				if (listDom != null) {
+					for (int i = 0; i < listDom.size(); i++) {
+						TeachingUnitDomainPK pk = new TeachingUnitDomainPK(
+								tUnit.getId(), listDom.get(i).getId());
+						TeachingUnitDomain tudom = new TeachingUnitDomain();
+						tudom.setPk(pk);
+						teachUnitDomServ.create(tudom);
+
+					}
+				}
 				addResult = "success";
 			}
 

@@ -14,7 +14,10 @@ import org.esprit.gestion.rapports.persistence.Teacher;
 @Local
 public interface ICoachFacadeLocal {
 
-	public List<Teacher> listerCoachDisponibles(int coachingHoursMax, List<String> projectDomains);
+	public List<Teacher> listerCoachSameDom(int coachingHoursMax, List<String> projectDomains);
+	
+	public List<Teacher> listAllCoach(int coachingHoursMax);
+
 
 	public void CoachProjectAccept(Teacher teacher, Message message);
 	

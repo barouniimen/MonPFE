@@ -6,33 +6,30 @@
 
 	<p:panel header="Informations Etudiant">
 		<p:messages id="msgAddStudent" showDetail="true" autoUpdate="true"
-			closable="true" />
+			closable="true"/>
 		<h:panelGrid columns="2" columnClasses="label, value">
-			<h:outputLabel
-				value="Code d'inscription"
-				for="selectStudent" />
-			<h:selectOneMenu id="selectStudent"
-				value="#{addProjectFormBean.studentToProject.id}"
-				valueChangeListener="#{addProjectFormBean.populateStudentInfo}"
-				required="true" requiredMessage="Veuillez sélectionner un étudiant}">
-				<f:selectItem
-					itemLabel="S#{msg['encodage.e.accent.grave']}lectionnez un #{msg['encodage.e.accent.grave']}tudiant"
-					itemValue="-1" />
-				<f:selectItems value="#{addProjectFormBean.studentList}"
-					var="student" itemLabel="#{student.registrationNumber}"
-					itemValue="#{student.id}" />
-				<p:ajax update="SelectedStudentname SelectedStudentClass" event="change" />
-			</h:selectOneMenu>
-
-			<h:outputLabel value="Nom et pr#{msg['encodage.e.accent.grave']}nom:"
-				for="SelectedStudentname" />
-			<h:outputText id="SelectedStudentname"
-				value="#{addProjectFormBean.selectedStudentName}" />
 			
-			<h:outputLabel value="Classe:"
-				for="SelectedStudentClass" />
-			<h:outputText id="SelectedStudentClass"
-				value="#{addProjectFormBean.selectedStudentClass.reference}" />
+			<h:outputLabel value="Code d'inscription" for="selectStudent" />
+
+
+			<h:inputText id="selectStudent" value="#{addProjectFormBean.regNbreStudentToFind}"
+				valueChangeListener="#{addProjectFormBean.populateStudentInfo}">
+				<p:ajax event="keyup" update="nameSt classSt" immediate="true" />
+			</h:inputText>
+
+
+			<h:outputLabel value="Nom et prénom" for="nameSt" />
+			<h:outputText value="#{addProjectFormBean.selectedStudentName}"
+				id="nameSt" />
+
+
+			<h:outputLabel value="Classe" for="classSt" />
+			<h:outputText
+				value="#{addProjectFormBean.selectedStudentClass.reference}"
+				id="classSt" />
+
+
+
 		</h:panelGrid>
 	</p:panel>
 

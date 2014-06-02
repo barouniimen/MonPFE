@@ -51,7 +51,7 @@
 				value="S#{msg['encodage.e.accent.grave']}lectionnez un encadrant"
 				for="selectCompCoach"
 				rendered="#{addProjectFormBean.notNewCompCoach}" />
-			<h:selectOneMenu id="selectCompCoach"
+			<p:selectOneMenu id="selectCompCoach"
 				value="#{addProjectFormBean.compCoachFromList.id}"
 				rendered="#{addProjectFormBean.notNewCompCoach}"
 				valueChangeListener="#{addProjectFormBean.populateCompCoachInfo}">
@@ -64,7 +64,7 @@
 					itemValue="#{compCoach.id}" />
 				<p:ajax update="positionSelect phoneSelect mailSelect"
 					event="change" />
-			</h:selectOneMenu>
+			</p:selectOneMenu>
 
 			<h:outputLabel value="Poste" for="positionSelect"
 				rendered="#{addProjectFormBean.notNewCompCoach}" />

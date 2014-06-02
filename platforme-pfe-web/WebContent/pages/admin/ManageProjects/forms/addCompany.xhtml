@@ -15,7 +15,7 @@
 			<h:outputLabel
 				value="S#{msg['encodage.e.accent.grave']}lectionnez une entreprise"
 				for="selectCompany" rendered="#{addProjectFormBean.notNewCompany}" />
-			<h:selectOneMenu id="selectCompany"
+			<p:selectOneMenu id="selectCompany"
 				value="#{addProjectFormBean.companyNameFromlist}"
 				valueChangeListener="#{addProjectFormBean.populateCompanyInfo}"
 				rendered="#{addProjectFormBean.notNewCompany}">
@@ -26,7 +26,7 @@
 					var="company" itemLabel="#{company.name}"
 					itemValue="#{company.name}" />
 				<p:ajax update="existCompAdress" event="change" />
-			</h:selectOneMenu>
+			</p:selectOneMenu>
 
 			<h:outputLabel value="Adresse" for="existCompAdress"
 				rendered="#{addProjectFormBean.notNewCompany}" />

@@ -23,7 +23,7 @@ public interface IProjectFacadeRemote {
 	 * @return 
 	 * returns true if operation success, else false 
 	 */
-	public void assignCoachToProject(Teacher teacher, Project project);
+	public void assignCoachToProject(Teacher teacher, int iDproject);
 	
 	/**
 	 * 

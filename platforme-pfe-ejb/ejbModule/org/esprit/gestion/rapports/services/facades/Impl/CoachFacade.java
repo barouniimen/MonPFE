@@ -16,6 +16,7 @@ import org.esprit.gestion.rapports.persistence.Teacher;
 import org.esprit.gestion.rapports.persistence.TeacherRole;
 import org.esprit.gestion.rapports.persistence.TeacherRolePK;
 import org.esprit.gestion.rapports.persistence.TeacherRoleType;
+import org.esprit.gestion.rapports.persistence.TeachingUnit;
 import org.esprit.gestion.rapports.persistence.TeachingUnitDomain;
 import org.esprit.gestion.rapports.persistence.UserMessage;
 import org.esprit.gestion.rapports.persistence.UserMessagePK;
@@ -62,7 +63,7 @@ public class CoachFacade implements ICoachFacadeLocal, ICoachFacadeRemote {
 	IMessageFacadeLocal msgFacade;
 
 	@Override
-	public List<Teacher> listerCoachDisponibles(int coachingHoursMax,
+	public List<Teacher> listerCoachSameDom(int coachingHoursMax,
 			List<String> projectDomains) {
 		List<Teacher> filtredList = new ArrayList<Teacher>();
 		int nbTeacherFiltred = 0;
@@ -73,62 +74,76 @@ public class CoachFacade implements ICoachFacadeLocal, ICoachFacadeRemote {
 
 		// search teachears having less then coachingHoursMax
 		teacherList = teacherServ.retrieveList(teacher, "ALL");
-		System.out.println("after retreive: "+teacherList);
 		if (teacherList.isEmpty()) {
-			System.out.println("on is empty!!");
+
 			return null;
 		}
-		for (int i = 0; i < teacherList.size(); i++) {
-			if (teacherList.get(i).getCoachingHours() <= coachingHoursMax) {
-				teacherLessHours.add(teacherList.get(i));
+
+		else {
+			for (int i = 0; i < teacherList.size(); i++) {
+				if (teacherList.get(i).getCoachingHours() <= coachingHoursMax) {
+					teacherLessHours.add(teacherList.get(i));
+				}
+
 			}
 
-		}
+			if (teacherLessHours.isEmpty()) {
+				return null;
+			} else {
 
-		if (teacherLessHours.isEmpty()) {
-			System.out.println("on is empty after search hours");
-			return null;
-		} else {
+				/**************** filter par teaching unit (domain coach = domain project) *********************/
 
-			/**************** filter par teaching unit (domain coach = domain project) *********************/
+				// ******parcourir la liste des teacher disponibles
+				for (int teacherIt = 0; teacherIt < teacherLessHours.size(); teacherIt++) {
+					Teacher t = teacherLessHours.get(teacherIt);
+					// ****recuperer tous les domaines du teacher (selon son
+					// unit)
+					TeachingUnit teachingUnit = new TeachingUnit();
+					teachingUnit = t.getTeachingUnit();
 
-			// ******parcourir la liste des teacher disponibles
-			for (int teacherIt = 0; teacherIt < teacherLessHours.size(); teacherIt++) {
-				Teacher t = teacherLessHours.get(teacherIt);
-				// ****recuperer tous les domaines du teacher (selon son unit)
-				List<TeachingUnitDomain> teacherDomains = t.getTeachingUnit()
-						.getTeachingUnitDomains();
+					if (teachingUnit == null) {
+						filtredList.add(t);
+						nbTeacherFiltred = nbTeacherFiltred + 1;
+					} else {
 
-				// ****parcourir les domaine du teacher, si egale au domaine du
-				// projet, ajouter a  la filtered list
-				for (int teacherDomIt = 0; teacherDomIt < teacherDomains.size(); teacherDomIt++) {
-					TeachingUnitDomain teachDomCx = teacherDomains
-							.get(teacherDomIt);
+						List<TeachingUnitDomain> teacherDomains = teachingUnit
+								.getTeachingUnitDomains();
 
-					for (int projDomIt = 0; projDomIt < projectDomains.size(); projDomIt++) {
+						// ****parcourir les domaine du teacher, si egale au
+						// domaine
+						// du
+						// projet, ajouter a  la filtered list
+						for (int teacherDomIt = 0; teacherDomIt < teacherDomains
+								.size(); teacherDomIt++) {
+							TeachingUnitDomain teachDomCx = teacherDomains
+									.get(teacherDomIt);
 
-						String projDom = projectDomains.get(projDomIt);
+							for (int projDomIt = 0; projDomIt < projectDomains
+									.size(); projDomIt++) {
 
-						// chercher le nom du domaine du teacher
-						Domain domt = new Domain();
-						domt.setId(teachDomCx.getPk().getDomainId());
-						domt = (Domain) domainServ.retrieve(domt, "ID");
-						String teachDom = domt.getDomainName();
+								String projDom = projectDomains.get(projDomIt);
 
-						if (projDom == teachDom) {
-							filtredList.add(t);
-							nbTeacherFiltred = nbTeacherFiltred + 1;
+								// chercher le nom du domaine du teacher
+								Domain domt = new Domain();
+								domt.setId(teachDomCx.getPk().getDomainId());
+								domt = (Domain) domainServ.retrieve(domt, "ID");
+								String teachDom = domt.getDomainName();
+
+								if (projDom == teachDom) {
+									filtredList.add(t);
+									nbTeacherFiltred = nbTeacherFiltred + 1;
+								}
+							}
 						}
 					}
 				}
+				if (nbTeacherFiltred == 0) {
+					return null;
+				}
+
 			}
-			if (nbTeacherFiltred == 0) {
-				Teacher notFound = new Teacher();
-				notFound.setFirstName("Aucun enseignant trouv\u00E9 dans le domaine du projet");
-				filtredList.add(notFound);
-			}
-			return filtredList;
 		}
+		return filtredList;
 		// TODO a  tester (et voir c quoi ce warning sur la filtredlist)!!!!!
 	}
 
@@ -179,4 +194,37 @@ public class CoachFacade implements ICoachFacadeLocal, ICoachFacadeRemote {
 		teacherServ.update(teacher);
 	}
 
+	@Override
+	public List<Teacher> listAllCoach(int coachingHoursMax) {
+
+		List<Teacher> teacherList = new ArrayList<Teacher>();
+		List<Teacher> teacherLessHours = new ArrayList<Teacher>();
+		Teacher teacher = new Teacher();
+
+		teacher.setCoachingHours(coachingHoursMax);
+
+		// search teachears having less then coachingHoursMax
+		teacherList = teacherServ.retrieveList(teacher, "ALL");
+
+		if (teacherList.isEmpty()) {
+
+			return null;
+		}
+
+		else {
+			for (int i = 0; i < teacherList.size(); i++) {
+				if (teacherList.get(i).getCoachingHours() <= coachingHoursMax) {
+					teacherLessHours.add(teacherList.get(i));
+
+				}
+
+			}
+
+			if (teacherLessHours.isEmpty()) {
+				return null;
+			} else
+				return teacherLessHours;
+
+		}
+	}
 }
