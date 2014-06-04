@@ -1,0 +1,42 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+	<h:outputText value="L'affectation suivante a été effectué:"
+		style="font-weight: bold;font-style: italic;margin-left:20%;margin-right:20%;" />
+	<br />
+	<br />
+	<br />
+	<h:outputText value="Enseignant:  " style="font-weight: bold;" />
+	<h:outputText value="#{projectsBean.assignCorrectorState.teacherName}" />
+	<br />
+	<br />
+	<br />
+	<h:outputText value="Date d'envoi:  " style="font-weight: bold;" />
+	<h:outputText
+		value="#{projectsBean.dateFormat.format(projectsBean.assignCorrectorState.sendingDate)}" />
+	<br />
+	<br />
+	<br />
+	<h:outputText value="Etat d'acceptation:  " style="font-weight: bold;" />
+	<h:outputText
+		value="#{projectsBean.assignCorrectorState.responseState.description}" />
+	<br />
+	<br />
+	<br />
+	<h:outputText value="Voulez-vous annuler cette affectation?" />
+	<p:selectOneRadio value="#{assignCorrectorToProject.cancel}">
+		<f:selectItem itemLabel="Oui" itemValue="true" />
+		<f:selectItem itemLabel="Non" itemValue="false" />
+	</p:selectOneRadio>
+
+	<br />
+	<br />
+	
+	<p:commandButton value="Valider"
+		actionListener="#{assignCorrectorToProject.cancelCorrectorAssign}" />
+
+
+</ui:composition>

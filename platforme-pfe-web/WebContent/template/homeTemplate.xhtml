@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+
+	<title><ui:insert name="pageTitle" /></title>
+	<h:outputStylesheet library="css" name="style.css" />
+	<link rel="stylesheet" type="text/css"
+		href="../resources/css/style.css" />
+	<link rel="shortcut icon" type="image/x-icon"
+		href="#{request.contextPath}/resources/icon/favicon.ico" />
+
+</h:head>
+
+<h:body>
+
+	<ui:include src="/template/header.xhtml" />
+
+
+	<h:form rendered="#{!authenticationBean.loggedIn}">
+		<ui:include src="/template/loginPage.xhtml" />
+	</h:form>
+
+	<ui:define name="homePage"></ui:define>
+
+</h:body>
+</html>
