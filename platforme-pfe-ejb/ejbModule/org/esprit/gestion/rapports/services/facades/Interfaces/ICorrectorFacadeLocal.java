@@ -13,4 +13,6 @@ public interface ICorrectorFacadeLocal {
 	public void CorrectorProjectAccept(Teacher teacher,Message message);
 
 	List<Teacher> listerCorrectorDisponibles();
+	
+	public List<Teacher> listCorrectorsSameDom(List<String> projectDomains);
 }

@@ -12,19 +12,21 @@ public interface IMessageFacadeLocal {
 
 	public void send(String content, String subject, int idSender, int idReciever);
 	
-	public void sendAffectCoach(int iDproject, int idReciever);
+	public void sendAffectCoach(int iDproject, int idReciever, int idSender);
 	
-	public void sendAffectCorrector(Project project, int idReciever);
+	public void sendAffectCorrector(int iDproject, int idReciever, int idSender);
 	
 	public void sendAffectPresidentJury(Project project, int idReciever, Date soutenanceDate);
 	
-	public void sendcancelCoachToProject(String content, Project project, int coachId);
+	public void sendcancelCoachToProject(Project project, int coachId, int senderId);
 
 	public void sendCoachAccept(String content, Project project, int idSender, int idReciever);
 	
 	public void sendCorrectorAccept(String content, Project project, int idSender, int idReciever);
 	
-	public void sendcancelCorrectorToProject(String content, Project project, int correctorId);
+	public void sendcancelCorrectorToProject(Project project, int correctorId,
+			int senderId);
+	
 	
 	/**
 	 * il faut préciser message.state:

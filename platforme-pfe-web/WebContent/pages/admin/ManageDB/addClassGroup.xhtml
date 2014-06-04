@@ -6,8 +6,9 @@
 
 
 	<p:panel toggleable="true" header="Ajouter une classe" collapsed="true">
-		<p:growl id="growl" autoUpdate="true" showDetail="true" />
+
 		<h:form>
+			<p:growl id="growlAddClass" autoUpdate="true" showDetail="true" />
 			<h:panelGrid columns="2" columnClasses="label, value">
 
 
@@ -16,7 +17,7 @@
 
 				<h:outputText value="Spécilaité" />
 				<h:selectOneMenu id="selectSpecilaity"
-					value="#{addClassGroupBean.specialitySelected.id}">
+					value="#{addClassGroupBean.specialitySelected.id}" >
 					<f:selectItem
 						itemLabel="S#{msg['encodage.e.accent.grave']}lectionnez une sp#{msg['encodage.e.accent.grave']}cialit#{msg['encodage.e.accent.grave']}"
 						itemValue="-1" />
@@ -26,7 +27,8 @@
 
 
 				<p:commandButton id="addClass" value="Ajouter"
-					actionListener="#{addClassGroupBean.addClass}" />
+					actionListener="#{addClassGroupBean.addClass}"
+					update="growlAddClass" />
 				<p:commandButton value="Annuler" onclick="location.reload();" />
 
 			</h:panelGrid>

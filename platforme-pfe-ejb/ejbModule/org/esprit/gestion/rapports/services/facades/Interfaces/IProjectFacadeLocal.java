@@ -6,6 +6,8 @@ import javax.ejb.Local;
 
 import org.esprit.gestion.rapports.persistence.Project;
 import org.esprit.gestion.rapports.persistence.Teacher;
+import org.esprit.gestion.rapports.persistence.User;
+import org.esprit.gestion.rapports.utils.AssignState;
 
 @Local
 public interface IProjectFacadeLocal {
@@ -22,7 +24,7 @@ public interface IProjectFacadeLocal {
 	 * @return returns true if operation success false if the connection already
 	 *         exists
 	 */
-	public void assignCoachToProject(Teacher teacher, int iDproject);
+	public void assignCoachToProject(Teacher teacher, int iDproject, User sender);
 
 	/**
 	 * 
@@ -31,7 +33,7 @@ public interface IProjectFacadeLocal {
 	 * @return returns true if operation success false if the connection is not
 	 *         found
 	 */
-	public void cancelCoachToProject(Teacher teacher, Project project);
+	public void cancelCoachToProject(Teacher teacher, Project project, int senderId);
 
 	/**
 	 * Corrector = rapporteur
@@ -40,9 +42,15 @@ public interface IProjectFacadeLocal {
 	 * @param project
 	 * @return
 	 */
-	public void assignCorrectorToProject(Teacher teacher, Project project);
+	public void assignCorrectorToProject(Teacher teacher, int iDproject, User sender);
 
-	public void cancelCorrectorToProject(Teacher teacher, Project project);
+
 
 	public void deleteProject(Project projectToDelete);
+	
+	public AssignState findCoachAssignement(int idProj);
+	
+	public void cancelCorrectorToProject(Teacher teacher, Project project, int senderId);
+	
+	public AssignState findCorrectorAssignement(int idProj);
 }

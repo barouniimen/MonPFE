@@ -1,11 +1,13 @@
 package org.esprit.gestion.rapports.services.facades.Impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import org.esprit.gestion.rapports.persistence.Domain;
 import org.esprit.gestion.rapports.persistence.Message;
 import org.esprit.gestion.rapports.persistence.MessageAccess;
 import org.esprit.gestion.rapports.persistence.Project;
@@ -14,9 +16,12 @@ import org.esprit.gestion.rapports.persistence.Teacher;
 import org.esprit.gestion.rapports.persistence.TeacherRole;
 import org.esprit.gestion.rapports.persistence.TeacherRolePK;
 import org.esprit.gestion.rapports.persistence.TeacherRoleType;
+import org.esprit.gestion.rapports.persistence.TeachingUnit;
+import org.esprit.gestion.rapports.persistence.TeachingUnitDomain;
 import org.esprit.gestion.rapports.persistence.UserMessage;
 import org.esprit.gestion.rapports.persistence.UserMessagePK;
 import org.esprit.gestion.rapports.services.CRUD.Interfaces.IServiceLocal;
+import org.esprit.gestion.rapports.services.CRUD.Util.DomainQualifier;
 import org.esprit.gestion.rapports.services.CRUD.Util.ProjectQualifier;
 import org.esprit.gestion.rapports.services.CRUD.Util.TeacherQualifier;
 import org.esprit.gestion.rapports.services.CRUD.Util.TecherRoleQualifier;
@@ -31,6 +36,10 @@ public class CorrectorFacade implements ICorrectorFacadeLocal, ICorrectorFacadeR
 	@Inject
 	@TecherRoleQualifier
 	IServiceLocal<TeacherRole> roleServ;
+	
+	@Inject
+	@DomainQualifier
+	IServiceLocal<Domain> domainServ;
 	
 
 	@Inject
@@ -99,6 +108,73 @@ public class CorrectorFacade implements ICorrectorFacadeLocal, ICorrectorFacadeR
 				msgFacade.sendCorrectorAccept(content, project, teacher.getId(), student.getId());
 	}
 	
+	public List<Teacher> listCorrectorsSameDom(List<String> projectDomains){
+		
+		List<Teacher> filtredList = new ArrayList<Teacher>();
+		int nbTeacherFiltred = 0;
+		List<Teacher> teacherList = new ArrayList<Teacher>();
+
 	
+		// search teachears having less then coachingHoursMax
+		teacherList = teacherServ.retrieveList(null, "ALL");
+		if (teacherList.isEmpty()) {
+
+			return null;
+		}
+		
+		else{
+		
+			/**************** filter par teaching unit (domain coach = domain project) *********************/
+
+// ******parcourir la liste des teacher disponibles
+				for (int teacherIt = 0; teacherIt < teacherList.size(); teacherIt++) {
+					Teacher t = teacherList.get(teacherIt);
+					// ****recuperer tous les domaines du teacher (selon unit)
+					TeachingUnit teachingUnit = new TeachingUnit();
+					teachingUnit = t.getTeachingUnit();
+
+					if (teachingUnit == null) {
+						filtredList.add(t);
+						nbTeacherFiltred = nbTeacherFiltred + 1;
+					} else {
+
+						List<TeachingUnitDomain> teacherDomains = teachingUnit
+								.getTeachingUnitDomains();
+
+	// ****parcourir les domaine du teacher, si egale au domaine duprojet, ajouter a  la filtered list
+						for (int teacherDomIt = 0; teacherDomIt < teacherDomains
+								.size(); teacherDomIt++) {
+							
+							TeachingUnitDomain teachDomCx = teacherDomains
+									.get(teacherDomIt);
+
+							for (int projDomIt = 0; projDomIt < projectDomains
+									.size(); projDomIt++) {
+
+								String projDom = projectDomains.get(projDomIt);
+
+								// chercher le nom du domaine du teacher
+								Domain domt = new Domain();
+								domt.setId(teachDomCx.getPk().getDomainId());
+								domt = (Domain) domainServ.retrieve(domt, "ID");
+								String teachDom = domt.getDomainName();
+
+								if (projDom == teachDom) {
+									filtredList.add(t);
+									nbTeacherFiltred = nbTeacherFiltred + 1;
+								}
+							}
+						}
+					}
+				}
+				if (nbTeacherFiltred == 0) {
+					return null;
+				}
+
+			}
+		
+		return filtredList;
+		
+	}
 
 }

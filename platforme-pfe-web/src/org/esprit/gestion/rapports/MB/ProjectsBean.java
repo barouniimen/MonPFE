@@ -13,6 +13,7 @@ import javax.faces.event.ActionEvent;
 import javax.inject.Inject;
 
 import org.esprit.gestion.rapports.Model.ManagedProjects;
+import org.esprit.gestion.rapports.persistence.AssignResponseState;
 import org.esprit.gestion.rapports.persistence.Domain;
 import org.esprit.gestion.rapports.persistence.Project;
 import org.esprit.gestion.rapports.persistence.TeacherRole;
@@ -22,8 +23,8 @@ import org.esprit.gestion.rapports.services.CRUD.Interfaces.IServiceLocal;
 import org.esprit.gestion.rapports.services.CRUD.Util.ProjectQualifier;
 import org.esprit.gestion.rapports.services.facades.Interfaces.IDomainFacadeLocal;
 import org.esprit.gestion.rapports.services.facades.Interfaces.IProjectFacadeLocal;
+import org.esprit.gestion.rapports.utils.AssignState;
 import org.primefaces.context.RequestContext;
-import org.primefaces.event.CloseEvent;
 
 @ManagedBean
 @ViewScoped
@@ -33,6 +34,16 @@ public class ProjectsBean implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private SimpleDateFormat dateFormat;
 	private List<Domain> projDomainList;
+	private boolean assignedCoach;
+	private boolean toAssignCoach;
+	private String dialogHeaderAssignCoach;
+	private boolean assignedCorrector;
+	private boolean toAssignCorrector;
+	private String dialogHeaderAssignCorrector;
+	private AssignState assignCoachState;
+	private AssignState assignCorrectorState;
+	
+
 
 	// EJB_CRUD----------------------------------------
 	@Inject
@@ -78,6 +89,11 @@ public class ProjectsBean implements Serializable {
 
 		// init project domain list
 		projDomainList = new ArrayList<Domain>();
+		
+		
+		//affect Coach
+		assignedCoach = false;
+		toAssignCoach = false;
 	}
 
 	/********************** Create Model (format) *****************************/
@@ -138,6 +154,44 @@ public class ProjectsBean implements Serializable {
 		}
 	}
 
+	public void onRowSelect(){
+		//Coach Assingnement state
+		//Find all msg with included ref proj ID
+		assignCoachState = new AssignState();
+		assignCoachState = projFacade.findCoachAssignement(selectedProject.getIdPorj());
+		
+		AssignResponseState canceled = AssignResponseState.CANCELED;
+		if(assignCoachState==null ||  assignCoachState.getResponseState().equals(canceled)){
+			dialogHeaderAssignCoach ="Affecter un encadrant";
+			assignedCoach = false;
+			toAssignCoach = true;
+		}
+		else {
+			dialogHeaderAssignCoach = "Etat d'affectation - Encadrant";
+			assignedCoach = true;
+			toAssignCoach = false;
+		}
+		
+		
+		
+		
+		//Corrector Assignement state
+		assignCorrectorState = new AssignState();
+		assignCorrectorState = projFacade.findCorrectorAssignement(selectedProject.getIdPorj());
+		
+		
+		if(assignCorrectorState==null ||  assignCorrectorState.getResponseState().equals(canceled)){
+			setDialogHeaderAssignCorrector("Affecter un rapporteur");
+			setAssignedCorrector(false);
+			setToAssignCorrector(true);
+		}
+		else {
+			setDialogHeaderAssignCorrector("Etat d'affectation - Rapporteur");
+			setAssignedCorrector(true);
+			setToAssignCorrector(false);
+		}
+	}
+	
 	public void findDomainList(ActionEvent event) {
 		Project proj = new Project();
 		proj.setId(selectedProject.getIdPorj());
@@ -158,9 +212,6 @@ public class ProjectsBean implements Serializable {
 
 	}
 
-	public void handleClose(CloseEvent event) {
-		selectedProject = new ManagedProjects();
-	}
 
 	/*************** Constructor ******************/
 	public ProjectsBean() {
@@ -222,4 +273,71 @@ public class ProjectsBean implements Serializable {
 		this.projDomainList = projDomainList;
 	}
 
+	public boolean isAssignedCoach() {
+		return assignedCoach;
+	}
+
+	public void setAssignedCoach(boolean assignedCoach) {
+		this.assignedCoach = assignedCoach;
+	}
+
+	public boolean isToAssignCoach() {
+		return toAssignCoach;
+	}
+
+	public void setToAssignCoach(boolean toAssignCoach) {
+		this.toAssignCoach = toAssignCoach;
+	}
+
+	public String getDialogHeaderAssignCoach() {
+		return dialogHeaderAssignCoach;
+	}
+
+	public void setDialogHeaderAssignCoach(String dialogHeaderAssignCoach) {
+		this.dialogHeaderAssignCoach = dialogHeaderAssignCoach;
+	}
+
+	public AssignState getAssignCoachState() {
+		return assignCoachState;
+	}
+
+	public void setAssignCoachState(AssignState assignCoachState) {
+		this.assignCoachState = assignCoachState;
+	}
+
+	public AssignState getAssignCorrectorState() {
+		return assignCorrectorState;
+	}
+
+	public void setAssignCorrectorState(AssignState assignCorrectorState) {
+		this.assignCorrectorState = assignCorrectorState;
+	}
+
+	public boolean isAssignedCorrector() {
+		return assignedCorrector;
+	}
+
+	public void setAssignedCorrector(boolean assignedCorrector) {
+		this.assignedCorrector = assignedCorrector;
+	}
+
+	public boolean isToAssignCorrector() {
+		return toAssignCorrector;
+	}
+
+	public void setToAssignCorrector(boolean toAssignCorrector) {
+		this.toAssignCorrector = toAssignCorrector;
+	}
+
+	public String getDialogHeaderAssignCorrector() {
+		return dialogHeaderAssignCorrector;
+	}
+
+	public void setDialogHeaderAssignCorrector(
+			String dialogHeaderAssignCorrector) {
+		this.dialogHeaderAssignCorrector = dialogHeaderAssignCorrector;
+	}
+
+
+	
 }

@@ -22,16 +22,20 @@ import org.primefaces.context.RequestContext;
 
 @ManagedBean
 @ViewScoped
-public class affectCoachToProjectBean {
+public class assignCoachToProjectBean {
 
 	@ManagedProperty(value = "#{projectsBean}")
 	private ProjectsBean projectBean;
+	@ManagedProperty(value = "#{authenticationBean}")
+	private AuthenticationBean authBean;
+
 	private boolean sameDom;
 	private int coachingHoursMax;
 	private List<Domain> selectedProjDom;
 	private List<Teacher> listPotentionalCoachs;
 	private Teacher selectedCoach;
-	private int selectedCoachID;
+	private boolean assigned;
+	private String cancel;
 
 	@EJB
 	IProjectFacadeLocal projFacade;
@@ -49,8 +53,7 @@ public class affectCoachToProjectBean {
 		setSameDom(false);
 		// init vars select by domain------------------------------------------
 		setSelectedProjDom(new ArrayList<Domain>());
-		
-		
+		setCancel("false");
 
 	}
 
@@ -73,25 +76,57 @@ public class affectCoachToProjectBean {
 
 	}
 
-	public void affectCoachToProj(ActionEvent event) {
+	public void assignCoachToProj(ActionEvent event) {
 
-		
-		System.out.println("calling facade!!!");
-
-		projFacade.assignCoachToProject(selectedCoach, projectBean.getSelectedProject().getIdPorj());
-
-	
-		
-		FacesMessage msg = new FacesMessage(
-				FacesMessage.SEVERITY_INFO, "Enseignant notifié!!",
-				"Un message a été envoyé à l'enseigant sélectionné ");
-		FacesContext.getCurrentInstance().addMessage(null, msg);
-		
-		try {
-			RequestContext.getCurrentInstance().execute("CoachDialog.hide();growlCoach.show();");
-		} catch (Exception e) {
+		if (selectedCoach.getId() == -1) {
+			FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_ERROR,
+					"Donnée manquante!!",
+					"Veuillez sélectionner un enseigant! ");
+			FacesContext.getCurrentInstance().addMessage(null, msg);
 		}
 
+		else {
+
+			projFacade.assignCoachToProject(selectedCoach, projectBean
+					.getSelectedProject().getIdPorj(), authBean.getUser());
+
+			FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO,
+					"Enseignant notifié!!",
+					"Un message a été envoyé à l'enseigant sélectionné ");
+			FacesContext.getCurrentInstance().addMessage(null, msg);
+
+			try {
+				RequestContext.getCurrentInstance().execute(
+						"CoachDialog.hide();location.reload();");
+			} catch (Exception e) {
+			}
+		}
+	}
+
+	public void cancelCoachAssign(ActionEvent event) {
+
+		if (cancel.equals("true")) {
+			Teacher coach = new Teacher();
+			coach.setId(projectBean.getAssignCoachState().getIdTeacher());
+
+			Project proj = new Project();
+			proj.setId(projectBean.getAssignCoachState().getIdProj());
+
+			projFacade.cancelCoachToProject(coach, proj, authBean.getUser()
+					.getId());
+			try {
+				RequestContext.getCurrentInstance().execute(
+						"CoachDialog.hide();");
+			} catch (Exception e) {
+			}
+
+		} else if (cancel.equals("false")) {
+			try {
+				RequestContext.getCurrentInstance().execute(
+						"CoachDialog.hide();");
+			} catch (Exception e) {
+			}
+		}
 	}
 
 	public void renderSameDom() {
@@ -141,7 +176,7 @@ public class affectCoachToProjectBean {
 
 	/************************************ constructor *********************************/
 
-	public affectCoachToProjectBean() {
+	public assignCoachToProjectBean() {
 		super();
 	}
 
@@ -191,12 +226,23 @@ public class affectCoachToProjectBean {
 		this.selectedCoach = selectedCoach;
 	}
 
-	public int getSelectedCoachID() {
-		return selectedCoachID;
+	public String getCancel() {
+		return cancel;
 	}
 
-	public void setSelectedCoachID(int selectedCoachID) {
-		this.selectedCoachID = selectedCoachID;
+	public void setCancel(String cancel) {
+		this.cancel = cancel;
 	}
 
+	public boolean isAssigned() {
+		return assigned;
+	}
+
+	public void setAssigned(boolean assigned) {
+		this.assigned = assigned;
+	}
+
+	public void setAuthBean(AuthenticationBean authBean) {
+		this.authBean = authBean;
+	}
 }

@@ -15,18 +15,18 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+
 /**
  * @author Imen Barouni
- *
+ * 
  */
 @Entity
 @NamedQueries({
 		@NamedQuery(name = "Message.findAll", query = "SELECT m FROM Message m"),
 		@NamedQuery(name = "Message.findById", query = "SELECT m FROM Message m WHERE m.id = :id"),
 		@NamedQuery(name = "Message.findByContent", query = "SELECT m FROM Message m WHERE m.content = :content"),
-		@NamedQuery(name = "Message.findByReceiver", query = "SELECT m FROM Message m WHERE m.receiver = :receiver"),
-		@NamedQuery(name = "Message.findBySender", query = "SELECT m FROM Message m WHERE m.sender = :sender"),
-		@NamedQuery(name = "Message.findBySendingDate", query = "SELECT m FROM Message m WHERE m.sendingDate = :sendingDate"),
+		@NamedQuery(name = "Message.findByIncludedRef", query = "SELECT m FROM Message m WHERE m.includedRef = :includedRef"),
+	@NamedQuery(name = "Message.findBySendingDate", query = "SELECT m FROM Message m WHERE m.sendingDate = :sendingDate"),
 		@NamedQuery(name = "Message.findByType", query = "SELECT m FROM Message m WHERE m.type = :type"),
 		@NamedQuery(name = "Message.findBySubject", query = "SELECT m FROM Message m WHERE m.subject = :subject") })
 public class Message implements Serializable {
@@ -35,24 +35,31 @@ public class Message implements Serializable {
 	private int includedRef;
 	private String subject;
 	private String content;
-	private String receiver;
-	private String sender;
+	private int idReceiver;
+	private int idSender;
 	private Date sendingDate;
 	private MessageType type;
+	private AssignResponseState responseState;
+	private String declineCause;
 	private List<UserMessage> userMessages;
 	private static final long serialVersionUID = 1L;
 
-	
-	
-	public Message(String subject, String content, String receiver,
-			String sender, Date sendingDate, MessageType type) {
+	public Message(int includedRef, String subject, String content,
+			int idReceiver, int idSender,
+			Date sendingDate, MessageType type,
+			AssignResponseState responseState, String declineCause) {
 		super();
+
+		this.includedRef = includedRef;
 		this.subject = subject;
 		this.content = content;
-		this.receiver = receiver;
-		this.sender = sender;
+		this.idReceiver = idReceiver;
+		this.idSender = idSender;
 		this.sendingDate = sendingDate;
 		this.type = type;
+		this.responseState = responseState;
+		this.declineCause = declineCause;
+
 	}
 
 	public Message() {
@@ -86,21 +93,7 @@ public class Message implements Serializable {
 		this.content = content;
 	}
 
-	public String getReceiver() {
-		return this.receiver;
-	}
 
-	public void setReceiver(String receiver) {
-		this.receiver = receiver;
-	}
-
-	public String getSender() {
-		return this.sender;
-	}
-
-	public void setSender(String sender) {
-		this.sender = sender;
-	}
 
 	@Temporal(TemporalType.TIMESTAMP)
 	public Date getSendingDate() {
@@ -137,8 +130,36 @@ public class Message implements Serializable {
 		this.includedRef = includedRef;
 	}
 
-	
+	public AssignResponseState getResponseState() {
+		return responseState;
+	}
 
+	public void setResponseState(AssignResponseState responseState) {
+		this.responseState = responseState;
+	}
 
-	
+	public String getDeclineCause() {
+		return declineCause;
+	}
+
+	public void setDeclineCause(String declineCause) {
+		this.declineCause = declineCause;
+	}
+
+	public int getIdSender() {
+		return idSender;
+	}
+
+	public void setIdSender(int idSender) {
+		this.idSender = idSender;
+	}
+
+	public int getIdReceiver() {
+		return idReceiver;
+	}
+
+	public void setIdReceiver(int idReceiver) {
+		this.idReceiver = idReceiver;
+	}
+
 }

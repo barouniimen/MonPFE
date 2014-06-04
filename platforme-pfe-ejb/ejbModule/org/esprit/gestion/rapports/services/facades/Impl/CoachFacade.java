@@ -144,7 +144,7 @@ public class CoachFacade implements ICoachFacadeLocal, ICoachFacadeRemote {
 			}
 		}
 		return filtredList;
-		// TODO a  tester (et voir c quoi ce warning sur la filtredlist)!!!!!
+		
 	}
 
 	@Override

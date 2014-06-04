@@ -22,7 +22,9 @@ public class UserMessageServ implements IServiceLocal<UserMessage>, IServiceRemo
 	
 	@Override
 	public void create(Object object) {
+		System.out.println("create user msg");
 		em.persist(object);
+		System.out.println("user msg created!!!");
 }
 
 	@Override

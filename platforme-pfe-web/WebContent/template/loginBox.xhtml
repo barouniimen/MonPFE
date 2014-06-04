@@ -5,7 +5,7 @@
 	xmlns:p="http://primefaces.org/ui">
 
 	<h2>
-		<h:outputText value="Login"/>
+		<h:outputText value="Authentification"/>
 	</h2>
 
 
@@ -15,20 +15,20 @@
 		<div class="boxLogin">
 			<table>
 				<tr>
-					<td><h:outputText value="login" /></td>
-					<td><p:inputText id="login" value="#{authBean.user.login}"
+					<td><h:outputText value="Identifiant" /></td>
+					<td><p:inputText id="login" value="#{authenticationBean.user.login}"
 							required="true" /></td>
 				</tr>
 				<tr>
-					<td><h:outputText value="password" /></td>
+					<td><h:outputText value="Mot de passe" /></td>
 					<td><p:password id="password"
-							value="#{authBean.user.password}" required="true" /></td>
+							value="#{authenticationBean.user.password}" required="true" /></td>
 				</tr>
 				<tr>
 					<td><p:spacer></p:spacer></td>
 					<td style="text-align: right;"><p:commandButton
 							icon="ui-icon-check" id="submit" value="valider"
-							action="#{authBean.performAuthetication}" update="loginGrowl"
+							action="#{authenticationBean.performAuthetication}" update="loginGrowl"
 							style="width:60%;margin-right:13%;margin-top:5%;" /></td>
 				</tr>
 

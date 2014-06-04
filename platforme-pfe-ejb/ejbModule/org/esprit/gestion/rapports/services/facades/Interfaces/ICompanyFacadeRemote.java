@@ -10,4 +10,6 @@ import org.esprit.gestion.rapports.persistence.Company;
 public interface ICompanyFacadeRemote {
 
 	public List<Company> listAllComapnies();
+	
+	
 }

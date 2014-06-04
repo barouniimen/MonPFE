@@ -52,8 +52,8 @@ public class AddStudentBean {
 	/*********************************** actionListener *************************************/
 
 	public void addStudent(ActionEvent event) {
-		//TODO verifications de saisie!!!
-		
+		// TODO verifications de saisie!!!
+
 		String resultCreate;
 		studentToDB.setStorageSpace(space);
 		classId = selectedClass.getId();

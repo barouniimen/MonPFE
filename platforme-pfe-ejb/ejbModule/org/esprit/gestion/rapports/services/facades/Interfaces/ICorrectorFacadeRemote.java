@@ -13,4 +13,6 @@ public interface ICorrectorFacadeRemote {
 	public void CorrectorProjectAccept(Teacher teacher,Message message);
 	
 	public List<Teacher> listerCorrectorDisponibles();
+	
+	public List<Teacher> listCorrectorsSameDom(List<String> projectDomains);
 }

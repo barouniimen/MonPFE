@@ -1,0 +1,49 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+
+
+	<p:growl showDetail="true" widgetVar="growlCorrector" autoUpdate="true" />
+
+	<h:outputText value="Filtrer selon les domaines du projet? "
+		style="font-weight: bold;" />
+	<p:selectBooleanCheckbox value="#{assignCorrectorToProject.sameDom}">
+		<p:ajax update="addCorrectorForm"
+			listener="#{assignCorrectorToProject.renderSameDom}" />
+	</p:selectBooleanCheckbox>
+
+	<br />
+	<br />
+	<p:outputLabel for="corrector" value="Enseignnts "
+		style="font-weight: bold;" />
+	<h:selectOneMenu id="corrector"
+		value="#{assignCorrectorToProject.selectedCorrector.id}">
+		<f:selectItem itemLabel="Sélectionnez un enseignant" itemValue="-1" />
+		<f:selectItems
+			value="#{assignCorrectorToProject.listPotentionalCorrectors}" var="c"
+			itemLabel="#{c.lastName}#{msg['message.espace']}#{c.firstName}"
+			itemValue="#{c.id}" />
+	</h:selectOneMenu>
+
+
+	
+	<br />
+	<br />
+	<br />
+	<p:commandButton value="Affecter"
+		actionListener="#{assignCorrectorToProject.assignCorrectorToProj}" />
+
+	<p:commandButton value="Annuler" onclick="location.reload();" />
+
+
+
+
+
+
+
+
+
+</ui:composition>

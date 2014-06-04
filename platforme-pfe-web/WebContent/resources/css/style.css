@@ -14,15 +14,12 @@
 	margin-top: 10px;
 	margin-right: 50px;
 	margin-left: 50px;
-	 
 }
 
 #header {
 	background-color: #F5F5F5;
 	margin: 0;
 	
-	
-
 }
 
 #TitreHeader {
@@ -37,7 +34,6 @@
 	font-style: italic;
 	color: #BB0000;
 }
-
 
 /*******************************************************************************/
 /*************************          BASIC          *****************************/
@@ -69,7 +65,6 @@ p {
 	padding: .8em 0;
 	line-height: 1.8em;
 	text-align: justify;
-	
 }
 
 p#subtitle {
@@ -98,9 +93,8 @@ a:hover {
 
 /************************* TOPBAR ******************************/
 #topbar {
-margin-top: 10px;
-margin-left: 30px;
-	
+	margin-top: 10px;
+	margin-left: 30px;
 }
 
 #topbar ul {
@@ -123,12 +117,11 @@ margin-left: 30px;
 	color: #FFFFFF;
 }
 
-
 /************* MAIN (à partir du menu jusqu'au footer *********************/
 #main {
 	margin: auto;
 	padding-bottom: 10px;
-	}
+}
 
 /************************* SIDEBAR - LoginPage ******************************/
 #sidebar {
@@ -230,7 +223,6 @@ margin-left: 30px;
 .mainStyle {
 	background: url("#{resource['images:rectangleNoir.jpg']}") no-repeat
 		bottom;
-		
 }
 
 #footer p {
@@ -238,9 +230,7 @@ margin-left: 30px;
 	text-align: center;
 	text-transform: uppercase;
 	color: #F5F5F5;
-	
 }
-
 
 /*******************************************************************************/
 /****************          redéfinition ui primefaces        *******************/
@@ -251,22 +241,21 @@ margin-left: 30px;
 	{
 	width: 80% !important;
 }
+
 .ui-datatable tbody td.wrap {
-    white-space: normal;
+	white-space: normal;
 }
 /*texte du bouton*/
 .ui-button-text	ui-c {
 	
 }
 
-.myLayoutStyleClass .ui-layout-unit-header-title{
-	color: #000000 !important;
+.myLayoutStyleClass .ui-layout-unit-header-title {
 	font-size: large !important;
+	color: #F6F6F6 !important;
 	font-weight: lighter !important;
-	
-	
 }
-.myLayoutStyleClass .ui-layout-unit-header{
-    background:#A8A8A8 !important; 
- }
 
+.myLayoutStyleClass .ui-layout-unit-header {
+	background: #BB0000 !important;
+}

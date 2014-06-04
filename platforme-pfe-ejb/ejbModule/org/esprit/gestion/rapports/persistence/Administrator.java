@@ -1,6 +1,7 @@
 package org.esprit.gestion.rapports.persistence;
 
 import java.io.Serializable;
+
 import javax.persistence.*;
 
 /**
@@ -9,6 +10,9 @@ import javax.persistence.*;
  */
 @Entity
 @DiscriminatorValue(value = "Administrator")
+@NamedQueries({
+	@NamedQuery(name = "Administrator.findAll", query = "SELECT a FROM Administrator a")
+	})
 public class Administrator extends User implements Serializable {
 
 	

@@ -81,11 +81,17 @@ public class UserService implements IServiceLocal<User>, IServiceRemote<User> {
 		}
 		/*********************** Search by first and lastName ***************************/
 		else if (searchBy == "NAME") {
+			
+			try{
 			TypedQuery<User> query = em.createNamedQuery(
 					"User.findByFirstAndLastName", User.class);
 			query.setParameter("firstName", ((User) object).getFirstName());
 			query.setParameter("lastName", ((User) object).getLastName());
 			userFound = query.getSingleResult();
+			}catch(javax.persistence.NoResultException exeption){
+				
+				return null;
+			}
 	}
 		
 		/*********************** Search by ID ***************************/

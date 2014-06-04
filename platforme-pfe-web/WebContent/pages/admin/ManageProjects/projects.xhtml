@@ -9,7 +9,7 @@
 		<!-- ******************************************************** Context Menu ************************************************************************  -->
 
 		<p:contextMenu for="managedProj" style="width:200px">
-		
+
 			<p:menuitem value="Affecter un encadrant" icon="ui-icon-person"
 				oncomplete="CoachDialog.show() " update=":tabView" />
 
@@ -23,13 +23,13 @@
 
 
 		<!-- ********************************************************** DataTable *********************************************************************************  -->
-		<p:dataTable id="managedProj" var="proj"
+		<p:dataTable id="managedProj" widgetVar="tableProj" var="proj"
 			value="#{projectsBean.managedProj}"
 			selection="#{projectsBean.selectedProject}" rowKey="#{proj.idPorj}"
 			selectionMode="single" rows="20"
 			emptyMessage="Aucun projet a afficher" paginator="true"
 			paginatorPosition="bottom" liveResize="true">
-
+			<p:ajax event="rowSelect" listener="#{projectsBean.onRowSelect}" />
 
 
 			<f:facet name="header">
@@ -150,24 +150,37 @@
 	</p:dialog>
 
 
-	<!-- ********************************************* Add coach Dialog **********************************************************  -->
-	<p:dialog id="dialogAddCoach" header="Ajouter un encadrant"
-		widgetVar="CoachDialog" height="300px" width="400px">
+	<!-- ********************************************* Assign coach Dialog **********************************************************  -->
+	<p:dialog id="dialogAddCoach"
+		header="#{projectsBean.dialogHeaderAssignCoach}"
+		widgetVar="CoachDialog" height="300px" width="450px">
 		<p:ajax event="close" listener="#{projectsBean.handleClose}" />
-
-		<ui:include
-			src="/pages/admin/ManageProjects/forms/affectCoachToProject.xhtml" />
-
+		<h:form id="addCoachForm" rendered="#{projectsBean.toAssignCoach}">
+			<ui:include
+				src="/pages/admin/ManageProjects/forms/assignCoachToProject.xhtml" />
+		</h:form>
+		<h:form id="coachAffectedForm"
+			rendered="#{projectsBean.assignedCoach}">
+			<ui:include
+				src="/pages/admin/ManageProjects/forms/assignedCoach.xhtml" />
+		</h:form>
 	</p:dialog>
 
 
-	<!-- ********************************************* Add corrector Dialog **********************************************************  -->
+	<!-- ********************************************* Assign corrector Dialog **********************************************************  -->
 	<p:dialog id="dialogAddCorrector" header="Ajouter un rapporteur"
 		widgetVar="CorrectorDialog" height="450px">
 		<p:ajax event="close" listener="#{projectsBean.handleClose}" />
-		<h:form id="addCorrectorForm">
+		<h:form id="addCorrectorForm"
+			rendered="#{projectsBean.toAssignCorrector}">
 			<ui:include
-				src="/pages/admin/ManageProjects/forms/affectCorrectorToProject.xhtml" />
+				src="/pages/admin/ManageProjects/forms/assignCorrectorToProject.xhtml" />
+		</h:form>
+
+		<h:form id="correctorAffectedForm"
+			rendered="#{projectsBean.assignedCorrector}">
+			<ui:include
+				src="/pages/admin/ManageProjects/forms/assignedCorrector.xhtml" />
 		</h:form>
 	</p:dialog>
 

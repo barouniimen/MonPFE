@@ -2,8 +2,9 @@ package org.esprit.gestion.rapports.MB;
 
 import java.io.Serializable;
 
-import javax.enterprise.context.ApplicationScoped;
+import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
+import javax.faces.bean.ApplicationScoped;
 import javax.faces.bean.ManagedBean;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
@@ -15,10 +16,13 @@ import org.esprit.gestion.rapports.persistence.User;
 import org.esprit.gestion.rapports.services.CRUD.Interfaces.IServiceLocal;
 import org.esprit.gestion.rapports.services.CRUD.Util.UserQualifier;
 
-@ManagedBean(name = "authBean")
+@ManagedBean
 @ApplicationScoped
-public class AuthenticationBean implements Serializable {
+public class AuthenticationBean implements Serializable{
 
+	/**
+	 * 
+	 */
 	private static final long serialVersionUID = 1L;
 
 	@Inject
@@ -26,7 +30,15 @@ public class AuthenticationBean implements Serializable {
 	IServiceLocal<User> userSer;
 
 	private boolean loggedIn = false;
-	private User user = new User();
+	private User user;
+
+	@PostConstruct
+	public void init() {
+		user = new User();
+	}
+
+	public AuthenticationBean() {
+	}
 
 	public User getUser() {
 		return user;
@@ -47,6 +59,7 @@ public class AuthenticationBean implements Serializable {
 	public String performAuthetication() {
 		String forward = null;
 		user = (User) userSer.retrieve(user, "LP");
+		System.out.println("logged in id: " + user.getId());
 
 		if (null != user) {
 
@@ -59,10 +72,9 @@ public class AuthenticationBean implements Serializable {
 				loggedIn = true;
 
 			} else if (user instanceof Administrator) {
-				 forward = "/pages/admin/home?faces-redirect=true";
-				//forward = "/pages/admin/Test?faces-redirect=true";
-				 loggedIn = true;
-				 
+				forward = "/pages/admin/home?faces-redirect=true";
+				loggedIn = true;
+
 			}
 
 		} else {
@@ -83,7 +95,8 @@ public class AuthenticationBean implements Serializable {
 	public String performLogout() {
 		user = new User();
 		loggedIn = false;
-		FacesContext.getCurrentInstance().getExternalContext().invalidateSession();
+		FacesContext.getCurrentInstance().getExternalContext()
+				.invalidateSession();
 		String forward = "/pages/index?faces-redirect=true";
 
 		return forward;

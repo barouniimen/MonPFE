@@ -71,6 +71,13 @@ public class AddClassGroupBean {
 
 	public void addClass(ActionEvent event) {
 		String resultCreate;
+		
+		if(specialitySelected.getId() == -1){
+			FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_ERROR,
+					"Donnée manquante!!", "Veuillez sélectionner une spécialité!");
+			FacesContext.getCurrentInstance().addMessage(null, msg);
+		}
+		else{
 		classGroupToDB.setSpeciality(specialitySelected);
 
 		resultCreate = classGroupFacade.addClassGroup(classGroupToDB);
@@ -86,7 +93,7 @@ public class AddClassGroupBean {
 					"Existe!!", "La référence de la classe existe déjà!");
 			FacesContext.getCurrentInstance().addMessage(null, msg);
 		}
-
+		}
 	}
 
 	/****************************** Constructor ***************************************/

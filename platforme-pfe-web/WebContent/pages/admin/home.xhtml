@@ -15,15 +15,16 @@
 </h:head>
 <body>
 
+
 	<p:layout fullPage="true">
 
 		<p:layoutUnit position="north" size="110">
 			<!-- Header -->
-			<p:commandLink action="#{authBean.performLogout()}"
+			<p:commandLink action="#{authenticationBean.performLogout()}"
 				value="Déconnexion"
 				style="float:right !important;margin-top:4%; margin-right:30px; margin-bottom: 10px;font-size: 120%;color:#666666;text-decoration: underline;" />
 
-			<ui:include src="/template/header.xhtml" />
+ 			<ui:include src="/template/header.xhtml" />
 
 			<!-- end Header -->
 		</p:layoutUnit>
@@ -37,8 +38,8 @@
 		</p:layoutUnit>
 
 		<p:layoutUnit id="manageDB" position="west" size="350"
-			header="Gérer la base de données" resizable="true" collapsible="true"
-			styleClass="myLayoutStyleClass">
+			header="Administration" resizable="true" collapsible="true"
+			styleClass="myLayoutStyleClass" collapsed="true">
 			<div style="margin-right: 10px;">
 
 				<br />
@@ -97,27 +98,6 @@
 		</p:layoutUnit>
 
 	</p:layout>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 </body>

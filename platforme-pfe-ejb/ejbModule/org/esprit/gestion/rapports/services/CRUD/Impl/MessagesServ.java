@@ -65,8 +65,7 @@ public class MessagesServ implements IServiceLocal<Message>, IServiceRemote<Mess
 
 	@Override
 	public void update(Object object) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("pas encore implémentée");
+		em.merge(object);
 	}
 
 	@Override
@@ -84,10 +83,9 @@ public class MessagesServ implements IServiceLocal<Message>, IServiceRemote<Mess
 	returnLsit = null;
 		
 		/***************************    search by receiver  ***************************************/
-		if (searchBy == "RECEIVER"){
-			
-			TypedQuery<Message> query = em.createNamedQuery("Message.findByReceiver", Message.class);
-			query.setParameter("receiver",((Message) object).getReceiver());
+		if(searchBy == "idProj"){
+			TypedQuery<Message> query = em.createNamedQuery("Message.findByIncludedRef", Message.class);
+			query.setParameter("includedRef",((Message) object).getIncludedRef());
 			returnLsit  = query.getResultList();
 		}
 		

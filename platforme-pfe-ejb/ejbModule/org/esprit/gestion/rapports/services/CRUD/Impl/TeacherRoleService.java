@@ -47,8 +47,8 @@ public class TeacherRoleService implements IServiceLocal<TeacherRole>,
 			try {
 				roleFound = query.getSingleResult();
 			} catch (NoResultException nullResult) {
-				System.out.println("introuvable!!!!");
-				roleFound = null;
+				System.out.println("introuvable role searched!!!!");
+				return null;
 			}
 		}
 

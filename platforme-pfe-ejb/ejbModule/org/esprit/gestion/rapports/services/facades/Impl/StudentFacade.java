@@ -59,30 +59,17 @@ public class StudentFacade implements IStudentFacadeLocal, IStudentFacadeRemote 
 
 	@Override
 	public String addStudent(Student student, int classId, String academicYear) {
+
 		String resultState = "init";
 		List<Student> allStudents = new ArrayList<Student>();
 
 		allStudents = studentServ.retrieveList(null, "ALL");
 
-		for (int i = 0; i < allStudents.size(); i++) {
-			if (allStudents.get(i).getRegistrationNumber().toLowerCase()
-					.equals(student.getRegistrationNumber().toLowerCase())) {
-				resultState = "regNbreExist";
-			} else if (allStudents.get(i).getLogin().toLowerCase()
-					.equals(student.getLogin().toLowerCase())) {
-				resultState = "loginExist";
-			} else if (allStudents.get(i).getPassword().toLowerCase()
-					.equals(student.getPassword().toLowerCase())) {
-				resultState = "passExist";
-			} else {
-				resultState = "reussi";
-			}
-		}
-
-		if (resultState == "reussi") {
+		if (allStudents.isEmpty()) {
 			// create storage space
 			StorageSpace space = student.getStorageSpace();
 			storageSpaceServ.create(space);
+
 			student.setStorageSpace(space);
 
 			// create student
@@ -101,6 +88,51 @@ public class StudentFacade implements IStudentFacadeLocal, IStudentFacadeRemote 
 			// create registration
 
 			registrationServ.create(reg);
+
+			return "reussi";
+		}
+
+		for (int i = 0; i < allStudents.size(); i++) {
+			if (allStudents.get(i).getRegistrationNumber().toLowerCase()
+					.equals(student.getRegistrationNumber().toLowerCase())) {
+				resultState = "regNbreExist";
+			} else if (allStudents.get(i).getLogin().toLowerCase()
+					.equals(student.getLogin().toLowerCase())) {
+				resultState = "loginExist";
+			} else if (allStudents.get(i).getPassword().toLowerCase()
+					.equals(student.getPassword().toLowerCase())) {
+				resultState = "passExist";
+			} else {
+				resultState = "reussi";
+
+			}
+		}
+
+		if (resultState == "reussi") {
+			// create storage space
+			StorageSpace space = student.getStorageSpace();
+			storageSpaceServ.create(space);
+			System.out.println("storage sp!!!");
+			student.setStorageSpace(space);
+
+			// create student
+			studentServ.create(student);
+			System.out.println("student created!!!!");
+
+			// find student id
+			int studentId = student.getId();
+
+			RegistrationPK pk = new RegistrationPK();
+			pk.setClassGroupId(classId);
+			pk.setUserId(studentId);
+			Registration reg = new Registration();
+			reg.setAcademicYear(academicYear);
+			reg.setRegistrationPK(pk);
+
+			// create registration
+
+			registrationServ.create(reg);
+			System.out.println("reg!!!!!!!!!!!");
 
 		}
 

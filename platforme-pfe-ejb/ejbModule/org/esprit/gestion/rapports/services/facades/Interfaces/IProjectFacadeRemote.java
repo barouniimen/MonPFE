@@ -6,6 +6,8 @@ import javax.ejb.Remote;
 
 import org.esprit.gestion.rapports.persistence.Project;
 import org.esprit.gestion.rapports.persistence.Teacher;
+import org.esprit.gestion.rapports.persistence.User;
+import org.esprit.gestion.rapports.utils.AssignState;
 
 @Remote
 public interface IProjectFacadeRemote {
@@ -23,7 +25,7 @@ public interface IProjectFacadeRemote {
 	 * @return 
 	 * returns true if operation success, else false 
 	 */
-	public void assignCoachToProject(Teacher teacher, int iDproject);
+	public void assignCoachToProject(Teacher teacher, int iDproject, User sender);
 	
 	/**
 	 * 
@@ -32,7 +34,7 @@ public interface IProjectFacadeRemote {
 	 * @return
 	 * returns true if operation success, else false 
 	 */
-	public void cancelCoachToProject(Teacher teacher, Project project);
+	public void cancelCoachToProject(Teacher teacher, Project project, int senderId);
 	
 	/**
 	 * Corrector = rapporteur
@@ -41,9 +43,13 @@ public interface IProjectFacadeRemote {
 	 * @param project
 	 * @return
 	 */
-	public void assignCorrectorToProject(Teacher teacher, Project project);
+	public void assignCorrectorToProject(Teacher teacher, int iDproject, User sender);
 	
-	public void cancelCorrectorToProject(Teacher teacher, Project project);
-
+	public void cancelCorrectorToProject(Teacher teacher, Project project, int senderId);
+	
 	public void deleteProject(Project projectToDelete);
+	
+	public AssignState findCoachAssignement(int idProj);
+	
+
 }
