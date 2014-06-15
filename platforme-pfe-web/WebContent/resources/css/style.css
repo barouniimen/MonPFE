@@ -266,3 +266,11 @@ a:hover {
     background-image: url("#{resource['images/logoutSmall.png']}") !important;
     
 }
+
+.myDialog .ui-dialog-titlebar {
+	color: #3F3E3E !important;
+	background-color: #D16363 !important;
+	font-size: 140% !important;
+	
+}
+

@@ -80,11 +80,13 @@ public class ReportFacade implements IReportFacadeLocal, IReportFacadeRemote {
 		// find project
 		Project proj = new Project();
 		proj = st.getProject();
-		proj = (Project) projServ.retrieve(proj, "ID");
 
-		// find all reports linked to project
-		reportsList = proj.getReports();
+		if (proj != null) {
+			proj = (Project) projServ.retrieve(proj, "ID");
 
+			// find all reports linked to project
+			reportsList = proj.getReports();
+		}
 		return reportsList;
 
 	}
@@ -108,37 +110,33 @@ public class ReportFacade implements IReportFacadeLocal, IReportFacadeRemote {
 
 		// update proj
 		projServ.update(proj);
-		
-		if(report.getVersion().equals("final")){
-			
-			//TODO
-			//notifier encadrant + administration
+
+		if (report.getVersion().equals("final")) {
+
+			// TODO
+			// notifier encadrant + administration
 		}
 
 	}
 
 	@Override
 	public boolean deleteReport(Report report) {
-		//delete document
-		//path == null
-		//size = 0
-		
-		
-		String path = report.getFilePath()+"\\"+report.getFileName();
-		System.out.println("path: "+path);
+		// delete document
+		// path == null
+		// size = 0
+
+		String path = report.getFilePath() + "\\" + report.getFileName();
+		System.out.println("path: " + path);
 		File file = new File(path);
-		if(file.delete()){
+		if (file.delete()) {
 			report.setFilePath(null);
 			report.setSize(0);
 			reportServ.update(report);
 			return true;
-		}
-		else {
+		} else {
 			return false;
 		}
-		
-		
-		
+
 	}
 
 	@Override
@@ -147,11 +145,11 @@ public class ReportFacade implements IReportFacadeLocal, IReportFacadeRemote {
 		selectedReport.setState(ReportState.DEPOSED);
 		Date date = new Date();
 		selectedReport.setUploadDate(date);
-		
+
 		reportServ.update(selectedReport);
-		//informer encadrant + admin pour affecter rapporteur
-		//TODO
-		
+		// informer encadrant + admin pour affecter rapporteur
+		// TODO
+
 	}
 
 }
