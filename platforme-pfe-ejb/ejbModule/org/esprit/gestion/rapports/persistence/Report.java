@@ -1,4 +1,5 @@
 package org.esprit.gestion.rapports.persistence;
+
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
@@ -17,16 +18,16 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+
 /**
  * @author Imen Barouni
- *
+ * 
  */
 @Entity
 @NamedQueries({
 		@NamedQuery(name = "Report.findAll", query = "SELECT r FROM Report r"),
 		@NamedQuery(name = "Report.findById", query = "SELECT r FROM Report r WHERE r.id = :id"),
 		@NamedQuery(name = "Report.findByCorrectorValidation", query = "SELECT r FROM Report r WHERE r.correctorValidation = :correctorValidation"),
-		@NamedQuery(name = "Report.findByOfficialSubmissionDate", query = "SELECT r FROM Report r WHERE r.officialSubmissionDate = :officialSubmissionDate"),
 		@NamedQuery(name = "Report.findBySize", query = "SELECT r FROM Report r WHERE r.size = :size"),
 		@NamedQuery(name = "Report.findByState", query = "SELECT r FROM Report r WHERE r.state = :state"),
 		@NamedQuery(name = "Report.findByUploadDate", query = "SELECT r FROM Report r WHERE r.uploadDate = :uploadDate"),
@@ -34,27 +35,35 @@ import javax.persistence.TemporalType;
 public class Report implements Serializable {
 
 	private int id;
-	private Date officialSubmissionDate;
 	private boolean correctorValidation;
-	private int size;
+	private Long size;
 	private ReportState state;
 	private Date uploadDate;
-	private int version;
+	private String version;
 	private Project project;
 	private List<ReportKeyWord> keyWords;
 	private List<Comments> comments;
+	private String filePath;
 	private static final long serialVersionUID = 1L;
+	private String fileName;
 
+	
 
-	public Report(int size, ReportState state, Date uploadDate,
-			int version, Project project, List<ReportKeyWord> keyWords) {
+	public Report(boolean correctorValidation,
+			Long size, ReportState state, Date uploadDate, String version,
+			Project project, List<ReportKeyWord> keyWords,
+			List<Comments> comments, String filePath, String fileName) {
 		super();
+		this.correctorValidation = correctorValidation;
 		this.size = size;
 		this.state = state;
 		this.uploadDate = uploadDate;
 		this.version = version;
 		this.project = project;
 		this.keyWords = keyWords;
+		this.comments = comments;
+		this.filePath = filePath;
+		this.fileName = fileName;
 	}
 
 	public Report() {
@@ -71,14 +80,7 @@ public class Report implements Serializable {
 		this.id = id;
 	}
 
-	@Temporal(TemporalType.TIMESTAMP)
-	public Date getOfficialSubmissionDate() {
-		return this.officialSubmissionDate;
-	}
-
-	public void setOfficialSubmissionDate(Date officialSubmissionDate) {
-		this.officialSubmissionDate = officialSubmissionDate;
-	}
+	
 
 	@Temporal(TemporalType.TIMESTAMP)
 	public Date getUploadDate() {
@@ -97,11 +99,11 @@ public class Report implements Serializable {
 		this.correctorValidation = correctorValidation;
 	}
 
-	public int getSize() {
+	public long getSize() {
 		return size;
 	}
 
-	public void setSize(int size) {
+	public void setSize(long size) {
 		this.size = size;
 	}
 
@@ -114,11 +116,11 @@ public class Report implements Serializable {
 		this.state = state;
 	}
 
-	public int getVersion() {
+	public String getVersion() {
 		return this.version;
 	}
 
-	public void setVersion(int version) {
+	public void setVersion(String version) {
 		this.version = version;
 	}
 
@@ -132,7 +134,7 @@ public class Report implements Serializable {
 		this.project = project;
 	}
 
-	@OneToMany(mappedBy = "report",cascade=CascadeType.PERSIST)
+	@OneToMany(mappedBy = "report", cascade = CascadeType.PERSIST)
 	public List<ReportKeyWord> getKeyWords() {
 		return keyWords;
 	}
@@ -150,5 +152,20 @@ public class Report implements Serializable {
 		this.comments = comments;
 	}
 
+	public String getFilePath() {
+		return filePath;
+	}
+
+	public void setFilePath(String filePath) {
+		this.filePath = filePath;
+	}
+
+	public String getFileName() {
+		return fileName;
+	}
+
+	public void setFileName(String fileName) {
+		this.fileName = fileName;
+	}
 
 }

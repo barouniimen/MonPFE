@@ -14,12 +14,16 @@
 	margin-top: 10px;
 	margin-right: 50px;
 	margin-left: 50px;
+
+	
+	
+	
+	
 }
 
 #header {
 	background-color: #F5F5F5;
 	margin: 0;
-	
 }
 
 #TitreHeader {
@@ -40,10 +44,6 @@
 /*******************************************************************************/
 body {
 	font: 75% Arial, Times, sans-serif;
-	color: #B9B3AD;
-	background: #F5F5F5;
-	width: 80%;
-	margin: auto;
 }
 
 h1 {
@@ -178,7 +178,7 @@ a:hover {
 	margin-bottom: 10px;
 }
 
-/************************* CONTENT - LoginPage  ******************************/
+/******************************* CONTENT ***********************************/
 #content {
 	float: right;
 	width: 990px;
@@ -221,8 +221,10 @@ a:hover {
 /*************************          FOOTER        ******************************/
 /*******************************************************************************/
 .mainStyle {
-	background: url("#{resource['images:rectangleNoir.jpg']}") no-repeat
+	background: url("#{resource['images:BarreCopyright.jpg']}") no-repeat
 		bottom;
+		
+
 }
 
 #footer p {
@@ -230,6 +232,7 @@ a:hover {
 	text-align: center;
 	text-transform: uppercase;
 	color: #F5F5F5;
+	
 }
 
 /*******************************************************************************/
@@ -249,7 +252,6 @@ a:hover {
 .ui-button-text	ui-c {
 	
 }
-
 .myLayoutStyleClass .ui-layout-unit-header-title {
 	font-size: large !important;
 	color: #F6F6F6 !important;
@@ -258,4 +260,9 @@ a:hover {
 
 .myLayoutStyleClass .ui-layout-unit-header {
 	background: #BB0000 !important;
+}
+
+.ui-widget.ui-icon-myLoguot{
+    background-image: url("#{resource['images/logoutSmall.png']}") !important;
+    
 }

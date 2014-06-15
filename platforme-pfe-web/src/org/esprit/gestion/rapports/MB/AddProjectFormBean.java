@@ -8,6 +8,7 @@ import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
@@ -30,6 +31,7 @@ import org.esprit.gestion.rapports.services.facades.Interfaces.ICompanyCoachFaca
 import org.esprit.gestion.rapports.services.facades.Interfaces.ICompanyFacadeLocal;
 import org.esprit.gestion.rapports.services.facades.Interfaces.IProjectFacadeLocal;
 import org.esprit.gestion.rapports.services.facades.Interfaces.IStudentFacadeLocal;
+import org.primefaces.context.RequestContext;
 import org.primefaces.event.FlowEvent;
 import org.primefaces.model.DualListModel;
 
@@ -100,7 +102,12 @@ public class AddProjectFormBean {
 	@Inject
 	@DomainQualifier
 	IServiceLocal<Domain> domainServ;
+	
+	
+	@ManagedProperty(value = "#{tabViewIndexBean}")
+	private TabViewIndexBean tabViewBean;
 
+	
 	/**********************************************************************************************************************/
 	/************************************************ init method *********************************************************/
 	/**********************************************************************************************************************/
@@ -173,10 +180,18 @@ public class AddProjectFormBean {
 	// button close
 	// ----------------------------------------------------------------------
 
-	// ----------------------------------------------------------------------
-	// button Cancel
-	// ----------------------------------------------------------------------
 	public void handelCancel() {
+		int tabIndex;
+		tabIndex = tabViewBean.getTabIndex();
+		
+		try {
+			RequestContext.getCurrentInstance().execute(
+					"location.reload();");
+		} catch (Exception e) {
+		}
+		
+		tabViewBean.setTabIndex(tabIndex);
+		
 		projToAdd = new ManagedProjects();
 		studentToProject = new Student();
 		listDomTarget = new ArrayList<String>();
@@ -189,6 +204,9 @@ public class AddProjectFormBean {
 	// button add
 	// ----------------------------------------------------------------------
 	public void addProject(ActionEvent event) {
+		
+		int tabIndex = tabViewBean.getTabIndex();
+		
 		// init listDom
 		for (int i = 0; i < listDomTarget.size(); i++) {
 			Domain d = new Domain();
@@ -370,14 +388,21 @@ public class AddProjectFormBean {
 		projToDB.setValidationState(projToAdd.getProjState());
 		projToDB.setCompanycoach(compCoachToDB);
 		projToDB.setStudent(studentToDB);
+		projToDB.setFonctionnalitites(projToAdd.getFonctionnalities());
 		// end init project
-		for (int j = 0; j < projToDB.getProjectDomains().size(); j++) {
-			System.out.println("proj dom: " + j + " "
-					+ projToDB.getProjectDomains().get(j));
-		}
+		
 
 		// add project to DB-----------------------------------------
 		projFacade.addProjectToDB(projToDB, newCompCoach);
+		
+		
+		try {
+			RequestContext.getCurrentInstance().execute(
+					"location.reload();");
+		} catch (Exception e) {
+		}
+		
+		tabViewBean.setTabIndex(tabIndex);
 	}
 
 	/****************************** add student form events **********************************/
@@ -681,7 +706,7 @@ public class AddProjectFormBean {
 
 	public boolean isAlpha(String string) {
 		boolean valid = false;
-		if (string.matches("[a-zA-Zéèçàôêû ]+")) {
+		if (string.matches("[a-zA-Zéèçàôêû',. ]+")) {
 			valid = true;
 		}
 		return valid;
@@ -1061,5 +1086,9 @@ public class AddProjectFormBean {
 	public void setStHasProj(boolean stHasProj) {
 		this.stHasProj = stHasProj;
 	}
+	public void setTabViewBean(TabViewIndexBean tabViewBean) {
+		this.tabViewBean = tabViewBean;
+	}
+
 
 }

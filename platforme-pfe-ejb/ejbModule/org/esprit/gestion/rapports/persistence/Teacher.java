@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -41,20 +42,12 @@ public class Teacher extends User implements Serializable {
 
 	
 	
-	public Teacher(String firstName, String lastName, String login,
-			String password, String email, int phoneNumber, TeacherGrade grade,
-			int coachingHours, TeachingUnit teachingUnit) {
-		super(firstName, lastName, login, password, email, phoneNumber);
-		this.grade = grade;
-		this.coachingHours = coachingHours;
-		this.teachingUnit = teachingUnit;
-	}
 
 	public Teacher() {
 		super();
 	}
 
-	@Enumerated
+	@Enumerated(EnumType.STRING)
 	public TeacherGrade getGrade() {
 		return this.grade;
 	}

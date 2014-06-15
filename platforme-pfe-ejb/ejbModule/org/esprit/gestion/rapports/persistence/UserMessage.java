@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -67,7 +68,7 @@ public class UserMessage implements Serializable {
 	public void setMessage(Message message) {
 		this.message = message;
 	}
-	@Enumerated
+	@Enumerated(EnumType.STRING)
 	public MessageAccess getAccess() {
 		return access;
 	}

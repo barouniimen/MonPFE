@@ -16,6 +16,7 @@ import org.esprit.gestion.rapports.persistence.TeachingUnit;
 import org.esprit.gestion.rapports.services.facades.Interfaces.IDomainFacadeLocal;
 import org.esprit.gestion.rapports.services.facades.Interfaces.ITeachingUnitFacadeLocal;
 import org.primefaces.context.RequestContext;
+import org.primefaces.event.ToggleEvent;
 
 @ManagedBean
 @ViewScoped
@@ -109,12 +110,21 @@ public class AddTeachingUnitBean {
 		} else if (addResult == "success") {
 			try {
 				RequestContext.getCurrentInstance().execute(
-						" location.reload();");
+						"panelTechUnit.toggle();");
 			} catch (Exception e) {
 			}
 		}
 	}
 
+	public void handleToggle(ToggleEvent event) {
+		teachUnitToDB = new TeachingUnit();
+		notAffectToDom = false;
+		affectToDom = false;
+		notExistDom = false;
+		existDom = false;
+		listDomTarget = new ArrayList<Domain>();
+	}
+	
 	/*********************************** constructor ****************************************/
 	public AddTeachingUnitBean() {
 		super();

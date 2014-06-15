@@ -1,20 +1,68 @@
-<ui:composition xmlns="http://www.w3.org/1999/xhtml"
-                xmlns:h="http://java.sun.com/jsf/html"
-                xmlns:f="http://java.sun.com/jsf/core"
-                xmlns:ui="http://java.sun.com/jsf/facelets"
-                xmlns:p="http://primefaces.org/ui"
-                template="/template/template.xhtml">
-                	
-			<ui:define name="pageTitle">
-				ESPRIT PFE Store&#8482;: STUDENT HOME
-			</ui:define>		
-			
-			<ui:define name="pageContentHeader">
-				Student Home Page
-			</ui:define>
-			
-			<ui:define name="pageContent">
-				... Student Home Page Content Under Construction ...
-			</ui:define>
-			
-</ui:composition>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<title>Espace Etudiant</title>
+	<h:outputStylesheet library="css" name="style.css" />
+	<link rel="shortcut icon" type="image/x-icon"
+		href="#{request.contextPath}/resources/icon/favicon.ico" />
+
+</h:head>
+<body>
+
+
+	<p:layout fullPage="true">
+
+		<p:layoutUnit position="north" size="123"
+			style="padding-top:5px !important; padding-buttom:0 !important;">
+			<!-- Header -->
+			<ui:include src="/template/header.xhtml" />
+
+			<!-- end Header -->
+		</p:layoutUnit>
+
+		<p:layoutUnit position="south" size="42">
+			<!-- footer -->
+
+			<ui:include src="/template/footer.xhtml" />
+
+			<!-- end footer -->
+		</p:layoutUnit>
+
+
+		<p:layoutUnit position="center">
+			<!-- content -->
+
+			<p:tabView id="tabView" activeIndex="#{tabViewIndexBean.tabIndex}"
+				style="background-color: #FFFFFF !important;  border-color:#FFFFFF !important;">
+				<p:ajax event="tabChange" listener="#{tabViewIndexBean.onChange}" />
+				<p:tab id="proj" title="Description du projet">
+					<p:spacer style="margin-top:5%;"></p:spacer>
+					<ui:include src="/pages/student/projectDescription.xhtml" />
+				</p:tab>
+
+				<p:tab id="reports" title="Espace Rapports">
+					<p:spacer style="margin-top:5%;"></p:spacer>
+					<ui:include src="/pages/student/manageReports/reports.xhtml" />
+				</p:tab>
+
+				<p:tab id="messages" title="Messages (#{mailBoxBean.msgStats.nbrToRead})">
+					<p:spacer style="margin-top:5%;"></p:spacer>
+					<ui:include src="/pages/student/manageMessages/message.xhtml" />
+				</p:tab>
+
+			</p:tabView>
+			<!-- end content -->
+
+		</p:layoutUnit>
+
+	</p:layout>
+
+
+</body>
+</html>

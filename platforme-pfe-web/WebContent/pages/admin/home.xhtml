@@ -18,18 +18,16 @@
 
 	<p:layout fullPage="true">
 
-		<p:layoutUnit position="north" size="110">
+		<p:layoutUnit position="north" size="123"
+			style="padding-top:5px !important; padding-buttom:0 !important;">
 			<!-- Header -->
-			<p:commandLink action="#{authenticationBean.performLogout()}"
-				value="Déconnexion"
-				style="float:right !important;margin-top:4%; margin-right:30px; margin-bottom: 10px;font-size: 120%;color:#666666;text-decoration: underline;" />
 
- 			<ui:include src="/template/header.xhtml" />
+			<ui:include src="/template/header.xhtml" />
 
 			<!-- end Header -->
 		</p:layoutUnit>
 
-		<p:layoutUnit position="south" size="60">
+		<p:layoutUnit position="south" size="42">
 			<!-- footer -->
 			<div id="footer" class="mainStyle">
 				<ui:include src="/template/footer.xhtml" />
@@ -54,23 +52,21 @@
 				<ui:include src="/pages/admin/ManageDB/addTeachingUnit.xhtml" />
 				<br />
 				<ui:include src="/pages/admin/ManageDB/addDomain.xhtml" />
-				
+
 			</div>
 		</p:layoutUnit>
 
 		<p:layoutUnit position="center">
 			<!-- content -->
 
-			<p:tabView id="tabView">
-
+			<p:tabView id="tabView" activeIndex="#{tabViewIndexBean.tabIndex}"
+				style="background-color: #FFFFFF !important;  border-color:#FFFFFF !important; ">
+				<p:ajax event="tabChange" listener="#{tabViewIndexBean.onChange}" />
 				<p:tab id="currentProject" title="Projets en cours">
 					<p:spacer style="margin-top:5%;"></p:spacer>
 					<ui:include src="/pages/admin/ManageProjects/projects.xhtml" />
 				</p:tab>
-				<p:tab id="oldProject" title="Projets archivés">
-					<p:spacer style="margin-top:5%;"></p:spacer>
 
-				</p:tab>
 				<p:tab id="Soutenances" title="Soutenances">
 					<p:spacer style="margin-top:5%;"></p:spacer>
 					<ui:include
@@ -84,7 +80,7 @@
 					<p:spacer style="margin-top:5%;"></p:spacer>
 					<ui:include src="/pages/admin/ManageStorageSpace/stockage.xhtml" />
 				</p:tab>
-				<p:tab id="message" title="Messages">
+				<p:tab id="message" title="Messages (#{mailBoxBean.msgStats.nbrToRead})">
 					<p:spacer style="margin-top:5%;"></p:spacer>
 					<ui:include src="/pages/admin/ManageMessages/message.xhtml" />
 				</p:tab>

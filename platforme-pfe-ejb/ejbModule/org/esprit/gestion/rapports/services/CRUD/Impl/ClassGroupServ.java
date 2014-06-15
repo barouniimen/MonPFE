@@ -23,8 +23,8 @@ public class ClassGroupServ implements IServiceLocal<ClassGroup>,
 
 	@Override
 	public void delete(Object object) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("pas encore implémentée");
+		
+		throw new UnsupportedOperationException("isn't implemented!!!!!!!");
 	}
 
 	@Override
@@ -61,8 +61,7 @@ public class ClassGroupServ implements IServiceLocal<ClassGroup>,
 
 	@Override
 	public void delete(int id) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("pas encore implémentée");
+		throw new UnsupportedOperationException("isn't implemented!!!!!!!");
 	}
 
 	@Override

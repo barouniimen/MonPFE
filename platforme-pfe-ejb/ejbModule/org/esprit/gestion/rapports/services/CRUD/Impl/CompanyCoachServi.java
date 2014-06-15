@@ -23,8 +23,7 @@ public class CompanyCoachServi implements IServiceLocal<CompanyCoach>, IServiceR
 	
 	@Override
 	public void delete(Object object) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("pas encore implémentée");
+		throw new UnsupportedOperationException("isn't implemented!!!!!!!");
 	}
 
 	@Override
@@ -38,8 +37,7 @@ public class CompanyCoachServi implements IServiceLocal<CompanyCoach>, IServiceR
 
 	@Override
 	public Object retrieve(Object object, String searchBy) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("pas encore implémentée");
+		throw new UnsupportedOperationException("isn't implemented!!!!!!!");
 	}
 
 	@Override
@@ -49,8 +47,7 @@ public class CompanyCoachServi implements IServiceLocal<CompanyCoach>, IServiceR
 
 	@Override
 	public void delete(int id) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("pas encore implémentée");
+		throw new UnsupportedOperationException("isn't implemented!!!!!!!");
 	}
 
 

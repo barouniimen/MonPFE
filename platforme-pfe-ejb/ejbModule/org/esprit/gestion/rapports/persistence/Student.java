@@ -38,14 +38,7 @@ public class Student extends User implements Serializable {
 
 	
 	
-	public Student(String firstName, String lastName, String login,
-			String password, String email, int phoneNumber,
-			String registrationNumber,
-			 StorageSpace storageSpace) {
-		super(firstName, lastName, login, password, email, phoneNumber);
-		this.registrationNumber = registrationNumber;
-		this.storageSpace = storageSpace;
-	}
+	
 
 	public Student() {
 		super();

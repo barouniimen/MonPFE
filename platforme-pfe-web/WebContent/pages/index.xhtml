@@ -13,40 +13,54 @@
 		href="#{request.contextPath}/resources/icon/favicon.ico" />
 
 </h:head>
-<body>
+<body onload="loginDialog.show();"
+	style="background-image: url('
+	#{resource['images:backgroungLogin.jpg']}') !important; background-repeat:
+	no-repeat !important; background-position: top !important;">
 
-		<h2>
-		<h:outputText value="Authentification"/>
-	</h2>
+	<p:dialog id="dialogLogin" header="Authentification"
+		widgetVar="loginDialog" resizable="false" closable="false"
+		closeOnEscape="false" draggable="true" visible="true" position="top"
+		style="margin-top:10% !important;margin-left:44%!important;">
 
 
-	<h:form id="loginFocusPoint" >
-		<p:focus context="loginFocusPoint" />
-		<p:growl id="loginGrowl" life="2000" />
-		<div class="boxLogin">
-			<table>
-				<tr>
-					<td><h:outputText value="Identifiant" /></td>
-					<td><p:inputText id="login" value="#{authenticationBean.user.login}"
-							required="true" /></td>
-				</tr>
-				<tr>
-					<td><h:outputText value="Mot de passe" /></td>
-					<td><p:password id="password"
-							value="#{authenticationBean.user.password}" required="true" /></td>
-				</tr>
-				<tr>
-					<td><p:spacer></p:spacer></td>
-					<td style="text-align: right;"><p:commandButton
-							icon="ui-icon-check" id="submit" value="valider"
-							action="#{authenticationBean.performAuthetication}" update="loginGrowl"
-							style="width:60%;margin-right:13%;margin-top:5%;" /></td>
-				</tr>
 
-			</table>
-		</div>
+		<h:form id="loginFocusPoint">
+			<p:focus context="loginFocusPoint" />
+			<p:growl id="loginGrowl" life="2000" />
+			<div class="boxLogin">
+				<table>
+					<tr>
+						<td><h:outputText value="Identifiant" /></td>
+						<td><p:inputText id="login"
+								value="#{authenticationBean.user.login}" required="true" /></td>
+					</tr>
+					<tr>
+						<td><h:outputText value="Mot de passe" /></td>
+						<td><p:password id="password"
+								value="#{authenticationBean.user.password}" required="true" /></td>
+					</tr>
+					<tr>
+						<td><p:spacer></p:spacer></td>
+						<td style="text-align: right;"><p:commandButton
+								icon="ui-icon-check" id="submit" value="valider"
+								action="#{authenticationBean.performAuthetication}"
+								update="loginGrowl"
+								style="width:60%;margin-right:13%;margin-top:5%;" /></td>
+					</tr>
 
+				</table>
+			</div>
+
+		</h:form>
+	</p:dialog>
+
+
+	<h:form style="position:fixed;buttom:0;top:90%;">
+		<ui:include src="/template/footer.xhtml" />
 	</h:form>
-	
+
+
+
 </body>
 </html>

@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -24,10 +25,13 @@ import javax.persistence.TemporalType;
 @NamedQueries({
 		@NamedQuery(name = "Message.findAll", query = "SELECT m FROM Message m"),
 		@NamedQuery(name = "Message.findById", query = "SELECT m FROM Message m WHERE m.id = :id"),
+		@NamedQuery(name = "Message.findByIdReciever", query = "SELECT m FROM Message m WHERE m.idReceiver = :idReceiver"),
+		@NamedQuery(name = "Message.findByIdSender", query = "SELECT m FROM Message m WHERE m.idSender = :idSender"),
 		@NamedQuery(name = "Message.findByContent", query = "SELECT m FROM Message m WHERE m.content = :content"),
 		@NamedQuery(name = "Message.findByIncludedRef", query = "SELECT m FROM Message m WHERE m.includedRef = :includedRef"),
-	@NamedQuery(name = "Message.findBySendingDate", query = "SELECT m FROM Message m WHERE m.sendingDate = :sendingDate"),
+		@NamedQuery(name = "Message.findBySendingDate", query = "SELECT m FROM Message m WHERE m.sendingDate = :sendingDate"),
 		@NamedQuery(name = "Message.findByType", query = "SELECT m FROM Message m WHERE m.type = :type"),
+		@NamedQuery(name = "Message.findMsgToChangeState", query = "SELECT m FROM Message m WHERE m.type = :type AND m.idReceiver = :idReceiver AND m.responseState = :responseState AND m.includedRef = :includedRef"),
 		@NamedQuery(name = "Message.findBySubject", query = "SELECT m FROM Message m WHERE m.subject = :subject") })
 public class Message implements Serializable {
 
@@ -45,8 +49,7 @@ public class Message implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	public Message(int includedRef, String subject, String content,
-			int idReceiver, int idSender,
-			Date sendingDate, MessageType type,
+			int idReceiver, int idSender, Date sendingDate, MessageType type,
 			AssignResponseState responseState, String declineCause) {
 		super();
 
@@ -93,8 +96,6 @@ public class Message implements Serializable {
 		this.content = content;
 	}
 
-
-
 	@Temporal(TemporalType.TIMESTAMP)
 	public Date getSendingDate() {
 		return this.sendingDate;
@@ -113,7 +114,7 @@ public class Message implements Serializable {
 		this.userMessages = userMessages;
 	}
 
-	@Enumerated
+	@Enumerated(EnumType.STRING)
 	public MessageType getType() {
 		return type;
 	}
@@ -130,6 +131,7 @@ public class Message implements Serializable {
 		this.includedRef = includedRef;
 	}
 
+	@Enumerated(EnumType.STRING)
 	public AssignResponseState getResponseState() {
 		return responseState;
 	}

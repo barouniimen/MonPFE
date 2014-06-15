@@ -32,6 +32,7 @@ import org.esprit.gestion.rapports.services.CRUD.Util.ProjectQualifier;
 import org.esprit.gestion.rapports.services.CRUD.Util.StudentQualifier;
 import org.esprit.gestion.rapports.services.CRUD.Util.TeacherQualifier;
 import org.esprit.gestion.rapports.services.CRUD.Util.TecherRoleQualifier;
+import org.esprit.gestion.rapports.services.CRUD.Util.UserQualifier;
 import org.esprit.gestion.rapports.services.facades.Interfaces.IMessageFacadeLocal;
 import org.esprit.gestion.rapports.services.facades.Interfaces.IProjectFacadeLocal;
 import org.esprit.gestion.rapports.services.facades.Interfaces.IProjectFacadeRemote;
@@ -39,6 +40,14 @@ import org.esprit.gestion.rapports.utils.AssignState;
 
 @Stateless
 public class ProjectFacade implements IProjectFacadeLocal, IProjectFacadeRemote {
+
+	@Inject
+	@UserQualifier
+	IServiceLocal<User> userServ;
+
+	@Inject
+	@TecherRoleQualifier
+	IServiceLocal<TeacherRole> teachRoleServ;
 
 	@Inject
 	@TecherRoleQualifier
@@ -132,30 +141,28 @@ public class ProjectFacade implements IProjectFacadeLocal, IProjectFacadeRemote 
 	}
 
 	@Override
-	public void assignCorrectorToProject(Teacher teacher, int iDproject, User sender) {
-		// TODO à tester
+	public void assignCorrectorToProject(Teacher teacher, int iDproject,
+			User sender) {
+		
 		int idReciever = teacher.getId();
 		msgFacade.sendAffectCorrector(iDproject, idReciever, sender.getId());
 	}
 
-
-
 	@Override
-	public List<Project> listProjectsToManage() {
+	public List<Project> listProjectsInProcess() {
 		List<Project> returnList = new ArrayList<Project>();
 		Project project = new Project();
 
-		ValidationState nonValid = ValidationState.NONVALID;
-		project.setValidationState(nonValid);
-		returnList = projServ.retrieveList(project, "VS");
-		ValidationState enAttente = ValidationState.WAITING;
-		project.setValidationState(enAttente);
-		List<Project> projListEnAttente = projServ.retrieveList(project, "VS");
-		returnList.addAll(projListEnAttente);
 		ValidationState valid = ValidationState.VALID;
 		project.setValidationState(valid);
-		List<Project> projListValid = projServ.retrieveList(project, "VS");
-		returnList.addAll(projListValid);
+
+		returnList = projServ.retrieveList(project, "VS");
+
+		ValidationState enAttenteDepot = ValidationState.WAITINGDEPO;
+		project.setValidationState(enAttenteDepot);
+		List<Project> projListEnAttente = projServ.retrieveList(project, "VS");
+
+		returnList.addAll(projListEnAttente);
 
 		return returnList;
 	}
@@ -175,8 +182,6 @@ public class ProjectFacade implements IProjectFacadeLocal, IProjectFacadeRemote 
 
 		// create project
 		projServ.create(project);
-		System.out.println("id proj " + project.getId());
-		System.out.println("student " + project.getStudent());
 
 		// create cx with student
 		Student student = new Student();
@@ -214,7 +219,6 @@ public class ProjectFacade implements IProjectFacadeLocal, IProjectFacadeRemote 
 		studentToDelete = proj.getStudent();
 		studentToDelete.setProject(null);
 		studentServ.update(studentToDelete);
-		System.out.println("student updated!!!");
 
 		for (int i = 0; i < proj.getProjectDomains().size(); i++) {
 			ProjectDomain projDom = new ProjectDomain();
@@ -229,6 +233,9 @@ public class ProjectFacade implements IProjectFacadeLocal, IProjectFacadeRemote 
 
 	@Override
 	public AssignState findCoachAssignement(int idProj) {
+
+		boolean coachFound = false;
+
 		Message msg = new Message();
 		msg.setIncludedRef(idProj);
 
@@ -238,13 +245,19 @@ public class ProjectFacade implements IProjectFacadeLocal, IProjectFacadeRemote 
 		msgForIdProjList = msgServ.retrieveList(msg, "idProj");
 
 		if (msgForIdProjList.isEmpty()) {
+
 			return null;
 		}
 
 		else {
-			MessageType coach = MessageType.COACHASSIGN;
+
 			for (int i = 0; i < msgForIdProjList.size(); i++) {
-				if (msgForIdProjList.get(i).getType().equals(coach)) {
+
+				if (msgForIdProjList.get(i).getType()
+						.equals(MessageType.COACHASSIGN)) {
+					coachFound = true;
+
+					System.out.println("coach found!!!!!!!");
 
 					affState.setIdMsg(msgForIdProjList.get(i).getId());
 					affState.setIdProj(msgForIdProjList.get(i).getIncludedRef());
@@ -253,27 +266,46 @@ public class ProjectFacade implements IProjectFacadeLocal, IProjectFacadeRemote 
 					affState.setSendingDate(msgForIdProjList.get(i)
 							.getSendingDate());
 
-					// search teacher
-					Teacher t = new Teacher();
-					t.setId(msgForIdProjList.get(i).getIdReceiver());
-					t = (Teacher) teacherServ.retrieve(t, "ID");
-					affState.setTeacherName(t.getFirstName() + " "
-							+ t.getLastName());
-					affState.setIdTeacher(msgForIdProjList.get(i)
-							.getIdReceiver());
+					// find user kind
+					User user = new User();
+					user.setId(msgForIdProjList.get(i).getIdReceiver());
+					user = (User) userServ.retrieve(user, "ID");
+
+					if (user instanceof Teacher) {
+
+						Teacher t = new Teacher();
+						t.setId(user.getId());
+
+						t = (Teacher) teacherServ.retrieve(t, "ID");
+
+						affState.setTeacherName(t.getFirstName() + " "
+								+ t.getLastName());
+						affState.setIdTeacher(msgForIdProjList.get(i)
+								.getIdReceiver());
+
+					}
+
+					else if (user instanceof Administrator) {
+						affState.setTeacherName("admin");
+						affState.setIdTeacher(user.getId());
+					}
 
 				}
 			}
 
-			return affState;
+			if (coachFound) {
+				return affState;
+			} else {
+				return null;
+			}
+
 		}
 
 	}
 
-	
-	
-	
 	public AssignState findCorrectorAssignement(int idProj) {
+		boolean correctorFound = false;
+
 		Message msg = new Message();
 		msg.setIncludedRef(idProj);
 
@@ -283,14 +315,17 @@ public class ProjectFacade implements IProjectFacadeLocal, IProjectFacadeRemote 
 		msgForIdProjList = msgServ.retrieveList(msg, "idProj");
 
 		if (msgForIdProjList.isEmpty()) {
+
 			return null;
 		}
 
 		else {
 			MessageType corrector = MessageType.CORRECTORASSIGN;
-			for (int i = 0; i < msgForIdProjList.size(); i++) {
-				if (msgForIdProjList.get(i).getType().equals(corrector)) {
 
+			for (int i = 0; i < msgForIdProjList.size(); i++) {
+
+				if (msgForIdProjList.get(i).getType().equals(corrector)) {
+					correctorFound = true;
 					affState.setIdMsg(msgForIdProjList.get(i).getId());
 					affState.setIdProj(msgForIdProjList.get(i).getIncludedRef());
 					affState.setResponseState(msgForIdProjList.get(i)
@@ -310,7 +345,11 @@ public class ProjectFacade implements IProjectFacadeLocal, IProjectFacadeRemote 
 				}
 			}
 
-			return affState;
+			if (correctorFound) {
+				return affState;
+			} else {
+				return null;
+			}
 		}
 
 	}
@@ -318,7 +357,7 @@ public class ProjectFacade implements IProjectFacadeLocal, IProjectFacadeRemote 
 	@Override
 	public void cancelCorrectorToProject(Teacher teacher, Project project,
 			int senderId) {
-		
+
 		int correctorId = teacher.getId();
 
 		teacher = (Teacher) teacherServ.retrieve(teacher, "ID");
@@ -354,8 +393,72 @@ public class ProjectFacade implements IProjectFacadeLocal, IProjectFacadeRemote 
 			msgServ.update(msg);
 
 		}
-		
-		
+
 		msgFacade.sendcancelCorrectorToProject(project, correctorId, senderId);
+	}
+
+	@Override
+	public List<TeacherRole> findTeacherRolesToProj(int idProj) {
+		List<TeacherRole> returnList = new ArrayList<TeacherRole>();
+		TeacherRole tr = new TeacherRole();
+		TeacherRolePK pk = new TeacherRolePK();
+		pk.setProjectId(idProj);
+		tr.setPk(pk);
+
+		returnList = teachRoleServ.retrieveList(tr, "projId");
+
+		if (returnList.isEmpty()) {
+
+			return null;
+		}
+
+		else {
+			return returnList;
+		}
+	}
+
+	@Override
+	public List<Project> listProjectsDeposed() {
+		List<Project> returnList = new ArrayList<Project>();
+		Project project = new Project();
+
+		
+		project.setValidationState(ValidationState.DEPOSED);
+
+		returnList = projServ.retrieveList(project, "VS");
+
+		return returnList;
+	}
+
+	@Override
+	public List<Project> listProjectsWaitingSout() {
+		List<Project> returnList = new ArrayList<Project>();
+		Project project = new Project();
+
+		
+		project.setValidationState(ValidationState.WAITINGSOUT);
+
+		returnList = projServ.retrieveList(project, "VS");
+
+		return returnList;
+	}
+
+	@Override
+	public List<Project> listProjectsSoutResult() {
+		List<Project> returnList = new ArrayList<Project>();
+		Project project = new Project();
+
+		
+		project.setValidationState(ValidationState.SOUTVALID);
+
+		returnList = projServ.retrieveList(project, "VS");
+		
+		
+		project.setValidationState(ValidationState.SOUTNONVALID);
+		List<Project> projList = projServ.retrieveList(project, "VS");
+
+		returnList.addAll(projList);
+
+		return returnList;
 	}
 }

@@ -7,7 +7,7 @@ import java.util.List;
 
 import javax.ejb.Remote;
 
-import org.esprit.gestion.rapports.persistence.Message;
+import org.esprit.gestion.rapports.persistence.Project;
 import org.esprit.gestion.rapports.persistence.Teacher;
 
 /**
@@ -22,7 +22,10 @@ public interface ICoachFacadeRemote {
 		
 		public List<Teacher> listAllCoach(int coachingHoursMax);
 
-		public void CoachProjectAccept(Teacher teacher, Message message);
+		public void CoachProjectAccept(int idCoach, int idMsg);
 	
+		public void coachDeclineAssign(int idCoach, int includedRef, String declineCause, int idAdmin, int idAssignMsg);
+		
+		public List<Project> listProjectsCoached(int idCoach);
 
 }

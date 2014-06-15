@@ -39,12 +39,16 @@ public class User implements Serializable {
 	private String email;
 	private int phoneNumber;
 	private List<UserMessage> messages;
+	private List<Appointement> appointements;
 	private static final long serialVersionUID = 1L;
 
 	
 	
+	
+
 	public User(String firstName, String lastName, String login,
-			String password, String email, int phoneNumber) {
+			String password, String email, int phoneNumber,
+			List<UserMessage> messages, List<Appointement> appointements) {
 		super();
 		this.firstName = firstName;
 		this.lastName = lastName;
@@ -52,6 +56,8 @@ public class User implements Serializable {
 		this.password = password;
 		this.email = email;
 		this.phoneNumber = phoneNumber;
+		this.messages = messages;
+		this.appointements = appointements;
 	}
 
 	public User() {
@@ -126,5 +132,14 @@ public class User implements Serializable {
 
 	public void setMessages(List<UserMessage> messages) {
 		this.messages = messages;
+	}
+
+	@OneToMany(mappedBy = "personToMeet")
+	public List<Appointement> getAppointements() {
+		return appointements;
+	}
+
+	public void setAppointements(List<Appointement> appointements) {
+		this.appointements = appointements;
 	}
 }

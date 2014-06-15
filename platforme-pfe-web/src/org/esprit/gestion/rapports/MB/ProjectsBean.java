@@ -8,6 +8,7 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
 import javax.faces.event.ActionEvent;
 import javax.inject.Inject;
@@ -42,8 +43,14 @@ public class ProjectsBean implements Serializable {
 	private String dialogHeaderAssignCorrector;
 	private AssignState assignCoachState;
 	private AssignState assignCorrectorState;
-	
 
+	// MBean-------------------------------------------
+	@ManagedProperty(value = "#{tabViewIndexBean}")
+	private TabViewIndexBean tabViewBean;
+
+	public void setTabViewBean(TabViewIndexBean tabViewBean) {
+		this.tabViewBean = tabViewBean;
+	}
 
 	// EJB_CRUD----------------------------------------
 	@Inject
@@ -58,7 +65,7 @@ public class ProjectsBean implements Serializable {
 
 	// vars ------------------------------------------
 	private ManagedProjects selectedProject;
-	private List<Project> listproj;
+	private List<Project> listprojInProcess;
 	private List<ManagedProjects> managedProj;
 	private Project project;
 	private final static ValidationState[] listStates;
@@ -66,32 +73,34 @@ public class ProjectsBean implements Serializable {
 	// intit listStates--------------------------------
 	static {
 		listStates = new ValidationState[6];
-		listStates[0] = ValidationState.WAITING;
-		listStates[1] = ValidationState.VALID;
-		listStates[2] = ValidationState.NONVALID;
+		listStates[0] = ValidationState.VALID;
+		listStates[1] = ValidationState.WAITINGDEPO;
+		listStates[2] = ValidationState.DEPOSED;
 		listStates[3] = ValidationState.WAITINGSOUT;
-		listStates[4] = ValidationState.SOUTNONVALID;
-		listStates[5] = ValidationState.SOUTVALID;
+		listStates[4] = ValidationState.SOUTVALID;
+		listStates[5] = ValidationState.SOUTNONVALID;
+
 	}
 
 	/********************** PostConstruct ***************************/
 	@PostConstruct
 	public void init() {
 
-		// retrieve project list----------------------------------
+		// retrieve project list In Process------------------------
 		setListproj(new ArrayList<Project>());
-		setListproj(projFacade.listProjectsToManage());
+		setListproj(projFacade.listProjectsInProcess());
 
-		// format project List------------------------------------
+		// format project List In Process-------------------------
+
 		managedProj = new ArrayList<ManagedProjects>();
-		managedProj = formatProjList(listproj, managedProj);
+
+		managedProj = formatProjList(listprojInProcess, managedProj);
 		dateFormat = new SimpleDateFormat("dd-M-yyyy");
 
 		// init project domain list
 		projDomainList = new ArrayList<Domain>();
-		
-		
-		//affect Coach
+
+		// init affect Coach
 		assignedCoach = false;
 		toAssignCoach = false;
 	}
@@ -99,26 +108,43 @@ public class ProjectsBean implements Serializable {
 	/********************** Create Model (format) *****************************/
 	public List<ManagedProjects> formatProjList(List<Project> projlist,
 			List<ManagedProjects> managedprojList) {
+
 		String coachName = "Non affect\u00E9";
 		String coachFirstName = null;
 		String correctorName = "Non affect\u00E9";
 		String correctorFirstName = null;
+
 		for (int i = 0; i < projlist.size(); i++) {
 			project = new Project();
 			project = projlist.get(i);
-			List<TeacherRole> teacherRoles = new ArrayList<TeacherRole>();
-			for (int j = 0; j < teacherRoles.size(); j++) {
-				if (teacherRoles.get(j).getRole() == TeacherRoleType.ENCADRANT) {
-					coachFirstName = project.getTeacherRoles().get(j)
-							.getTeacher().getFirstName();
 
-					coachName = project.getTeacherRoles().get(j).getTeacher()
-							.getLastName();
-				} else if (teacherRoles.get(j).getRole() == TeacherRoleType.RAPPORTEUR) {
-					correctorFirstName = project.getTeacherRoles().get(j)
-							.getTeacher().getFirstName();
-					correctorName = project.getTeacherRoles().get(j)
-							.getTeacher().getLastName();
+			List<TeacherRole> teacherRoles = new ArrayList<TeacherRole>();
+
+			// find teacher roles
+			teacherRoles = projFacade.findTeacherRolesToProj(project.getId());
+
+			if (teacherRoles != null) {
+
+				for (int j = 0; j < teacherRoles.size(); j++) {
+
+					if (teacherRoles.get(j).getRole()
+							.equals(TeacherRoleType.ENCADRANT)) {
+
+						coachFirstName = teacherRoles.get(j).getTeacher()
+								.getFirstName();
+
+						coachName = teacherRoles.get(j).getTeacher()
+								.getLastName();
+
+					} else if (teacherRoles.get(j).getRole()
+							.equals(TeacherRoleType.RAPPORTEUR)) {
+
+						correctorFirstName = teacherRoles.get(j).getTeacher()
+								.getFirstName();
+
+						correctorName = teacherRoles.get(j).getTeacher()
+								.getLastName();
+					}
 				}
 			}
 			ManagedProjects managedproj = new ManagedProjects(project.getId(),
@@ -137,9 +163,10 @@ public class ProjectsBean implements Serializable {
 							.getStudent().getId(), project.getStudent()
 							.getLastName(),
 					project.getStudent().getFirstName(), project.getStudent()
-							.getRegistrationNumber());
+							.getRegistrationNumber(),project.getFonctionnalitites());
 
 			managedprojList.add(managedproj);
+
 		}
 		return managedprojList;
 
@@ -147,51 +174,63 @@ public class ProjectsBean implements Serializable {
 
 	/****************** Listners *********************/
 	public void handleClose() {
-
+		int tabIndex;
+		tabIndex = tabViewBean.getTabIndex();
 		try {
-			RequestContext.getCurrentInstance().execute(" location.reload();");
+			RequestContext.getCurrentInstance().execute("location.reload();");
 		} catch (Exception e) {
 		}
+		tabViewBean.setTabIndex(tabIndex);
 	}
 
-	public void onRowSelect(){
-		//Coach Assingnement state
-		//Find all msg with included ref proj ID
+	public void assignCoachMenu() {
 		assignCoachState = new AssignState();
-		assignCoachState = projFacade.findCoachAssignement(selectedProject.getIdPorj());
-		
-		AssignResponseState canceled = AssignResponseState.CANCELED;
-		if(assignCoachState==null ||  assignCoachState.getResponseState().equals(canceled)){
-			dialogHeaderAssignCoach ="Affecter un encadrant";
+		assignCoachState = projFacade.findCoachAssignement(selectedProject
+				.getIdPorj());
+
+		if (assignCoachState == null
+				|| assignCoachState.getResponseState().equals(
+						AssignResponseState.CANCELED)
+				|| assignCoachState.getResponseState().equals(
+						AssignResponseState.REFUSED)) {
+
+			dialogHeaderAssignCoach = "Affecter un encadrant";
 			assignedCoach = false;
 			toAssignCoach = true;
-		}
-		else {
+
+		} else {
+
 			dialogHeaderAssignCoach = "Etat d'affectation - Encadrant";
 			assignedCoach = true;
 			toAssignCoach = false;
 		}
-		
-		
-		
-		
-		//Corrector Assignement state
+	}
+
+	public void assignCorrectorMenu() {
+
+		// Corrector Assignement state
 		assignCorrectorState = new AssignState();
-		assignCorrectorState = projFacade.findCorrectorAssignement(selectedProject.getIdPorj());
-		
-		
-		if(assignCorrectorState==null ||  assignCorrectorState.getResponseState().equals(canceled)){
+
+		assignCorrectorState = projFacade
+				.findCorrectorAssignement(selectedProject.getIdPorj());
+
+		if (assignCorrectorState == null
+				|| assignCorrectorState.getResponseState().equals(
+						AssignResponseState.CANCELED)
+				|| assignCorrectorState.getResponseState().equals(
+						AssignResponseState.REFUSED)) {
 			setDialogHeaderAssignCorrector("Affecter un rapporteur");
 			setAssignedCorrector(false);
 			setToAssignCorrector(true);
-		}
-		else {
+
+		} else {
+
 			setDialogHeaderAssignCorrector("Etat d'affectation - Rapporteur");
 			setAssignedCorrector(true);
 			setToAssignCorrector(false);
 		}
 	}
-	
+
 	public void findDomainList(ActionEvent event) {
 		Project proj = new Project();
 		proj.setId(selectedProject.getIdPorj());
@@ -212,7 +251,6 @@ public class ProjectsBean implements Serializable {
 
 	}
 
-
 	/*************** Constructor ******************/
 	public ProjectsBean() {
 		super();
@@ -222,8 +260,6 @@ public class ProjectsBean implements Serializable {
 	public ManagedProjects getSelectedProject() {
 		return selectedProject;
 	}
-
-	
 
 	public void setSelectedProject(ManagedProjects selectedProject) {
 		this.selectedProject = selectedProject;
@@ -246,11 +282,11 @@ public class ProjectsBean implements Serializable {
 	}
 
 	public List<Project> getListproj() {
-		return listproj;
+		return listprojInProcess;
 	}
 
 	public void setListproj(List<Project> listproj) {
-		this.listproj = listproj;
+		this.listprojInProcess = listproj;
 	}
 
 	public ValidationState[] getListstates() {
@@ -338,6 +374,4 @@ public class ProjectsBean implements Serializable {
 		this.dialogHeaderAssignCorrector = dialogHeaderAssignCorrector;
 	}
 
-
-	
 }

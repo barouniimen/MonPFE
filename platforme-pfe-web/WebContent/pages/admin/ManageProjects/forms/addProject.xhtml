@@ -37,21 +37,29 @@
 				value="#{addProjectFormBean.projToAdd.projState}">
 				<f:selectItem
 					itemLabel="S#{msg['encodage.e.accent.grave']}lectionnez un #{msg['encodage.e.accent.grave']}tat de validation"
-					itemValue="WAITING" />
+					itemValue="VALID" />
 				<f:selectItems value="#{projectsBean.liststates}" var="stateList"
 					itemLabel="#{stateList.description}" itemValue="#{stateList}" />
 			</h:selectOneMenu>
 
 
 			<h:outputLabel value="Domaines" for="domaineProj" />
-		
+
 			<p:selectManyCheckbox id="domaineProj"
 				value="#{addProjectFormBean.listDomTarget}" required="true"
-				requiredMessage="Vous devez sélectionner au moins un domaine" layout="grid" columns="3">
+				requiredMessage="Vous devez sélectionner au moins un domaine"
+				layout="grid" columns="3">
 				<f:selectItems value="#{addProjectFormBean.listDomSource}" var="dom"
 					itemLabel="#{dom}" itemValue="#{dom}" />
 			</p:selectManyCheckbox>
-	
+
+
+			<h:outputLabel value="Fonctionnalitées" for="fonctionnalitites" />
+			<p:inputTextarea required="true"
+				requiredMessage="Vous devez citer les fonctionnalités de votre projet!"
+				id="fonctionnalitites" autoResize="true" 
+				value="#{addProjectFormBean.projToAdd.fonctionnalities}" />
+
 		</h:panelGrid>
 	</p:panel>
 

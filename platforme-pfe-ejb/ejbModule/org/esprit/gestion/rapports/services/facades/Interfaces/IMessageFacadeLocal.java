@@ -1,11 +1,15 @@
 package org.esprit.gestion.rapports.services.facades.Interfaces;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.ejb.Local;
 
 import org.esprit.gestion.rapports.persistence.Message;
+import org.esprit.gestion.rapports.persistence.MessageAccess;
+import org.esprit.gestion.rapports.persistence.MessageType;
 import org.esprit.gestion.rapports.persistence.Project;
+import org.esprit.gestion.rapports.utils.MessageStats;
 
 @Local
 public interface IMessageFacadeLocal {
@@ -20,20 +24,24 @@ public interface IMessageFacadeLocal {
 	
 	public void sendcancelCoachToProject(Project project, int coachId, int senderId);
 
-	public void sendCoachAccept(String content, Project project, int idSender, int idReciever);
+	public void sendCoachAccept(int idProject, int idCoach,
+			int idStudent,int idAdmin);
 	
-	public void sendCorrectorAccept(String content, Project project, int idSender, int idReciever);
+	public void sendCorrectorAccept(int idProject, int idCorrector,
+			int idStudent,int idAdmin);
 	
 	public void sendcancelCorrectorToProject(Project project, int correctorId,
 			int senderId);
+
+	public void changeAccess(int msgId,int userId, MessageAccess access);
 	
+	public List<Message> listMsgToRead(int idUser);
 	
-	/**
-	 * il faut préciser message.state:
-	 * if state = réponse requise: afficher sous forme de poop-up (accept-decline)
-	 * @return
-	 */
-	public boolean read(Message message);
+	public List<Message> listMsgSeen(int idUser);
 	
-	public boolean changeState(Message message);
+	public List<Message> listMsgSent(int idUser);
+	
+	public List<Message> listMsgByType(int idUser, MessageType type);
+
+	public MessageStats listNbrMsg(int idUser);
 }

@@ -11,6 +11,7 @@ import javax.faces.event.ActionEvent;
 import org.esprit.gestion.rapports.persistence.Speciality;
 import org.esprit.gestion.rapports.services.facades.Interfaces.ISpecialityFacadeLocal;
 import org.primefaces.context.RequestContext;
+import org.primefaces.event.ToggleEvent;
 
 @ManagedBean
 @ViewScoped
@@ -43,7 +44,7 @@ public class AddSpecialityBean {
 		if (resultCreate.equals("unique")) {
 			try {
 				RequestContext.getCurrentInstance().execute(
-						" location.reload();");
+						"panelAddSpec.toggle();");
 			} catch (Exception e) {
 			}
 		} else if (resultCreate.equals("exist")) {
@@ -54,6 +55,10 @@ public class AddSpecialityBean {
 
 	}
 
+	
+	public void handleToggle(ToggleEvent event) {
+		specialityToDB = new Speciality();	
+	}
 	/************************************* constructor ***************************************/
 	public AddSpecialityBean() {
 		super();

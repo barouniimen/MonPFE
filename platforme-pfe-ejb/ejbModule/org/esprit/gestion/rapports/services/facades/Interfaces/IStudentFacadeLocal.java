@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.ejb.Local;
 
+import org.esprit.gestion.rapports.persistence.Project;
 import org.esprit.gestion.rapports.persistence.Student;
 
 /**
@@ -16,8 +17,13 @@ import org.esprit.gestion.rapports.persistence.Student;
 public interface IStudentFacadeLocal {
 
 	public List<Student> listStudentsWithoutProject();
+	
 	public String addStudent(Student student, int classId, String academicYear);
+	
 	public boolean studentHaveProject(Student student);
+
 	public List<Student> listAllStudent();
+	
+	public Project findStudentProj(int idStudent);
 
 }

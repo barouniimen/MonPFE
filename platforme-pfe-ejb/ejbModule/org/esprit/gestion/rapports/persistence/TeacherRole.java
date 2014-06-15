@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -20,6 +21,7 @@ import javax.persistence.NamedQuery;
 		@NamedQuery(name = "Teacherrole.findByProjectId", query = "SELECT t FROM TeacherRole t WHERE t.pk.projectId = :projectId"),
 		@NamedQuery(name = "Teacherrole.findByTeacherId", query = "SELECT t FROM TeacherRole t WHERE t.pk.teacherId = :teacherId"),
 		@NamedQuery(name = "Teacherrole.findByRole", query = "SELECT t FROM TeacherRole t WHERE t.role = :role"),
+		@NamedQuery(name = "Teacherrole.findByRoleAndTeacherId", query = "SELECT t FROM TeacherRole t WHERE t.role = :role AND t.pk.teacherId = :teacherId"),
 		@NamedQuery(name = "Teacherrole.findByTeacherIdANDProjectId", query = "SELECT t FROM TeacherRole t WHERE t.pk.teacherId = :teacherId and t.pk.projectId = :projectId")})
 public class TeacherRole implements Serializable {
 
@@ -70,7 +72,7 @@ public class TeacherRole implements Serializable {
 		this.project = project;
 	}
 
-	@Enumerated
+	@Enumerated(EnumType.STRING)
 	public TeacherRoleType getRole() {
 		return role;
 	}

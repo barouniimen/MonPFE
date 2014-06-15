@@ -35,14 +35,6 @@ public class CompanyCoach extends User implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	
-	
-	public CompanyCoach(String firstName, String lastName, String login,
-			String password, String email, int phoneNumber, String position,
-			Company company) {
-		super(firstName, lastName, login, password, email, phoneNumber);
-		this.position = position;
-		this.company = company;
-	}
 
 	public CompanyCoach() {
 		super();

@@ -23,8 +23,7 @@ public class TeacherService implements IServiceLocal<Teacher>,IServiceRemote<Tea
 
 	@Override
 	public void delete(Object object) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("pas encore implémentée");
+		throw new UnsupportedOperationException("isn't implemented!!!!!!!");
 
 	}
 
@@ -60,7 +59,7 @@ public class TeacherService implements IServiceLocal<Teacher>,IServiceRemote<Tea
 
 	@Override
 	public void delete(int id) {
-		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("isn't implemented!!!!!!!");
 
 	}
 

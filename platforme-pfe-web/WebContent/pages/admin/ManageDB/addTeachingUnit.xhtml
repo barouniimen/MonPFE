@@ -5,10 +5,11 @@
 	xmlns:p="http://primefaces.org/ui">
 
 
-	<p:panel toggleable="true" header="Ajouter une Unité d'Enseignement" collapsed="true" >
-
+	<p:panel toggleable="true" header="Ajouter une Unité d'Enseignement" collapsed="true" widgetVar="panelTechUnit">
+		<p:ajax event="toggle" listener="#{addTeachingUnitBean.handleToggle}"
+			update="formTunit" />
 		<h:panelGrid columns="2" columnClasses="label, value">
-			<h:form id="panelAddUp">
+			<h:form id="formTunit">
 
 				<h:outputText value="Nom" />
 				<br />
@@ -22,12 +23,12 @@
 
 				<p:commandLink value="Affecter à un Domaine"
 					actionListener="#{addTeachingUnitBean.renderAffectToDom}"
-					update="panelAddUp" disabled="#{addTeachingUnitBean.affectToDom}"
+					update="formTunit" disabled="#{addTeachingUnitBean.affectToDom}"
 					style="color: #DC143C;font-weight: bold;text-decoration: underline;" />
 				<br />
 				<p:commandLink value="Ne pas affecter à un Domaine"
 					actionListener="#{addTeachingUnitBean.notRenderAffectToDom}"
-					update="panelAddUp"
+					update="formTunit"
 					disabled="#{addTeachingUnitBean.notAffectToDom}"
 					style="color: #DC143C;font-weight: bold;text-decoration: underline;" />
 				<br />
@@ -52,7 +53,7 @@
 				<p:commandButton id="addTunit" value="Ajouter"
 					actionListener="#{addTeachingUnitBean.addTeachingUnit}" />
 				<p:commandButton id="cancelAddTunit" value="Annuler"
-					onclick="location.reload();" />
+					onclick="panelTechUnit.toggle();" />
 			</h:form>
 
 

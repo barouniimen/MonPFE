@@ -18,6 +18,7 @@ import org.esprit.gestion.rapports.services.CRUD.Interfaces.IServiceLocal;
 import org.esprit.gestion.rapports.services.CRUD.Util.SpecialityQualifier;
 import org.esprit.gestion.rapports.services.facades.Interfaces.IClassGroupFacadeLocal;
 import org.primefaces.context.RequestContext;
+import org.primefaces.event.ToggleEvent;
 
 @ManagedBean
 @ViewScoped
@@ -49,51 +50,59 @@ public class AddClassGroupBean {
 		listSpecialityFromDB = new ArrayList<Speciality>();
 		listSpecialityFromDB = specialityServ.retrieveList(
 				listSpecialityFromDB, "ALL");
-		
-		//init render vars
+
+		// init render vars
 		setNewSpeciality(false);
 		setNotNewSpeciality(false);
 
 	}
 
 	/*********************************** action listeners ******************************/
-	
-	public void renderNewSpeciality(){
+
+	public void renderNewSpeciality() {
 		setNewSpeciality(true);
 		setNotNewSpeciality(false);
 	}
-	
-	public void renderNotNewSpeciality(){
+
+	public void renderNotNewSpeciality() {
 		setNewSpeciality(false);
 		setNotNewSpeciality(true);
 	}
-	
 
 	public void addClass(ActionEvent event) {
 		String resultCreate;
-		
-		if(specialitySelected.getId() == -1){
+
+		if (specialitySelected.getId() == -1) {
 			FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_ERROR,
-					"Donnée manquante!!", "Veuillez sélectionner une spécialité!");
+					"Donnée manquante!!",
+					"Veuillez sélectionner une spécialité!");
 			FacesContext.getCurrentInstance().addMessage(null, msg);
-		}
-		else{
-		classGroupToDB.setSpeciality(specialitySelected);
+		} else {
+			classGroupToDB.setSpeciality(specialitySelected);
 
-		resultCreate = classGroupFacade.addClassGroup(classGroupToDB);
+			resultCreate = classGroupFacade.addClassGroup(classGroupToDB);
 
-		if (resultCreate.equals("unique")) {
-			try {
-				RequestContext.getCurrentInstance().execute(
-						" location.reload();");
-			} catch (Exception e) {
+			if (resultCreate.equals("unique")) {
+				try {
+					RequestContext.getCurrentInstance().execute(
+							"panelAddClass.toggle();");
+				} catch (Exception e) {
+				}
+			} else if (resultCreate.equals("exist")) {
+				FacesMessage msg = new FacesMessage(
+						FacesMessage.SEVERITY_ERROR, "Existe!!",
+						"La référence de la classe existe déjà!");
+				FacesContext.getCurrentInstance().addMessage(null, msg);
 			}
-		} else if (resultCreate.equals("exist")) {
-			FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_ERROR,
-					"Existe!!", "La référence de la classe existe déjà!");
-			FacesContext.getCurrentInstance().addMessage(null, msg);
 		}
-		}
+	}
+
+	public void handleToggle(ToggleEvent event) {
+		classGroupToDB = new ClassGroup();
+	specialitySelected = new Speciality();
+		newSpeciality = false;
+		notNewSpeciality = false;
+
 	}
 
 	/****************************** Constructor ***************************************/

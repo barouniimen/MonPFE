@@ -4,23 +4,40 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:p="http://primefaces.org/ui">
 
-	<div id="positionLogo">
-		<h:graphicImage library="images" name="logo.png" />
-	</div>
-	<div id="TitreHeader">
-		<h:outputText value="Esprit PFE I.Management" style="text-shadow: 1px 1px 2px gray;"/>
-		<div id="SousTitreHeader">
-			<font
-				style="color: #666666; font-size: 180%; text-shadow: 1px 1px 2px gray;">P</font>lateforme
-			de<font
-				style="color: #666666; font-size: 180%; text-shadow: 1px 1px 2px gray;">
-				G</font>estion des <font
-				style="color: #666666; font-size: 180%; text-shadow: 1px 1px 2px gray;">R</font>apports
-			de <font
-				style="color: #666666; font-size: 180%; text-shadow: 1px 1px 2px gray;">PFE</font>
-		</div>
-	</div>
-	<div style="margin-left: 10px; margin-right:10px; margin-top: 5px;">
-		<h:graphicImage url="/resources/images/triangleRouge.png"/>
-	</div>
+	<h:graphicImage rendered="#{authenticationBean.admin}" library="images"
+		name="EnteteAdministrateur.jpg"
+		style="height:100%;width:100%;margin-top:0 !important; margin-buttom:0 !important; padding-buttom:0 !important;" />
+
+
+	<h:graphicImage rendered="#{authenticationBean.student}"
+		library="images" name="EnteteEtudiant.jpg"
+		style="height:100%;width:100%;margin-top:0 !important; margin-buttom:0 !important; padding-buttom:0 !important;" />
+
+
+
+	<h:graphicImage rendered="#{authenticationBean.teacher}"
+		library="images" name="EnteteEnseignant.jpg"
+		style="height:100%;width:100%;margin-top:0 !important; margin-buttom:0 !important; padding-buttom:0 !important;" />
+
+	<h:outputText
+		value="Bienvenu #{authenticationBean.user.lastName}#{msg['message.espace']}#{authenticationBean.user.firstName}|"
+		style="position: fixed;top:3%;right:5%;color: White;font-size: 150%;font-family: Century Gothic;" />
+
+	<h:graphicImage value="/resources/images/logoutMedium.png"
+		style="position: fixed;top:3%;right:2%;"
+		onclick="confirmLogout.show();" title="Déconnexion"/>
+
+	<p:confirmDialog closeOnEscape="false"
+		message="Vous #{msg['encodage.e.chapeau']}tes sur le point de vous déconnecter de la plateforme . Voulez-vous continuer ?"
+		header="Déconnexion ..." severity="alert"
+		widgetVar="confirmLogout" appendToBody="true">
+		<h:form >
+			<p:commandButton value="Continuer"
+				action="#{authenticationBean.performLogout}" onsuccess="confirmLogout.hide()" />
+			<p:commandButton value="Annuler"
+				onclick="confirmLogout.hide()" />
+		</h:form>
+
+	</p:confirmDialog>
+
 </ui:composition>

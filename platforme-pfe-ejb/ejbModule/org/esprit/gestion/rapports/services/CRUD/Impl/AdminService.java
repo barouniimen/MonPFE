@@ -23,14 +23,13 @@ public class AdminService implements IServiceLocal<Administrator>, IServiceRemot
 	
 	@Override
 	public void create(Object object) {
-		// TODO Auto-generated method stub
+		em.persist(object);
 		
 	}
 
 	@Override
 	public Object retrieve(Object object, String searchBy) {
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException("isn't implemented!!!!!!!");
 	}
 
 	@Override
@@ -47,19 +46,19 @@ public class AdminService implements IServiceLocal<Administrator>, IServiceRemot
 
 	@Override
 	public void update(Object object) {
-		// TODO Auto-generated method stub
+		em.merge(object);
 		
 	}
 
 	@Override
 	public void delete(int id) {
-		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("isn't implemented!!!!!!!");
 		
 	}
 
 	@Override
 	public void delete(Object object) {
-		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("isn't implemented!!!!!!!");
 		
 	}
 

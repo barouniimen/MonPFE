@@ -11,6 +11,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -44,13 +45,15 @@ public class Project implements Serializable {
 	private CompanyCoach companycoach;
 	private Student student;
 	private List<ProjectDomain> projectDomains;
+	private String fonctionnalitites;
 	private static final long serialVersionUID = 1L;
 
 	
 
 	public Project(Date startDate, String academicYear, String topic,
 			ValidationState validationState, CompanyCoach companycoach,
-			Student student) {
+			Student student, List<ProjectDomain> projectDomains,
+			String fonctionnalitites) {
 		super();
 		this.startDate = startDate;
 		this.academicYear = academicYear;
@@ -58,6 +61,8 @@ public class Project implements Serializable {
 		this.validationState = validationState;
 		this.companycoach = companycoach;
 		this.student = student;
+		this.projectDomains = projectDomains;
+		this.fonctionnalitites = fonctionnalitites;
 	}
 
 	public Project(String academicYear, String topic) {
@@ -106,8 +111,6 @@ public class Project implements Serializable {
 	public void setTeacherRoles(List<TeacherRole> teacherRoles) {
 		this.teacherRoles = teacherRoles;
 	}
-
-	
 
 	@OneToMany(mappedBy = "project")
 	public List<Report> getReports() {
@@ -172,7 +175,8 @@ public class Project implements Serializable {
 		this.presentationEvent = presentationEvent;
 	}
 
-	@OneToOne
+	@ManyToOne
+	@JoinColumn(name = "submissionEvent")
 	public SubmissionEvent getSubmissionEvent() {
 		return submissionEvent;
 	}
@@ -276,7 +280,13 @@ public class Project implements Serializable {
 		return true;
 	}
 
-	
+	@Lob
+	public String getFonctionnalitites() {
+		return fonctionnalitites;
+	}
 
+	public void setFonctionnalitites(String fonctionnalitites) {
+		this.fonctionnalitites = fonctionnalitites;
+	}
 
 }

@@ -6,9 +6,13 @@
 
 
 	<p:panel toggleable="true" header="Ajouter un étudiant"
-		collapsed="true">
+		collapsed="true" widgetVar="panelAddSt">
+		
+		<p:ajax event="toggle" listener="#{addStudentBean.handleToggle}"
+			update="formSt" />
+		
 		<p:growl autoUpdate="true" showDetail="true" />
-		<h:form>
+		<h:form id="formSt">
 			<h:panelGrid columns="2" columnClasses="label, value">
 
 				<h:outputText value="Nom" />
@@ -35,7 +39,7 @@
 				<h:outputText value="Numéro de téléphone" />
 				<h:inputText value="#{addStudentBean.studentToDB.phoneNumber}" />
 
-				<h:outputText value="Espace de stockage alloué" />
+				<h:outputText value="Espace de stockage alloué (en Mo)" />
 				<h:inputText value="#{addStudentBean.space.allocatedSpace}" />
 
 				<h:outputText
@@ -56,7 +60,7 @@
 				<p:commandButton id="addClass" value="Ajouter"
 					actionListener="#{addStudentBean.addStudent}" />
 					<p:commandButton id="cancelClass" value="Annuler"
-					onclick="location.reload();" />
+					onclick="panelAddSt.toggle();" />
 
 			</h:panelGrid>
 		</h:form>

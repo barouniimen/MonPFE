@@ -58,6 +58,8 @@ public class TeacherRoleService implements IServiceLocal<TeacherRole>,
 	@Override
 	public List<TeacherRole> retrieveList(Object object, String searchBy) {
 		List<TeacherRole >listRoles = null;
+		
+		
 		if(searchBy=="ROLE"){
 			TypedQuery<TeacherRole> query = em.createNamedQuery("Teacherrole.findByRole",
 					TeacherRole.class);
@@ -65,6 +67,26 @@ public class TeacherRoleService implements IServiceLocal<TeacherRole>,
 			listRoles = query.getResultList();
 
 		}
+		
+		else if(searchBy == "RoleAndCoach"){
+			
+			TypedQuery<TeacherRole> query = em.createNamedQuery("Teacherrole.findByRoleAndTeacherId",
+					TeacherRole.class);
+			query.setParameter("role", ((TeacherRole) object).getRole());
+			query.setParameter("teacherId", ((TeacherRole) object).getPk().getTeacherId());
+			listRoles = query.getResultList();
+			
+		}
+		
+		
+		else if(searchBy == "projId"){
+			TypedQuery<TeacherRole> query = em.createNamedQuery("Teacherrole.findByProjectId",
+					TeacherRole.class);
+			query.setParameter("projectId", ((TeacherRole) object).getPk().getProjectId());
+			listRoles = query.getResultList();
+			
+		}
+		
 		return listRoles;
 	}
 

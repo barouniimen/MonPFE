@@ -85,7 +85,7 @@
 
 				<p:commandButton id="submitProject" value="Ajouter"
 					actionListener="#{addProjectFormBean.addProject}"
-					oncomplete="handleLoginRequest(xhr, status, args)" />
+					update=":tabView:currentProject"/>
 
 				<p:commandButton value="Annuler"
 					actionListener="#{addProjectFormBean.handelCancel}"

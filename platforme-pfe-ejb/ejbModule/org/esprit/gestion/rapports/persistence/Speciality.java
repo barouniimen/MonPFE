@@ -11,7 +11,6 @@ import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 /**
  * @author Imen Barouni
  *
@@ -26,7 +25,6 @@ public class Speciality implements Serializable {
 	private int id;
 	private String sepcialityTitle;
 	private List<ClassGroup> classGroups;
-	private SubmissionEvent submissionEvent;
 	private static final long serialVersionUID = 1L;
 
 	
@@ -68,13 +66,6 @@ public class Speciality implements Serializable {
 		this.classGroups = classGroups;
 	}
 
-	@OneToOne
-	public SubmissionEvent getSubmissionEvent() {
-		return submissionEvent;
-	}
 
-	public void setSubmissionEvent(SubmissionEvent submissionEvent) {
-		this.submissionEvent = submissionEvent;
-	}
 
 }

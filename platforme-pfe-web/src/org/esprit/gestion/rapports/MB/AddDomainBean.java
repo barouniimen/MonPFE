@@ -11,6 +11,7 @@ import javax.faces.event.ActionEvent;
 import org.esprit.gestion.rapports.persistence.Domain;
 import org.esprit.gestion.rapports.services.facades.Interfaces.IDomainFacadeLocal;
 import org.primefaces.context.RequestContext;
+import org.primefaces.event.ToggleEvent;
 
 @ManagedBean
 @ViewScoped
@@ -38,7 +39,7 @@ public class AddDomainBean {
 		if (resultCreate.equals("unique")) {
 			try {
 				RequestContext.getCurrentInstance().execute(
-						" location.reload();");
+						"panelAddDom.toggle();");
 			} catch (Exception e) {
 			}
 		} else if (resultCreate.equals("exist")) {
@@ -47,6 +48,10 @@ public class AddDomainBean {
 			FacesContext.getCurrentInstance().addMessage(null, msg);
 		}
 
+	}
+	
+	public void handleToggle(ToggleEvent event) {
+		domainToDB = new Domain();
 	}
 
 	/****************************** Constructor ***************************************/

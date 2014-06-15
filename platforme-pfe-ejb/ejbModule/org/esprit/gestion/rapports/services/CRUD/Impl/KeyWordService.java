@@ -69,8 +69,7 @@ public class KeyWordService implements IServiceLocal<KeyWord>,
 	 */
 	@Override
 	public List<KeyWord> retrieveList(Object object, String searchBy) {
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException("isn't implemented!!!!!!!");
 	}
 
 }

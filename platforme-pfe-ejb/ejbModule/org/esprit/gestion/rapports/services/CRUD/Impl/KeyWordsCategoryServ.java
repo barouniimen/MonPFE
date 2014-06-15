@@ -20,8 +20,7 @@ public class KeyWordsCategoryServ implements IServiceLocal<KeyWordCategory>, ISe
 	
 	@Override
 	public void delete(Object object) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("pas encore implémentée");
+		throw new UnsupportedOperationException("isn't implemented!!!!!!!");
 	}
 
 	@Override
@@ -31,26 +30,22 @@ public class KeyWordsCategoryServ implements IServiceLocal<KeyWordCategory>, ISe
 
 	@Override
 	public Object retrieve(Object object, String searchBy) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("pas encore implémentée");
+		throw new UnsupportedOperationException("isn't implemented!!!!!!!");
 	}
 
 	@Override
 	public void update(Object object) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("pas encore implémentée");
+		em.merge(object);
 	}
 
 	@Override
 	public void delete(int id) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("pas encore implémentée");
+		throw new UnsupportedOperationException("isn't implemented!!!!!!!");
 	}
 
 	@Override
 	public List<KeyWordCategory> retrieveList(Object object, String searchBy) {
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException("isn't implemented!!!!!!!");
 	}
 
 }

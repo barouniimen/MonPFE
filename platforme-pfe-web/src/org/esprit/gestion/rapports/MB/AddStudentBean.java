@@ -19,6 +19,7 @@ import org.esprit.gestion.rapports.services.CRUD.Interfaces.IServiceLocal;
 import org.esprit.gestion.rapports.services.CRUD.Util.ClassGroupeQualifier;
 import org.esprit.gestion.rapports.services.facades.Interfaces.IStudentFacadeLocal;
 import org.primefaces.context.RequestContext;
+import org.primefaces.event.ToggleEvent;
 
 @ManagedBean
 @ViewScoped
@@ -64,7 +65,7 @@ public class AddStudentBean {
 		if (resultCreate.equals("reussi")) {
 			try {
 				RequestContext.getCurrentInstance().execute(
-						" location.reload();");
+						"panelAddSt.toggle();");
 			} catch (Exception e) {
 			}
 		} else if (resultCreate.equals("regNbreExist")) {
@@ -81,6 +82,13 @@ public class AddStudentBean {
 			FacesContext.getCurrentInstance().addMessage(null, msg);
 		}
 
+	}
+
+	
+	public void handleToggle(ToggleEvent event) {
+		studentToDB = new Student();
+		space = new StorageSpace();
+		selectedClass = new ClassGroup();
 	}
 
 	/************************************* constructor ***************************************/

@@ -1,15 +1,18 @@
 package org.esprit.gestion.rapports.services.facades.Impl;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import org.esprit.gestion.rapports.persistence.AssignResponseState;
 import org.esprit.gestion.rapports.persistence.Domain;
 import org.esprit.gestion.rapports.persistence.Message;
 import org.esprit.gestion.rapports.persistence.MessageAccess;
+import org.esprit.gestion.rapports.persistence.MessageType;
 import org.esprit.gestion.rapports.persistence.Project;
 import org.esprit.gestion.rapports.persistence.Student;
 import org.esprit.gestion.rapports.persistence.Teacher;
@@ -22,6 +25,7 @@ import org.esprit.gestion.rapports.persistence.UserMessage;
 import org.esprit.gestion.rapports.persistence.UserMessagePK;
 import org.esprit.gestion.rapports.services.CRUD.Interfaces.IServiceLocal;
 import org.esprit.gestion.rapports.services.CRUD.Util.DomainQualifier;
+import org.esprit.gestion.rapports.services.CRUD.Util.MessagesQualifier;
 import org.esprit.gestion.rapports.services.CRUD.Util.ProjectQualifier;
 import org.esprit.gestion.rapports.services.CRUD.Util.TeacherQualifier;
 import org.esprit.gestion.rapports.services.CRUD.Util.TecherRoleQualifier;
@@ -38,6 +42,10 @@ import org.esprit.gestion.rapports.services.facades.Interfaces.IMessageFacadeLoc
  */
 @Stateless
 public class CoachFacade implements ICoachFacadeLocal, ICoachFacadeRemote {
+
+	@Inject
+	@MessagesQualifier
+	IServiceLocal<Message> msgServ;
 
 	@Inject
 	@DomainQualifier
@@ -144,54 +152,48 @@ public class CoachFacade implements ICoachFacadeLocal, ICoachFacadeRemote {
 			}
 		}
 		return filtredList;
-		
+
 	}
 
 	@Override
-	public void CoachProjectAccept(Teacher teacher, Message message) {
+	public void CoachProjectAccept(int idCoach, int idMsg) {
 
-		int projectId = message.getIncludedRef();
+		// retrieve msg
+		Message msg = new Message();
+		msg.setId(idMsg);
+		msg = (Message) msgServ.retrieve(msg, "ID");
+
+		// retrieve coach
+		Teacher coach = new Teacher();
+		coach.setId(idCoach);
+		coach = (Teacher) teacherServ.retrieve(coach, "ID");
+
+		// associer le coach au projet
+		int projectId = msg.getIncludedRef();
 		TeacherRole tRole = new TeacherRole();
 		TeacherRolePK pk = new TeacherRolePK();
 		TeacherRoleType role = TeacherRoleType.ENCADRANT;
 		pk.setProjectId(projectId);
-		pk.setTeacherId(teacher.getId());
+		pk.setTeacherId(coach.getId());
 		tRole.setPk(pk);
 		tRole.setRole(role);
 
-		// mise √† jour de l'association = lu (seen)
-		UserMessage userMsg = new UserMessage();
-		UserMessagePK userMpk = new UserMessagePK();
-		userMpk.setMessageId(message.getId());
-		userMpk.setUserId(teacher.getId());
-		MessageAccess access = MessageAccess.SEEN;
-		userMsg.setAccess(access);
-		userMsg.setPk(userMpk);
-		userMsgServ.update(userMsg);
-
-		// associer le coach au projet
 		roleServ.create(tRole);
-
-		// notifier le student concern√© et l'admin (notification de l'admin √†
-		// l'int√©rieur de la fonction send)
-
-		// ***chercher le projet en question
+		// retrieve project
 		Project project = new Project();
 		project.setId(projectId);
 		project = (Project) projServ.retrieve(project, "ID");
-		// ***chercher le student concern√©
+		// get student
 		Student student = project.getStudent();
-		// ***envoyer le message
-		String content = "(Mr/Mme): " + teacher.getFirstName() + " "
-				+ teacher.getLastName()
-				+ " encadrera la r√©alisation du projet de fin d'√©tude :"
-				+ project.getTopic() + " r√©f√©renc√© : " + project.getId();
-		msgFacade.sendCoachAccept(content, project, teacher.getId(),
-				student.getId());
+
+		msgFacade.sendCoachAccept(projectId, coach.getId(), student.getId(),
+				msg.getIdSender());
 
 		// coachingHours + 1
-		teacher.setCoachingHours(teacher.getCoachingHours() + 1);
-		teacherServ.update(teacher);
+
+		coach.setCoachingHours(coach.getCoachingHours() + 1);
+		teacherServ.update(coach);
+
 	}
 
 	@Override
@@ -226,5 +228,119 @@ public class CoachFacade implements ICoachFacadeLocal, ICoachFacadeRemote {
 				return teacherLessHours;
 
 		}
+	}
+
+	@Override
+	public void coachDeclineAssign(int idCoach, int includedRef,
+			String declineCause, int idAdmin, int idAssignMsg) {
+
+		// update assignResponseState on msg of assign
+		Message msgToUpdate = new Message();
+		msgToUpdate.setId(idAssignMsg);
+
+		msgToUpdate = (Message) msgServ.retrieve(msgToUpdate, "ID");
+
+		msgToUpdate.setResponseState(AssignResponseState.REFUSED);
+		msgToUpdate.setDeclineCause(declineCause);
+
+		msgServ.update(msgToUpdate);
+
+		// retrieve coach
+		Teacher coach = new Teacher();
+		coach.setId(idCoach);
+
+		coach = (Teacher) teacherServ.retrieve(coach, "ID");
+
+		// retrieve student(from project)
+
+		Project proj = new Project();
+		proj.setId(includedRef);
+		proj = (Project) projServ.retrieve(proj, "ID");
+
+		// send message to admin
+		Message msg = new Message();
+		msg.setContent("Bonjour, \n Mr/Mme."
+				+ coach.getLastName()
+				+ " "
+				+ coach.getFirstName()
+				+ " a dÈclinÈ son affectation en tant qu'encadrant pour l'Ètudiant: "
+				+ proj.getStudent().getLastName() + " "
+				+ proj.getStudent().getFirstName()
+				+ " inscrit sous le numÈro: ["
+				+ proj.getStudent().getRegistrationNumber()
+				+ "]. La cause de la dÈclinaison est: '" + declineCause
+				+ ". \n Ceci est un message automatique. \n Cordialement");
+		msg.setDeclineCause(declineCause);
+		msg.setIdReceiver(idAdmin);
+		msg.setIdSender(idCoach);
+		msg.setIncludedRef(proj.getId());
+		Date sendingDate = new Date();
+		msg.setSendingDate(sendingDate);
+		msg.setSubject("Affectation dÈclinÈe");
+		msg.setType(MessageType.COACHASSIGN);
+		msg.setResponseState(AssignResponseState.REFUSED);
+
+		msgServ.create(msg);
+
+		// cx msg admin
+		UserMessage cxAdmin = new UserMessage();
+		UserMessagePK pkAdmin = new UserMessagePK();
+		pkAdmin.setMessageId(msg.getId());
+		pkAdmin.setUserId(idAdmin);
+
+		cxAdmin.setAccess(MessageAccess.TOREAD);
+		cxAdmin.setPk(pkAdmin);
+
+		userMsgServ.create(cxAdmin);
+
+		// cx sender
+		UserMessage cxCoach = new UserMessage();
+		UserMessagePK pkCoach = new UserMessagePK();
+		pkCoach.setMessageId(msg.getId());
+		pkCoach.setUserId(idCoach);
+
+		cxCoach.setAccess(MessageAccess.SENT);
+		cxCoach.setPk(pkCoach);
+
+		userMsgServ.create(cxCoach);
+
+	}
+
+	@Override
+	public List<Project> listProjectsCoached(int idCoach) {
+			
+		List<Project> returnList = new ArrayList<Project>();
+		
+		List<TeacherRole> listTeachRoles = new ArrayList<TeacherRole>();
+
+		TeacherRole tr = new TeacherRole();
+		TeacherRolePK pk = new TeacherRolePK();
+		pk.setTeacherId(idCoach);
+		tr.setPk(pk);
+		tr.setRole(TeacherRoleType.ENCADRANT);
+
+		listTeachRoles = roleServ
+				.retrieveList(tr, "RoleAndCoach");
+		
+		if(listTeachRoles.isEmpty()){
+			return null;
+		}
+		
+		else{
+			
+			for (int i = 0; i < listTeachRoles.size(); i++) {
+				Project proj = new Project();
+				proj.setId(listTeachRoles.get(i).getPk().getProjectId());
+				proj = (Project) projServ.retrieve(proj, "ID");
+				
+				returnList.add(proj);
+				
+			}
+			
+
+			return returnList;
+		}
+		
+		
 	}
 }

@@ -29,8 +29,7 @@ public class ProjectDomainServ implements IServiceLocal<ProjectDomain>,
 
 	@Override
 	public Object retrieve(Object object, String searchBy) {
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException("isn't implemented!!!!!!!");
 	}
 
 	@Override
@@ -51,13 +50,12 @@ public class ProjectDomainServ implements IServiceLocal<ProjectDomain>,
 
 	@Override
 	public void update(Object object) {
-		// TODO Auto-generated method stub
-
+	em.merge(object);
 	}
 
 	@Override
 	public void delete(int id) {
-		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("isn't implemented!!!!!!!");
 
 	}
 

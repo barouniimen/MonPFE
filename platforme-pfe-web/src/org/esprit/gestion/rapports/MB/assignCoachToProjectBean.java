@@ -45,11 +45,18 @@ public class assignCoachToProjectBean {
 
 	@EJB
 	ICoachFacadeLocal coachFacade;
+	
+	@ManagedProperty(value = "#{tabViewIndexBean}")
+	private TabViewIndexBean tabViewBean;
+
+	public void setTabViewBean(TabViewIndexBean tabViewBean) {
+		this.tabViewBean = tabViewBean;
+	}
 
 	/******************************** init method ************************************/
 	@PostConstruct
 	public void init() {
-
+		
 		setSameDom(false);
 		// init vars select by domain------------------------------------------
 		setSelectedProjDom(new ArrayList<Domain>());
@@ -78,6 +85,8 @@ public class assignCoachToProjectBean {
 
 	public void assignCoachToProj(ActionEvent event) {
 
+		int tabIndex = tabViewBean.getTabIndex();
+		
 		if (selectedCoach.getId() == -1) {
 			FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_ERROR,
 					"Donnée manquante!!",
@@ -97,13 +106,17 @@ public class assignCoachToProjectBean {
 
 			try {
 				RequestContext.getCurrentInstance().execute(
-						"CoachDialog.hide();location.reload();");
+						"location.reload();");
 			} catch (Exception e) {
 			}
+			
+			tabViewBean.setTabIndex(tabIndex);
 		}
 	}
 
 	public void cancelCoachAssign(ActionEvent event) {
+		
+		int tabIndex = tabViewBean.getTabIndex();
 
 		if (cancel.equals("true")) {
 			Teacher coach = new Teacher();
@@ -123,9 +136,11 @@ public class assignCoachToProjectBean {
 		} else if (cancel.equals("false")) {
 			try {
 				RequestContext.getCurrentInstance().execute(
-						"CoachDialog.hide();");
+						"location.reload();");
 			} catch (Exception e) {
 			}
+			
+			tabViewBean.setTabIndex(tabIndex);
 		}
 	}
 

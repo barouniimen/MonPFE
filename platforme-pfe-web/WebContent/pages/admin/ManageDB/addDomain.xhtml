@@ -6,10 +6,11 @@
 
 
 	<p:panel toggleable="true" header="Ajouter un domaine de (projet / U.E)"
-		collapsed="true">
-
+		collapsed="true" widgetVar="panelAddDom">
+		<p:ajax event="toggle" listener="#{addDomainBean.handleToggle}"
+			update="formDom" />
 		<h:panelGrid columns="2" columnClasses="label, value">
-			<h:form>
+			<h:form id="formDom">
 
 				<h:outputText value="Nom" />
 				<br />
@@ -18,7 +19,7 @@
 				<p:commandButton value="Ajouter"
 					actionListener="#{addDomainBean.addDomain}" />
 					<p:commandButton value="Annuler"
-					onclick="location.reload();" />
+					onclick="panelAddDom.toggle();" />
 			</h:form>
 
 

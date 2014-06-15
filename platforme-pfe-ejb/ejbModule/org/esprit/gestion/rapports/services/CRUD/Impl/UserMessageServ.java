@@ -1,5 +1,6 @@
 package org.esprit.gestion.rapports.services.CRUD.Impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -14,62 +15,82 @@ import org.esprit.gestion.rapports.services.CRUD.Util.UserMessageQualifier;
 
 @Stateless
 @UserMessageQualifier
-public class UserMessageServ implements IServiceLocal<UserMessage>, IServiceRemote<UserMessage>{
+public class UserMessageServ implements IServiceLocal<UserMessage>,
+		IServiceRemote<UserMessage> {
 
-	
 	@PersistenceContext
 	EntityManager em;
-	
+
 	@Override
 	public void create(Object object) {
-		System.out.println("create user msg");
 		em.persist(object);
-		System.out.println("user msg created!!!");
-}
+
+	}
 
 	@Override
 	public Object retrieve(Object object, String searchBy) {
-		// TODO Auto-generated method stub
+	
 		UserMessage userMsgSearched = null;
-		
+
 		/*********************** Search by pk ***************************/
 		if (searchBy == "PK") {
-			TypedQuery<UserMessage> query = em.createNamedQuery(
-					"UserMessage.findByuserIdandMessageId", UserMessage.class);
-			query.setParameter("messageId", ((UserMessage) object).getPk().getMessageId());
-			query.setParameter("userId", ((UserMessage) object).getPk().getUserId());
+			try {
+				TypedQuery<UserMessage> query = em.createNamedQuery(
+						"UserMessage.findByuserIdandMessageId",
+						UserMessage.class);
+				query.setParameter("messageId", ((UserMessage) object).getPk()
+						.getMessageId());
+				query.setParameter("userId", ((UserMessage) object).getPk()
+						.getUserId());
 
-					userMsgSearched = query.getSingleResult();
+				userMsgSearched = query.getSingleResult();
+				
+			} catch (javax.persistence.NoResultException ex) {
+				
+				return null;
+			}
 
-			
 		}
-		
-		
+
 		return userMsgSearched;
-}
+	}
 
 	@Override
 	public List<UserMessage> retrieveList(Object object, String searchBy) {
-		// TODO Auto-generated method stub
-		return null;
+		List<UserMessage> userMsgSearched = new ArrayList<UserMessage>();
+
+		/*********************** Search by userId ***************************/
+		if (searchBy == "userId") {
+			TypedQuery<UserMessage> query = em.createNamedQuery(
+					"UserMessage.findByuserId", UserMessage.class);
+			query.setParameter("userId", ((UserMessage) object).getPk()
+					.getUserId());
+
+			userMsgSearched = query.getResultList();
+
+		}
+
+		return userMsgSearched;
 	}
 
 	@Override
 	public void update(Object object) {
-		em.merge(object);
+		System.out.println("updating user msg");
 		
+		em.merge(object);
+
+		System.out.println("updated!!!!!");
 	}
 
 	@Override
 	public void delete(int id) {
-		// TODO Auto-generated method stub
-		
+		throw new UnsupportedOperationException("isn't implemented!!!!!!!");
 	}
 
 	@Override
 	public void delete(Object object) {
-		// TODO Auto-generated method stub
-		
+	em.remove(object);
+
 	}
 
 }

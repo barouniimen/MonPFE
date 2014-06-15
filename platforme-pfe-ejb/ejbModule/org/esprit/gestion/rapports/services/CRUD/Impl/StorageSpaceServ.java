@@ -47,25 +47,20 @@ public class StorageSpaceServ implements IServiceRemote<StorageSpace>,IServiceLo
 
 	@Override
 	public void update(Object object) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("pas encore implémentée");
+		throw new UnsupportedOperationException("isn't implemented!!!!!!!");
 	}
 
 	@Override
 	public void delete(int id) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("pas encore implémentée");
+		throw new UnsupportedOperationException("isn't implemented!!!!!!!");
 	}
 
 	@Override
 	public void delete(Object object) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("pas encore implémentée");
+		throw new UnsupportedOperationException("isn't implemented!!!!!!!");
 	}
 
-	/* (non-Javadoc)
-	 * @see org.esprit.gestion.rapports.services.CRUD.Interfaces.IServiceLocal#retrieveList(java.lang.Object, java.lang.String)
-	 */
+	
 	@Override
 	public List<StorageSpace> retrieveList(Object object, String searchBy) {
 		List<StorageSpace> returnList = new ArrayList<StorageSpace>();

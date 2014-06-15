@@ -6,9 +6,12 @@
 
 
 	<p:panel  toggleable="true"
-		header="Ajouter un enseignant" collapsed="true">
+		header="Ajouter un enseignant" collapsed="true" widgetVar="panelAddTeach">
+		<p:ajax event="toggle" listener="#{addTeacherBean.handleToggle}"
+			update="formT" />
+		
 		<p:growl id="growlTeacher" autoUpdate="true" showDetail="true" />
-		<h:form id="panelAddTeacher">
+		<h:form id="formT">
 			<h:panelGrid columns="2" columnClasses="label, value">
 				<h:outputText value="Nom" />
 				<h:inputText value="#{addTeacherBean.teacherToDB.lastName}" />
@@ -48,14 +51,14 @@
 				<br />
 				<p:commandLink value="Affecter à une U.P"
 					actionListener="#{addTeacherBean.renderAffectToUP}"
-					update="panelAddTeacher" disabled="#{addTeacherBean.affectToUP}"
+					update="formT" disabled="#{addTeacherBean.affectToUP}"
 					style="color: #DC143C;font-weight: bold;text-decoration: underline;" />
 
 
 				<br />
 				<p:commandLink value="Ne pas affecter à une U.P"
 					actionListener="#{addTeacherBean.notRenderAffectToUP}"
-					update="panelAddTeacher" disabled="#{addTeacherBean.notAffectToUP}"
+					update="formT" disabled="#{addTeacherBean.notAffectToUP}"
 					style="color: #DC143C;font-weight: bold;text-decoration: underline;" />
 
 				<h:outputLabel value="Unité Pédagogique" for="selectUP" rendered="#{addTeacherBean.affectToUP}"/>
@@ -75,7 +78,7 @@
 				<p:commandButton actionListener="#{addTeacherBean.addTeacher}"
 					value="Ajouter" />
 					<p:commandButton id="cancelAddT" value="Annuler"
-					onclick="location.reload();" />
+					onclick="panelAddTeach.toggle();" />
 
 			</h:panelGrid>
 		</h:form>

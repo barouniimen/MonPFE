@@ -6,10 +6,11 @@
 
 
 	<p:panel toggleable="true" header="Ajouter une spécialité"
-		collapsed="true">
-
+		collapsed="true" widgetVar="panelAddSpec">
+		<p:ajax event="toggle" listener="#{addSpecialityBean.handleToggle}"
+			update="formSpec" />
 		<h:panelGrid columns="2" columnClasses="label, value">
-			<h:form>
+			<h:form id="formSpec">
 
 				<h:outputText value="Titre" />
 				<br />
@@ -19,7 +20,7 @@
 				<p:commandButton id="addSpec" value="Ajouter"
 					actionListener="#{addSpecialityBean.addSpeciality}" />
 					<p:commandButton value="Annuler"
-					onclick="location.reload();" />
+					onclick="panelAddSpec.toggle();" />
 			</h:form>
 
 

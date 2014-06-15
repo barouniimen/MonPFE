@@ -43,6 +43,9 @@ public class AssignCorrectorToProject {
 
 	@EJB
 	IDomainFacadeLocal domainFacade;
+	
+	@ManagedProperty(value = "#{tabViewIndexBean}")
+	private TabViewIndexBean tabViewBean;
 
 	/******************************** init method ************************************/
 	@PostConstruct
@@ -99,6 +102,8 @@ public class AssignCorrectorToProject {
 	}
 
 	public void assignCorrectorToProj(ActionEvent event) {
+		int tabIndex = tabViewBean.getTabIndex();
+		
 		if (selectedCorrector.getId() == -1) {
 			FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_ERROR,
 					"Donnée manquante!!",
@@ -118,15 +123,19 @@ public class AssignCorrectorToProject {
 
 			try {
 				RequestContext.getCurrentInstance().execute(
-						"CoachDialog.hide();location.reload();");
+						"location.reload();");
 			} catch (Exception e) {
 			}
+			
+			tabViewBean.setTabIndex(tabIndex);
 		}
 	}
 
 
 	public void cancelCorrectorAssign(){
 
+		int tabIndex= tabViewBean.getTabIndex();
+		
 		if (cancel.equals("true")) {
 			Teacher corrector = new Teacher();
 			corrector.setId(projectBean.getAssignCorrectorState().getIdTeacher());
@@ -145,15 +154,17 @@ public class AssignCorrectorToProject {
 		} else if (cancel.equals("false")) {
 			try {
 				RequestContext.getCurrentInstance().execute(
-						"CorrectorDialog.hide();");
+						"location.reload();");
 			} catch (Exception e) {
 			}
+			
+			tabViewBean.setTabIndex(tabIndex);
 		}
 	}
 	/************************************* constructor *****************************************/
 	public AssignCorrectorToProject() {
 		super();
-		// TODO Auto-generated constructor stub
+	
 	}
 
 	/*********************************** getter & setter *************************************/

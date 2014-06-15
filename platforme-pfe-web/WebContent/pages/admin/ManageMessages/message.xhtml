@@ -4,45 +4,139 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:p="http://primefaces.org/ui">
 
+	<h:form id="formMsgMenuAdmin"
+		style="display: table !important; border-collapse: separate !important; border-spacing: 20px 5px !important;">
+		<div
+			style="display: table-cell !important; float: left !important; vertical-align: top !important; table-layout: auto !important;">
 
-	<p:layout style="min-width:400px;min-height:200px;" id="layout">
-		<p:layoutUnit position="north" resizable="false" size="45">
-			<p:commandButton value="compose"></p:commandButton>
-		</p:layoutUnit>
-		<p:layoutUnit position="west" resizable="true" size="150"
-			siminSize="40" maxSize="250" header="Indicateurs">
+			<p:menu>
+				<p:submenu label="Boite de réception">
+					<p:menuitem
+						value="Messages non lus (#{mailBoxBean.msgStats.nbrToRead})"
+						actionListener="#{mailBoxBean.renderToRead}"
+						update="formMsgMenuAdmin" />
+					<p:menuitem value="Messages lus (#{mailBoxBean.msgStats.nbrSeen})"
+						actionListener="#{mailBoxBean.renderSeen}"
+						update="formMsgMenuAdmin" />
+				</p:submenu>
+				<p:submenu label="Boite d'envoi">
+					<p:menuitem
+						value="Messages envoyés (#{mailBoxBean.msgStats.nbrSent})"
+						actionListener="#{mailBoxBean.renderSent}"
+						update="formMsgMenuAdmin" />
 
-			<p:outputLabel value="Messages non lus= " />
-			
-		
-		
-		</p:layoutUnit>
+				</p:submenu>
+			</p:menu>
 
-		<p:layoutUnit position="center">
-			<p:dataTable var="mail" value="#{mailbox.msgReceived}">
 
-				<p:column headerText="From" sortBy="from">
-					
-				</p:column>
+		</div>
 
-				<p:column headerText="Subject" sortBy="subject">
-					
-				</p:column>
 
-				<p:column headerText="Date" sortBy="date">
-					
-				</p:column>
+		<ui:include src="/pages/admin/ManageMessages/datatables/msgSeen.xhtml" />
+		<ui:include src="/pages/admin/ManageMessages/datatables/msgSent.xhtml" />
+		<ui:include
+			src="/pages/admin/ManageMessages/datatables/msgToRead.xhtml" />
 
-				<p:column>
-					<p:commandButton icon="ui-icon-search" title="View">
+	</h:form>
 
-					</p:commandButton>
-				</p:column>
+	<!-- ******************************** Message Seen content Dialog *****************************  -->
+	<p:dialog header="Objet: #{mailBoxBean.selectedMsgSeen.subject}"
+		widgetVar="seenDialog" resizable="false" hideEffect="explode">
+		<p:ajax event="close" listener="#{mailBoxBean.handleClose}"
+			update=":tabView:message" />
+		<h:form id="dialogSeenForm">
+			<p:growl showDetail="true" widgetVar="growlResponseAssign"
+				autoUpdate="true" />
+			<br />
+			<h:outputLabel value="De la part de: " for="senderSeen"
+				style="font-weight: bold;" />
+			<h:outputText id="senderSeen"
+				value="#{mailBoxBean.selectedMsgSeen.senderName}" />
+			<br />
+			<br />
+			<pre style="font: 100% Arial, Times, sans-serif !important;">
+				<h:outputText value="#{mailBoxBean.selectedMsgSeen.content}" />
+			</pre>
+			<br />
+			<br />
 
-			</p:dataTable>
-		</p:layoutUnit>
-	</p:layout>
+			<h:outputText value="L'enseignant a accepté cette affectation."
+				style="color: #DC143C;text-align: center;font-size: medium;font-style: italic;font-weight: bold"
+				rendered="#{mailBoxBean.assignAccepted}" />
+			<h:outputText value="Cette affectation a été annulée."
+				style="color: #DC143C;text-align: center;font-size: medium;font-style: italic;font-weight: bold"
+				rendered="#{mailBoxBean.assignCancelled}" />
+			<h:outputText
+				value="L'enseignant a décliné cette affectation. Il a indiqué la raison suivante: [#{mailBoxBean.selectedMsgSeen.declineCause}]"
+				style="color: #DC143C;text-align: center;font-size: medium;font-style: italic;font-weight: bold"
+				rendered="#{mailBoxBean.assignDeclined}" />
+			<br />
+			<br />
+			<br />
+		</h:form>
+	</p:dialog>
 
+
+
+	<!-- ******************************** Message ToRead content Dialog *****************************  -->
+	<p:dialog header="Objet: #{mailBoxBean.selectedMsgToRead.subject}"
+		widgetVar="toReadDialog" resizable="false" hideEffect="explode">
+		<p:ajax event="close" listener="#{mailBoxBean.handleClose}"
+			update=":tabView:message" />
+		<h:form id="dialogToReadForm">
+			<p:growl showDetail="true" widgetVar="growlResponseAssign"
+				autoUpdate="true" />
+			<br />
+			<h:outputLabel value="De la part de: " for="senderToRead"
+				style="font-weight: bold;" />
+			<h:outputText id="senderToRead"
+				value="#{mailBoxBean.selectedMsgToRead.senderName}" />
+			<br />
+			<br />
+			<pre style="font: 100% Arial, Times, sans-serif !important;">
+				<h:outputText value="#{mailBoxBean.selectedMsgToRead.content}" />
+			</pre>
+			<br />
+			<br />
+
+			<h:outputText value="L'enseignant a accepté cette affectation."
+				style="color: #DC143C;text-align: center;font-size: medium;font-style: italic;font-weight: bold"
+				rendered="#{mailBoxBean.assignAccepted}" />
+			<h:outputText value="Cette affectation a été annulée."
+				style="color: #DC143C;text-align: center;font-size: medium;font-style: italic;font-weight: bold"
+				rendered="#{mailBoxBean.assignCancelled}" />
+			<h:outputText
+				value="L'enseignant a décliné cette affectation. Il a indiqué la raison suivante: [#{mailBoxBean.selectedMsgToRead.declineCause}]"
+				style="color: #DC143C;text-align: center;font-size: medium;font-style: italic;font-weight: bold"
+				rendered="#{mailBoxBean.assignDeclined}" />
+			<br />
+			<br />
+			<br />
+		</h:form>
+	</p:dialog>
+
+	<!-- ******************************** Message sent content Dialog *****************************  -->
+	<p:dialog header="Objet: #{mailBoxBean.selectedMsgSent.subject}"
+		widgetVar="sentDialog" resizable="false" hideEffect="explode">
+		<p:ajax event="close" listener="#{mailBoxBean.handleClose}"
+			update=":tabView:message" />
+		<h:form>
+			<br />
+			<h:outputLabel value="Envoyé à: " for="recieverSent"
+				style="font-weight: bold;" />
+			<h:outputText id="recieverSent"
+				value="#{mailBoxBean.selectedMsgSent.receiverName}" />
+			<br />
+			<br />
+			<br />
+			<pre style="font: 100% Arial, Times, sans-serif !important;">
+				<h:outputText value="#{mailBoxBean.selectedMsgSent.content}" />
+			</pre>
+			<br />
+			<br />
+			<br />
+		</h:form>
+	</p:dialog>
 
 
 </ui:composition>

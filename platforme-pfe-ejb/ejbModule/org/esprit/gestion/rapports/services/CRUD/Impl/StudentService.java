@@ -27,8 +27,7 @@ public class StudentService implements IServiceLocal<Student>, IServiceRemote<St
 
 	@Override
 	public void delete(Object object) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("pas encore implémentée");
+		em.remove(object);
 	}
 
 	@Override
@@ -70,8 +69,7 @@ public class StudentService implements IServiceLocal<Student>, IServiceRemote<St
 
 	@Override
 	public void delete(int id) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("pas encore implémentée");
+		throw new UnsupportedOperationException("isn't implemented!!!!!!!");
 	}
 
 	

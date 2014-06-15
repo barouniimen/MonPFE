@@ -17,6 +17,7 @@ import org.esprit.gestion.rapports.persistence.TeachingUnit;
 import org.esprit.gestion.rapports.services.facades.Interfaces.ITeacherFacadeLocal;
 import org.esprit.gestion.rapports.services.facades.Interfaces.ITeachingUnitFacadeLocal;
 import org.primefaces.context.RequestContext;
+import org.primefaces.event.ToggleEvent;
 
 @ManagedBean
 @ViewScoped
@@ -86,12 +87,12 @@ public class AddTeacherBean {
 	public void addTeacher(ActionEvent event) {
 		String addResult;
 		teacherToDB.setTeachingUnit(selectedTeachUnit);
-		System.out.println("teaching unit id: "+teacherToDB.getTeachingUnit().getId());
+		
 		addResult = teacherFacade.addTeacher(teacherToDB);
 		if (addResult == "success") {
 			try {
 				RequestContext.getCurrentInstance().execute(
-						" location.reload();");
+						"panelAddTeach.toggle();");
 			} catch (Exception e) {
 			}
 		} else if (addResult.equals("loginExist")) {
@@ -103,6 +104,15 @@ public class AddTeacherBean {
 					"Existe!!", "Le mot de passe est déjà utilisé!");
 			FacesContext.getCurrentInstance().addMessage(null, msg);
 		}
+	}
+	
+	public void handleToggle(ToggleEvent event) {
+		teacherToDB = new Teacher();
+		affectToUP = false;
+		notAffectToUP = false;
+		noUPdispo = false;
+		upDispo = false;
+		selectedTeachUnit = new TeachingUnit();
 	}
 
 	/************************************* constructor ***************************************/

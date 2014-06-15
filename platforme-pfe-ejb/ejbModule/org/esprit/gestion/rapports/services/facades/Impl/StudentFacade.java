@@ -6,11 +6,13 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import org.esprit.gestion.rapports.persistence.Project;
 import org.esprit.gestion.rapports.persistence.Registration;
 import org.esprit.gestion.rapports.persistence.RegistrationPK;
 import org.esprit.gestion.rapports.persistence.StorageSpace;
 import org.esprit.gestion.rapports.persistence.Student;
 import org.esprit.gestion.rapports.services.CRUD.Interfaces.IServiceLocal;
+import org.esprit.gestion.rapports.services.CRUD.Util.ProjectQualifier;
 import org.esprit.gestion.rapports.services.CRUD.Util.RegistrationQualifier;
 import org.esprit.gestion.rapports.services.CRUD.Util.StorageSpaceQualifier;
 import org.esprit.gestion.rapports.services.CRUD.Util.StudentQualifier;
@@ -31,6 +33,10 @@ public class StudentFacade implements IStudentFacadeLocal, IStudentFacadeRemote 
 	@Inject
 	@StorageSpaceQualifier
 	IServiceLocal<StorageSpace> storageSpaceServ;
+
+	@Inject
+	@ProjectQualifier
+	IServiceLocal<Project> projServ;
 
 	@Override
 	public List<Student> listStudentsWithoutProject() {
@@ -160,5 +166,19 @@ public class StudentFacade implements IStudentFacadeLocal, IStudentFacadeRemote 
 		returnList = studentServ.retrieveList(null, "ALL");
 
 		return returnList;
+	}
+
+	@Override
+	public Project findStudentProj(int idStudent) {
+		Project proj = new Project();
+		
+		Student st = new Student();
+		st.setId(idStudent);
+		st = (Student) studentServ.retrieve(st, "ID");
+		
+		proj = st.getProject();
+		
+		return proj;
+		
 	}
 }

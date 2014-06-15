@@ -11,10 +11,10 @@
 		<p:contextMenu for="managedProj" style="width:200px">
 
 			<p:menuitem value="Affecter un encadrant" icon="ui-icon-person"
-				oncomplete="CoachDialog.show() " update=":tabView" />
+				oncomplete="CoachDialog.show() " update=":tabView" actionListener="#{projectsBean.assignCoachMenu}"/>
 
 			<p:menuitem value="Affecter un rapporteur" icon="ui-icon-person"
-				oncomplete="CorrectorDialog.show() " update=":tabView" />
+				oncomplete="CorrectorDialog.show() " update=":tabView" actionListener="#{projectsBean.assignCorrectorMenu}"/>
 
 			<p:menuitem value="Supprimer" icon="ui-icon-trash"
 				oncomplete="confirmationRemove.show()"
@@ -29,9 +29,7 @@
 			selectionMode="single" rows="20"
 			emptyMessage="Aucun projet a afficher" paginator="true"
 			paginatorPosition="bottom" liveResize="true">
-			<p:ajax event="rowSelect" listener="#{projectsBean.onRowSelect}" />
-
-
+		
 			<f:facet name="header">
 
 				<!-- *************************************************** Ajouter un projet *******************************************************************  -->
@@ -185,22 +183,7 @@
 	</p:dialog>
 
 
-	<!-- ******************************************* Script Add project button *******************************************************  -->
-	<script type="text/javascript">
-    function handleLoginRequest(xhr, status, args) {
-    	if(args.validationFailed )  {
-        	wizAdd.loadStep(wizAdd.cfg.steps[0], true);
-       } 
-        else {
-            
-            AddProjDialog.hide();
-            location.reload();
-            
-        }
-    }
 
-    
-</script>
 
 
 

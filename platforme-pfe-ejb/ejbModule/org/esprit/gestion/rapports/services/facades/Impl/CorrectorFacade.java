@@ -22,6 +22,7 @@ import org.esprit.gestion.rapports.persistence.UserMessage;
 import org.esprit.gestion.rapports.persistence.UserMessagePK;
 import org.esprit.gestion.rapports.services.CRUD.Interfaces.IServiceLocal;
 import org.esprit.gestion.rapports.services.CRUD.Util.DomainQualifier;
+import org.esprit.gestion.rapports.services.CRUD.Util.MessagesQualifier;
 import org.esprit.gestion.rapports.services.CRUD.Util.ProjectQualifier;
 import org.esprit.gestion.rapports.services.CRUD.Util.TeacherQualifier;
 import org.esprit.gestion.rapports.services.CRUD.Util.TecherRoleQualifier;
@@ -41,7 +42,10 @@ public class CorrectorFacade implements ICorrectorFacadeLocal, ICorrectorFacadeR
 	@DomainQualifier
 	IServiceLocal<Domain> domainServ;
 	
-
+	@Inject
+	@MessagesQualifier
+	IServiceLocal<Message> msgServ;
+	
 	@Inject
 	@TeacherQualifier
 	IServiceLocal<Teacher> teacherServ;
@@ -65,47 +69,53 @@ public class CorrectorFacade implements ICorrectorFacadeLocal, ICorrectorFacadeR
 		Teacher teacher = new Teacher();
 		teacherList = teacherServ.retrieveList(teacher, "ALL");
 		return teacherList;
-		//TODO ajouter un filtre sur le domaine (voir si on choisit le rapporteur par domaine)
+		
 	}
 	
 	
 	@Override
-	public void CorrectorProjectAccept(Teacher teacher,Message message) {
-		
-		int projectId = message.getIncludedRef();
+	public void CorrectorProjectAccept(int idCorrector, int idMsg) {
+	// retrieve msg
+		Message msg = new Message();
+		msg.setId(idMsg);
+		msg = (Message) msgServ.retrieve(msg, "ID");
+
+		// retrieve coach
+		Teacher corrector = new Teacher();
+		corrector.setId(idCorrector);
+		corrector = (Teacher) teacherServ.retrieve(corrector, "ID");
+
+		// associer le coach au projet
+		int projectId = msg.getIncludedRef();
 		TeacherRole tRole = new TeacherRole();
 		TeacherRolePK pk = new TeacherRolePK();
 		TeacherRoleType role = TeacherRoleType.RAPPORTEUR;
 		pk.setProjectId(projectId);
-		pk.setTeacherId(teacher.getId());
+		pk.setTeacherId(corrector.getId());
 		tRole.setPk(pk);
 		tRole.setRole(role);
-		
-		
-		//mise à jour de l'association = lu (seen)		
+		roleServ.create(tRole);
+
+		// update message to seen
 		UserMessage userMsg = new UserMessage();
 		UserMessagePK userMpk = new UserMessagePK();
-		userMpk.setMessageId(message.getId());
-		userMpk.setUserId(teacher.getId());
+		userMpk.setMessageId(msg.getId());
+		userMpk.setUserId(corrector.getId());
 		MessageAccess access = MessageAccess.SEEN;
 		userMsg.setAccess(access);
 		userMsg.setPk(userMpk);
 		userMsgServ.update(userMsg);
 
-		// associer le coach au projet
-			roleServ.create(tRole);	
-			
-		// notifier le student concerné et l'admin (notification de l'admin à l'intérieur de la fonction send)
-			
-				//***chercher le projet en question
-				Project project = new Project();
-				project.setId(projectId);
-				project = (Project) projServ.retrieve(project, "ID");
-				//***chercher le student concerné
-				Student student = project.getStudent();
-				//***envoyer le message
-				String content = "(Mr/Mme): " + teacher.getFirstName()+" "+teacher.getLastName()+" sera le rapporteur du projet de fin d'étude :"+project.getTopic()+" référencé : "+project.getId();
-				msgFacade.sendCorrectorAccept(content, project, teacher.getId(), student.getId());
+		// retrieve project
+		Project project = new Project();
+		project.setId(projectId);
+		project = (Project) projServ.retrieve(project, "ID");
+		// get student
+		Student student = project.getStudent();
+
+		msgFacade.sendCorrectorAccept(projectId, corrector.getId(), student.getId(),msg.getIdSender());
+
+		
 	}
 	
 	public List<Teacher> listCorrectorsSameDom(List<String> projectDomains){
@@ -174,6 +184,14 @@ public class CorrectorFacade implements ICorrectorFacadeLocal, ICorrectorFacadeR
 			}
 		
 		return filtredList;
+		
+	}
+
+
+	@Override
+	public void correctorDeclineAssign(int id, int includedRef,
+			String declineCause, int idAdmin, int idAssignMsg) {
+		throw new UnsupportedOperationException("isn't implemented!!!!!!!");
 		
 	}
 

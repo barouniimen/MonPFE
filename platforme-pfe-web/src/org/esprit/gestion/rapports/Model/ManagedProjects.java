@@ -17,6 +17,7 @@ public class ManagedProjects {
 	private List<ProjectDomain> projDomainList;
 	private Date startDate;
 	private String academicYear;
+	private String fonctionnalities;
 		
 	//company Info----------------------------------
 	private String companyName;
@@ -50,7 +51,7 @@ public class ManagedProjects {
 	
 	/*************************** Constructors *********************************/
 	public ManagedProjects() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 
@@ -63,7 +64,7 @@ public class ManagedProjects {
 			String companyCoachName, String companyCoachFirstName,
 			String compCoachEmail, int compCoachphoneNbre,
 			String compCoachPosition, int studentId, String studentName,
-			String studentFirstName, String studentRegistrationNbre) {
+			String studentFirstName, String studentRegistrationNbre, String fonctionnalities) {
 		super();
 		this.idPorj = idPorj;
 		this.projTopic = projTopic;
@@ -88,6 +89,7 @@ public class ManagedProjects {
 		this.studentName = studentName;
 		this.studentFirstName = studentFirstName;
 		this.studentRegistrationNbre = studentRegistrationNbre;
+		this.fonctionnalities = fonctionnalities;
 	}
 
 
@@ -341,6 +343,16 @@ public class ManagedProjects {
 
 	public void setStudentRegistrationNbre(String studentRegistrationNbre) {
 		this.studentRegistrationNbre = studentRegistrationNbre;
+	}
+
+
+	public String getFonctionnalities() {
+		return fonctionnalities;
+	}
+
+
+	public void setFonctionnalities(String fonctionnalities) {
+		this.fonctionnalities = fonctionnalities;
 	}
 
 }

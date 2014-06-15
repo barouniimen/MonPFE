@@ -26,31 +26,28 @@ public class TeachUnitDomainServ implements IServiceLocal<TeachingUnitDomain>, I
 
 	@Override
 	public Object retrieve(Object object, String searchBy) {
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException("isn't implemented!!!!!!!");
 	}
 
 	@Override
 	public List<TeachingUnitDomain> retrieveList(Object object, String searchBy) {
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException("isn't implemented!!!!!!!");
 	}
 
 	@Override
 	public void update(Object object) {
-		// TODO Auto-generated method stub
-		
+		throw new UnsupportedOperationException("isn't implemented!!!!!!!");
 	}
 
 	@Override
 	public void delete(int id) {
-		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("isn't implemented!!!!!!!");
 		
 	}
 
 	@Override
 	public void delete(Object object) {
-		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("isn't implemented!!!!!!!");
 		
 	}
 

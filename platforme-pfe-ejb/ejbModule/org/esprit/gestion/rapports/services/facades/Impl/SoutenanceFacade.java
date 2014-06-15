@@ -47,20 +47,17 @@ public class SoutenanceFacade implements ISoutenanceFacadeLocal,
 	@Override
 	public void confirmSoutenance(Project project, Date date,
 			int classroomId, Teacher chefJury) {
-		// TODO Auto-generated method stub
-
+		throw new UnsupportedOperationException("isn't implemented!!!!!!!");
 	}
 
 	@Override
 	public void cancelSoutenance(PresentationEvent soutenance) {
-		// TODO Auto-generated method stub
-
+		throw new UnsupportedOperationException("isn't implemented!!!!!!!");
 	}
 
 	@Override
 	public void editSoutenanceResult(PresentationEvent soutenance) {
-		// TODO Auto-generated method stub
-
+		throw new UnsupportedOperationException("isn't implemented!!!!!!!");
 	}
 
 	@Override
