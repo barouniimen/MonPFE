@@ -1,0 +1,41 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+
+	<h:outputText value="Vous n'avez aucun projet en cours"
+		rendered="#{!projectDescriptionBean.projFound}" />
+	<h:panelGrid columns="2" columnClasses="label, value" styleClass="grid">
+
+		<p:outputLabel value="Sujet: " for="topic" style="font-weight: bold;"
+			rendered="#{projectDescriptionBean.projFound}" />
+
+		
+		<h:outputText id="topic"
+			value="#{projectDescriptionBean.studentProj.topic}"
+			rendered="#{projectDescriptionBean.projFound}" />
+
+		<p:outputLabel value="Date de début: " for="date"
+			style="font-weight: bold;"
+			rendered="#{projectDescriptionBean.projFound}" />
+
+		
+		<h:outputText id="date"
+			value="#{projectDescriptionBean.dateFormat.format(projectDescriptionBean.studentProj.startDate)}"
+			rendered="#{projectDescriptionBean.projFound}" />
+			
+			<p:outputLabel value="Année universitaire: " for="year" style="font-weight: bold;"
+			rendered="#{projectDescriptionBean.projFound}" />
+		
+		
+		<h:outputText id="year"
+			value="#{projectDescriptionBean.studentProj.academicYear}"
+			rendered="#{projectDescriptionBean.projFound}" />
+
+
+	</h:panelGrid>
+
+
+</ui:composition>

@@ -1,0 +1,119 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+	<h:form id="formMsgMenuStudent"
+		style="display: table !important; border-collapse: separate !important; border-spacing: 20px 5px !important;">
+		<div
+			style="display: table-cell !important; float: left !important; vertical-align: top !important; table-layout: auto !important;">
+
+			<p:menu>
+				<p:submenu label="Boite de réception">
+					<p:menuitem
+						value="Messages non lus (#{mailBoxBean.msgStats.nbrToRead})"
+						actionListener="#{mailBoxBean.renderToRead}"
+						update="formMsgMenuStudent" />
+					<p:menuitem value="Messages lus (#{mailBoxBean.msgStats.nbrSeen})"
+						actionListener="#{mailBoxBean.renderSeen}"
+						update="formMsgMenuStudent" />
+				</p:submenu>
+				<p:submenu label="Boite d'envoi">
+					<p:menuitem
+						value="Messages envoyés (#{mailBoxBean.msgStats.nbrSent})"
+						actionListener="#{mailBoxBean.renderSent}"
+						update="formMsgMenuStudent" />
+
+				</p:submenu>
+			</p:menu>
+
+
+		</div>
+
+		<ui:include
+			src="/pages/teacher/manageMessages/datatables/msgSeen.xhtml" />
+		<ui:include
+			src="/pages/teacher/manageMessages/datatables/msgSent.xhtml" />
+		<ui:include
+			src="/pages/teacher/manageMessages/datatables/msgToRead.xhtml" />
+
+	</h:form>
+
+
+	<!-- ******************************** Message Seen content Dialog *****************************  -->
+	<p:dialog header="Objet: #{mailBoxBean.selectedMsgSeen.subject}"
+		widgetVar="seenDialog" resizable="false" hideEffect="explode">
+		<p:ajax event="close" listener="#{mailBoxBean.handleClose}"/>
+		<h:form id="dialogSeenForm">
+			<br />
+			<h:outputLabel value="De la part de: " for="senderSeen"
+				style="font-weight: bold;" />
+			<h:outputText id="senderSeen"
+				value="#{mailBoxBean.selectedMsgSeen.senderName}" />
+			<br />
+			<br />
+			<pre style="font: 100% Arial, Times, sans-serif !important;">
+				<h:outputText value="#{mailBoxBean.selectedMsgSeen.content}" />
+			</pre>
+			<br />
+			<br />
+
+
+		</h:form>
+	</p:dialog>
+
+
+
+	<!-- ******************************** Message ToRead content Dialog *****************************  -->
+	<p:dialog header="Objet: #{mailBoxBean.selectedMsgToRead.subject}"
+		widgetVar="toReadDialog" resizable="false" hideEffect="explode">
+		<p:ajax event="close" listener="#{mailBoxBean.handleClose}"
+			update=":tabView:messages" />
+		<h:form id="dialogToReadForm">
+			<p:growl showDetail="true" widgetVar="growlResponseAssign"
+				autoUpdate="true" />
+			<br />
+			<h:outputLabel value="De la part de: " for="senderToRead"
+				style="font-weight: bold;" />
+			<h:outputText id="senderToRead"
+				value="#{mailBoxBean.selectedMsgToRead.senderName}" />
+			<br />
+			<br />
+			<pre style="font: 100% Arial, Times, sans-serif !important;">
+				<h:outputText value="#{mailBoxBean.selectedMsgToRead.content}" />
+			</pre>
+			<br />
+			<br />
+
+
+		</h:form>
+	</p:dialog>
+
+
+	<!-- ******************************** Message sent content Dialog *****************************  -->
+	<p:dialog id="dialogContent"
+		header="Objet: #{mailBoxBean.selectedMsgSent.subject}"
+		widgetVar="sentDialog" resizable="false" hideEffect="explode">
+		<p:ajax event="close" listener="#{mailBoxBean.handleClose}"
+			update=":tabView:messages" />
+		<h:form>
+			<br />
+			<h:outputLabel value="Envoyé à: " for="recieverSent"
+				style="font-weight: bold;" />
+			<h:outputText id="recieverSent"
+				value="#{mailBoxBean.selectedMsgSent.receiverName}" />
+			<br />
+			<br />
+			<br />
+			<pre style="font: 100% Arial, Times, sans-serif !important;">
+				<h:outputText value="#{mailBoxBean.selectedMsgSent.content}" />
+			</pre>
+			<br />
+			<br />
+			<br />
+		</h:form>
+	</p:dialog>
+
+
+</ui:composition>

@@ -1,0 +1,45 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+	<div
+		style="display: table-cell !important; vertical-align: top !important; table-layout: auto !important;">
+		
+		
+		<p:dataTable rendered="#{mailBoxBean.toRead}"
+			var="msgToRead" value="#{mailBoxBean.listMsgModelToRead}"
+			selection="#{mailBoxBean.selectedMsgToRead}" rowKey="#{msgToRead.id}"
+			rows="20" emptyMessage="Aucun message a afficher" paginator="true"
+			paginatorPosition="bottom" liveResize="true"
+			style="min-width: 150% !important;">
+			<f:facet name="header">
+           Messages non lus (#{mailBoxBean.msgStats.nbrToRead})
+        </f:facet>
+
+			<p:column selectionMode="single" style="width:2%;text-align:center" />
+
+			<p:column headerText="Date d'envoi">
+				<h:outputText
+					value="#{mailBoxBean.dateFormat.format(msgToRead.sendingDate)}" />
+			</p:column>
+			<p:column headerText="Expéditeur">
+				<h:outputText value="#{msgToRead.senderName}" />
+			</p:column>
+			<p:column headerText="Objet">
+				<h:outputText value="#{msgToRead.subject}" />
+			</p:column>
+
+		</p:dataTable>
+
+		<p:commandButton icon="ui-icon-search" value="Lire"
+			actionListener="#{mailBoxBean.showContent}"
+			update=":tabView:message" rendered="#{mailBoxBean.toRead}" />
+
+	</div>
+
+
+
+
+</ui:composition>

@@ -1,0 +1,129 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+
+	<h:form>
+		<p:growl autoUpdate="true" />
+		<h:outputText
+			value="Vous avez déposé la version finale de votre rapport, vous n'avez plus le droit de télécharger des documents."
+			rendered="#{!reportUploadBean.renderUpload}"
+			style="color: #DC143C;text-align: center;font-size: medium;font-style: italic;font-weight: bold" />
+		<br />
+		<br />
+		<p:commandButton value="Ajouter un rapport"
+			onclick="uploadDialog.show();" style="margin-right:3%;"
+			rendered="#{reportUploadBean.renderUpload}" actionListener="#{reportUploadBean.toUpload}"/>
+
+		<p:commandButton value="Marquer la sélection comme finale"
+			style="margin-right:3%;" rendered="#{reportUploadBean.renderUpload}"
+			actionListener="#{reportUploadBean.markAsFinal}"/>
+
+		<p:commandButton value="Supprimer la sélection"
+			actionListener="#{reportUploadBean.toDeleteReport}" />
+		<br />
+		<br />
+
+		<p:dataTable id="reportsTable" rows="5"
+			value="#{reportUploadBean.listReports}" var="report"
+			rowKey="#{report.id}" emptyMessage="Aucun rapport téléchargé"
+			selection="#{reportUploadBean.selectedReport}" paginator="true"
+			paginatorPosition="bottom" liveResize="true"
+			style="margin-top:0 !important;">
+
+			<f:facet name="header">
+
+			</f:facet>
+
+			<p:column selectionMode="single" style="width:2%;text-align:center" />
+
+			<p:column headerText="Version" width="5%;">
+				<h:outputText value="#{report.version}" />
+			</p:column>
+			<p:column headerText="Titre du document">
+				<h:outputText value="#{report.fileName}" />
+			</p:column>
+			<p:column headerText="Taille (Ko)">
+				<h:outputText value="#{report.size}" />
+			</p:column>
+			<p:column headerText="Etat de validation">
+				<h:outputText value="#{report.state.description}" />
+			</p:column>
+			<p:column headerText="Date de téléchargement">
+				<h:outputText value="#{reportUploadBean.dateFormat.format(report.uploadDate)}" />
+			</p:column>
+
+		</p:dataTable>
+
+	</h:form>
+
+
+
+	<!-- ************************** confirm delete dialog ********************************* -->
+	<p:confirmDialog closeOnEscape="true"
+		message="Vous #{msg['encodage.e.chapeau']}tes sur le point de supprimer le document sélectionné. Voulez-vous continuer ?"
+		header="Confirmez la suppression ..." severity="alert"
+		widgetVar="confirmationDeleteDoc" appendToBody="true">
+		<h:form>
+			<h:outputText
+				value="Remarque: Seul le document sera supprimé, toutes les informations relatives à ce document seront conservées." />
+			<br />
+			<p:commandButton id="confirmRemove" value="Continuer"
+				actionListener="#{reportUploadBean.deleteReport}" />
+			<p:commandButton id="declineFinal" value="Annuler"
+				onclick="confirmationDeleteDoc.close();" />
+		</h:form>
+
+	</p:confirmDialog>
+
+	<!-- ************************** confirm final dialog ********************************* -->
+	<p:confirmDialog closeOnEscape="true"
+		message="Vous #{msg['encodage.e.chapeau']}tes sur le point de déposer une version finale de votre rapport. Voulez-vous continuer ?"
+		header="Confirmez le dépôt ..." severity="alert"
+		widgetVar="confirmationFinal" appendToBody="true">
+		<h:form>
+			<p:commandButton id="confirmRemove" value="Continuer"
+				onclick="confirmationFinal.hide();"
+				actionListener="#{reportUploadBean.confirmFinalVersion}" />
+			<p:commandButton id="declineFinal" value="Annuler"
+				actionListener="#{reportUploadBean.cancelFinalVersion}"
+				onclick="confirmationFinal.close(); uploadDialog.close();" />
+		</h:form>
+
+	</p:confirmDialog>
+
+
+	<!-- ************************** upload report dialog ********************************* -->
+
+	<p:dialog widgetVar="uploadDialog" header="Ajouter un rapport">
+
+		<h:form enctype="multipart/form-data">
+			<p:growl autoUpdate="true" />
+			<br />
+
+			<h:outputText value="Version finale"
+				style="margin-right:3%;font-weight: bold;" />
+			<p:selectBooleanCheckbox value="#{reportUploadBean.finalVersion}">
+				<p:ajax onstart="confirmationFinal.show();" />
+			</p:selectBooleanCheckbox>
+			<br />
+			<br />
+
+			<p:fileUpload fileUploadListener="#{reportUploadBean.fileUpload}"
+				allowTypes="/(\.|\/)(doc|docx|pdf)$/" cancelLabel="Annuler"
+				dragDropSupport="true"
+				invalidFileMessage="Seuls les fichiers de format doc, docx et pdf sont autorisés."
+				label="Choisir" multiple="false" />
+
+			<br />
+			<br />
+			<br />
+
+
+		</h:form>
+
+	</p:dialog>
+
+</ui:composition>

@@ -35,7 +35,7 @@ public class ReportService implements IServiceLocal<Report>, IServiceRemote<Repo
 
 	@Override
 	public void update(Object object) {
-		throw new UnsupportedOperationException("isn't implemented!!!!!!!");
+		em.merge(object);
 	}
 
 	@Override

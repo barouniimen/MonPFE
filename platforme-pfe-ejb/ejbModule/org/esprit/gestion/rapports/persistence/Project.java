@@ -7,6 +7,7 @@ import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -47,8 +48,6 @@ public class Project implements Serializable {
 	private List<ProjectDomain> projectDomains;
 	private String fonctionnalitites;
 	private static final long serialVersionUID = 1L;
-
-	
 
 	public Project(Date startDate, String academicYear, String topic,
 			ValidationState validationState, CompanyCoach companycoach,
@@ -112,7 +111,7 @@ public class Project implements Serializable {
 		this.teacherRoles = teacherRoles;
 	}
 
-	@OneToMany(mappedBy = "project")
+	@OneToMany(mappedBy = "project", fetch = FetchType.EAGER)
 	public List<Report> getReports() {
 		return reports;
 	}

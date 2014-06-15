@@ -1,0 +1,41 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+
+	<p:dataTable var="coachedProj"
+		value="#{coachSpaceBean.coachedProjList}" rowKey="#{coachedProj.id}"
+		rows="20" emptyMessage="Aucun message a afficher" paginator="true"
+		paginatorPosition="bottom" liveResize="true">
+		<f:facet name="header">
+          Etudiants encadrés (#{coachSpaceBean.coachedProjList.size()})
+        </f:facet>
+
+
+		<p:column headerText="Etudiant">
+			<h:outputText
+				value="#{coachedProj.student.lastName}#{msg['message.espace']}#{coachedProj.student.firstName}" />
+		</p:column>
+
+		<p:column headerText="Sujet">
+			<h:outputText value="#{coachedProj.topic}" />
+		</p:column>
+
+		<p:column headerText="Date de début">
+			<h:outputText
+				value="#{coachSpaceBean.simpleDate.format(coachedProj.startDate)}" />
+		</p:column>
+
+		<p:column headerText="Entreprise d'acceuil">
+			<h:outputText value="#{coachedProj.companycoach.company.name}" />
+		</p:column>
+
+		<p:column headerText="Etat du projet">
+			<h:outputText value="#{coachedProj.validationState.description}" />
+		</p:column>
+
+	</p:dataTable>
+
+</ui:composition>
