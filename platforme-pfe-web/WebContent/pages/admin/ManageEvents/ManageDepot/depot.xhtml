@@ -4,8 +4,96 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:p="http://primefaces.org/ui">
 
-	<div id="content">
-		<h:outputLabel value="En cours de construction" />
-	</div>
-	
+	<h:form>
+
+		<div
+			style="display: table-cell !important; float: left !important; vertical-align: top !important; table-layout: auto !important; margin-right:3%;">
+			<h:panelGrid columns="1">
+			<p:commandButton value="Créer une session"
+				actionListener="#{submissionEventBean.tocreateEvent}" />
+				<br/>
+				<p:commandButton value="Rapports déposés" title="Liste des rapports déposés pour la session sélectionnée"/>
+		</h:panelGrid>
+		</div>
+
+		<div
+			style="display: table-cell !important; vertical-align: top !important; table-layout: auto !important;">
+
+			<p:dataTable var="event"
+				value="#{submissionEventBean.allSubmissionEvent}"
+				selection="#{submissionEventBean.selectedSubmitEvent}"
+				rowKey="#{event.id}" rows="20"
+				emptyMessage="Aucune session a afficher" paginator="true"
+				paginatorPosition="bottom" liveResize="true" style="width:100%;">
+				<f:facet name="header">
+           Historique des sessions de dépôt
+        </f:facet>
+				<p:column selectionMode="single" style="width:2%;text-align:center" />
+				<p:column headerText="Date d'ouverture">
+					<h:outputText
+						value="#{submissionEventBean.dateFormat.format(event.startDate)}" />
+				</p:column>
+				<p:column headerText="Date de clôture">
+					<h:outputText
+						value="#{submissionEventBean.dateFormat.format(event.dueDate)}" />
+				</p:column>
+				<p:column headerText="Etat">
+					<h:outputText value="#{event.state.description}" />
+				</p:column>
+
+			</p:dataTable>
+		</div>
+
+
+
+	</h:form>
+
+
+	<p:dialog widgetVar="createSessionDialog"
+		header="Créer une session de dépôt">
+		<p:ajax event="close" listener="#{submissionEventBean.handleClose}" />
+		<h:form>
+
+
+			<p:messages showDetail="true" autoUpdate="true" closable="true" />
+			<h:panelGrid columns="2" columnClasses="label, value"
+				styleClass="grid">
+
+				<h:outputLabel value="Date d'ouverture" for="start" />
+				<p:calendar id="start"
+					value="#{submissionEventBean.submitEventToDB.startDate}"
+					required="true"
+					requiredMessage="Veuillez indiquer une date d'ouverture" />
+
+				<h:outputLabel value="Date de clôture" for="end" />
+				<p:calendar id="end"
+					value="#{submissionEventBean.submitEventToDB.dueDate}"
+					required="true"
+					requiredMessage="Veuillez indiquer une date de clôture" />
+
+				<p:commandButton value="Ajouter"
+					actionListener="#{submissionEventBean.createSubmitEvent}" />
+
+
+
+
+			</h:panelGrid>
+
+
+
+
+		</h:form>
+
+	</p:dialog>
+
+
+	<p:confirmDialog widgetVar="existSessionDialog" appendToBody="true"
+		header="Action interdite"
+		message="Vous ne pouvez créer une nouvelle session de dépôt qu'une fois la session de dépôt en cours est fermée.">
+		<h:form>
+			<p:commandButton value="Ok" onclick="existSessionDialog.close();" />
+
+		</h:form>
+
+	</p:confirmDialog>
 </ui:composition>

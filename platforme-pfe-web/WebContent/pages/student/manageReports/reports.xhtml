@@ -11,6 +11,7 @@
 			value="Vous avez déposé la version finale de votre rapport, vous n'avez plus le droit de télécharger des documents."
 			rendered="#{!reportUploadBean.renderUpload}"
 			style="color: #DC143C;text-align: center;font-size: medium;font-style: italic;font-weight: bold" />
+		
 		<br />
 		<br />
 		<p:commandButton value="Ajouter un rapport"
@@ -45,6 +46,9 @@
 			</p:column>
 			<p:column headerText="Titre du document">
 				<h:outputText value="#{report.fileName}" />
+			</p:column>
+			<p:column headerText="Description">
+				<h:outputText value="#{report.description}" style=" white-space: pre-wrap;"/>
 			</p:column>
 			<p:column headerText="Taille (Ko)">
 				<h:outputText value="#{report.size}" />
@@ -90,7 +94,8 @@
 		<h:form>
 			<p:commandButton id="confirmRemove" value="Continuer"
 				onclick="confirmationFinal.hide();"
-				actionListener="#{reportUploadBean.confirmFinalVersion}" update=":tabView:uploadForm"/>
+				actionListener="#{reportUploadBean.confirmFinalVersion}"
+				update=":tabView:uploadForm" />
 			<p:commandButton id="declineFinal" value="Annuler"
 				actionListener="#{reportUploadBean.cancelFinalVersion}"
 				onclick="confirmationFinal.hide();" update=":tabView:uploadForm" />

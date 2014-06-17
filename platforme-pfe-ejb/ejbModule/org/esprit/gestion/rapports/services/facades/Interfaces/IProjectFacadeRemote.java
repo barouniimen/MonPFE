@@ -40,5 +40,7 @@ public interface IProjectFacadeRemote {
 	public AssignState findCoachAssignement(int idProj);
 
 	public List<TeacherRole> findTeacherRolesToProj(int idProj);
+	
+	public boolean lastedSixMonth(int idStudent);
 
 }

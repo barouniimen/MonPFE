@@ -41,4 +41,6 @@ public interface IProjectFacadeLocal {
 	public AssignState findCorrectorAssignement(int idProj);
 
 	public List<TeacherRole> findTeacherRolesToProj(int idProj);
+
+	public boolean lastedSixMonth(int idStudent);
 }

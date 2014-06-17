@@ -43,6 +43,7 @@ public class ProjectsBean implements Serializable {
 	private String dialogHeaderAssignCorrector;
 	private AssignState assignCoachState;
 	private AssignState assignCorrectorState;
+	private int nbreProjInProcess;
 
 	// MBean-------------------------------------------
 	@ManagedProperty(value = "#{tabViewIndexBean}")
@@ -89,6 +90,7 @@ public class ProjectsBean implements Serializable {
 		// retrieve project list In Process------------------------
 		setListproj(new ArrayList<Project>());
 		setListproj(projFacade.listProjectsInProcess());
+		nbreProjInProcess = listprojInProcess.size();
 
 		// format project List In Process-------------------------
 
@@ -372,6 +374,14 @@ public class ProjectsBean implements Serializable {
 	public void setDialogHeaderAssignCorrector(
 			String dialogHeaderAssignCorrector) {
 		this.dialogHeaderAssignCorrector = dialogHeaderAssignCorrector;
+	}
+
+	public int getNbreProjInProcess() {
+		return nbreProjInProcess;
+	}
+
+	public void setNbreProjInProcess(int nbreProjInProcess) {
+		this.nbreProjInProcess = nbreProjInProcess;
 	}
 
 }

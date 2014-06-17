@@ -26,7 +26,9 @@ import org.esprit.gestion.rapports.persistence.Report;
 import org.esprit.gestion.rapports.persistence.ReportState;
 import org.esprit.gestion.rapports.persistence.Student;
 import org.esprit.gestion.rapports.services.facades.Interfaces.IKeyWordFacadeLocal;
+import org.esprit.gestion.rapports.services.facades.Interfaces.IProjectFacadeLocal;
 import org.esprit.gestion.rapports.services.facades.Interfaces.IReportFacadeLocal;
+import org.esprit.gestion.rapports.services.facades.Interfaces.ISubmissionFacadeLocal;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.event.FlowEvent;
@@ -62,6 +64,8 @@ public class ReportUploadBean {
 	private boolean newKeyWord;
 	private String newCategoryToAdmin;
 	private String newKeyWordToAdmin;
+	private boolean submitSessionOpened;
+	private boolean lastedSixMonth;
 
 	// MBean-------------------------------------------
 	@ManagedProperty(value = "#{tabViewIndexBean}")
@@ -76,6 +80,12 @@ public class ReportUploadBean {
 
 	@EJB
 	IKeyWordFacadeLocal keyWordFacade;
+
+	@EJB
+	ISubmissionFacadeLocal submissionFacade;
+	
+	@EJB
+	IProjectFacadeLocal projFacad;
 
 	/****************************** init method ***************************/
 	@PostConstruct
@@ -110,6 +120,9 @@ public class ReportUploadBean {
 		listKeyWordToDB = new ArrayList<String>();
 
 		newKeyWord = false;
+
+		submitSessionOpened = submissionFacade.sessionOpened();
+		lastedSixMonth = projFacad.lastedSixMonth(authBean.getUser().getId());
 	}
 
 	/*********************** listeners ********************************/
@@ -184,17 +197,40 @@ public class ReportUploadBean {
 	}
 
 	public void confirmFinalVersion(ActionEvent event) {
-		// markAsFinal=true if button marquer comme finale is pressed and not on
-		// upload new file
+		if (submitSessionOpened && lastedSixMonth) {
+			/*
+			 * markAsFinal=true if button marquer comme finale is pressed and
+			 * not on upload new file
+			 */
+			if (markAsFinal) {
+				reportFacade.changeToFinal(selectedReport);
+				FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO,
+						"Depôt réussi",
+						"Vous avez déposé la version finale de votre rapport");
+				FacesContext.getCurrentInstance().addMessage(null, msg);
+			} else {
+				renderAddKw = true;
+			}
+		}
 
-		if (markAsFinal) {
-			reportFacade.changeToFinal(selectedReport);
-			FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO,
-					"Depôt réussi",
-					"Vous avez déposé la version finale de votre rapport");
+		else {
+			
+			if(!submitSessionOpened){
+			FacesMessage msg = new FacesMessage(
+					FacesMessage.SEVERITY_WARN,
+					"Pas de session",
+					"Aucune session de dépôt n'est ouverte en ce moment, vous ne pouvez pas déposer une version finale!");
 			FacesContext.getCurrentInstance().addMessage(null, msg);
-		} else {
-			renderAddKw = true;
+			}
+			if(!lastedSixMonth){
+				FacesMessage msg = new FacesMessage(
+						FacesMessage.SEVERITY_WARN,
+						"Moins de 6 mois",
+						"Votre projet a duré moins que 6 mois, vous ne pouvez pas le déposer maintenant!");
+				FacesContext.getCurrentInstance().addMessage(null, msg);
+			}
+			markAsFinal = false;
+			finalVersion = false;
 		}
 
 		markAsFinal = false;
@@ -245,16 +281,15 @@ public class ReportUploadBean {
 	}
 
 	public void doUpload(ActionEvent event) {
-		/*String tmpDestination = "C:\\PFE_Tools\\jboss-as-7.1.1.Final\\tmpUpload";
-		File tmpDirectory = new File(tmpDestination);
-		try {
-			FileUtils.cleanDirectory(tmpDirectory);
-			System.out.println("did clear!!!!!!!!!!!");
-		} catch (IOException e1) {
-			System.out.println("didnt clear!!!!!!!!!!!!");
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}*/
+		/*
+		 * String tmpDestination =
+		 * "C:\\PFE_Tools\\jboss-as-7.1.1.Final\\tmpUpload"; File tmpDirectory =
+		 * new File(tmpDestination); try {
+		 * FileUtils.cleanDirectory(tmpDirectory);
+		 * System.out.println("did clear!!!!!!!!!!!"); } catch (IOException e1)
+		 * { System.out.println("didnt clear!!!!!!!!!!!!"); // TODO
+		 * Auto-generated catch block e1.printStackTrace(); }
+		 */
 
 		int tabIndex;
 		tabIndex = tabViewBean.getTabIndex();
@@ -647,6 +682,22 @@ public class ReportUploadBean {
 
 	public void setNewKeyWordToAdmin(String newKeyWordToAdmin) {
 		this.newKeyWordToAdmin = newKeyWordToAdmin;
+	}
+
+	public boolean isSubmitSessionOpened() {
+		return submitSessionOpened;
+	}
+
+	public void setSubmitSessionOpened(boolean submitSessionOpened) {
+		this.submitSessionOpened = submitSessionOpened;
+	}
+
+	public boolean isLastedSixMonth() {
+		return lastedSixMonth;
+	}
+
+	public void setLastedSixMonth(boolean lastedSixMonth) {
+		this.lastedSixMonth = lastedSixMonth;
 	}
 
 }

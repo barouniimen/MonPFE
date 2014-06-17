@@ -64,32 +64,24 @@
 			<p:tabView id="tabView" activeIndex="#{tabViewIndexBean.tabIndex}"
 				style="background-color: #FFFFFF !important;  border-color:#FFFFFF !important; ">
 				<p:ajax event="tabChange" listener="#{tabViewIndexBean.onChange}" />
-				<p:tab id="currentProject" title="Projets en cours">
+
+
+				<p:tab id="currentProject" title="Projets en cours (#{projectsBean.nbreProjInProcess})">
 					<p:spacer style="margin-top:5%;"></p:spacer>
 					<ui:include src="/pages/admin/ManageProjects/projects.xhtml" />
 				</p:tab>
 
-				<p:tab id="Soutenances" title="Soutenances">
-					<p:spacer style="margin-top:5%;"></p:spacer>
-					<ui:include
-						src="/pages/admin/ManageEvents/ManagePresentation/soutenances.xhtml" />
-				</p:tab>
-				<p:tab id="depot" title="Sessions de dépôt">
+				<p:tab id="depot" title="Sessions de dépôt (#{submissionEventBean.nbreSessionOpened})">
 					<p:spacer style="margin-top:5%;"></p:spacer>
 					<ui:include src="/pages/admin/ManageEvents/ManageDepot/depot.xhtml" />
 				</p:tab>
-				<p:tab id="stockage" title="Espaces de stockage">
-					<p:spacer style="margin-top:5%;"></p:spacer>
-					<ui:include src="/pages/admin/ManageStorageSpace/stockage.xhtml" />
-				</p:tab>
-				<p:tab id="message" title="Messages (#{mailBoxBean.msgStats.nbrToRead})">
+
+				<p:tab id="message"
+					title="Messages (#{mailBoxBean.msgStats.nbrToRead})">
 					<p:spacer style="margin-top:5%;"></p:spacer>
 					<ui:include src="/pages/admin/ManageMessages/message.xhtml" />
 				</p:tab>
-				<p:tab id="recherche" title="Rechercher rapport">
-					<p:spacer style="margin-top:5%;"></p:spacer>
-					<ui:include src="/pages/admin/ViewReports/recherche.xhtml" />
-				</p:tab>
+
 			</p:tabView>
 			<!-- end content -->
 

@@ -127,8 +127,8 @@
 	<p:dialog id="dialogEdit"
 		header="Modifier le projet: #{projectsBean.selectedProject.projTopic}"
 		widgetVar="EditProjDialog" resizable="false" hideEffect="explode"
-		closable="true" listener="#{projectsBean.handleClose}">
-
+		closable="true">
+<p:ajax event="close" listener="#{projectsBean.handleClose}" />
 		<h:form id="EditForm">
 			<ui:include
 				src="/pages/admin/ManageProjects/forms/updateProjectWizard.xhtml" />

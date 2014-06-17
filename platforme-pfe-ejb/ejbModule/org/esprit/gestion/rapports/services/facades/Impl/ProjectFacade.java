@@ -1,6 +1,7 @@
 package org.esprit.gestion.rapports.services.facades.Impl;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.ejb.EJB;
@@ -143,7 +144,7 @@ public class ProjectFacade implements IProjectFacadeLocal, IProjectFacadeRemote 
 	@Override
 	public void assignCorrectorToProject(Teacher teacher, int iDproject,
 			User sender) {
-		
+
 		int idReciever = teacher.getId();
 		msgFacade.sendAffectCorrector(iDproject, idReciever, sender.getId());
 	}
@@ -422,7 +423,6 @@ public class ProjectFacade implements IProjectFacadeLocal, IProjectFacadeRemote 
 		List<Project> returnList = new ArrayList<Project>();
 		Project project = new Project();
 
-		
 		project.setValidationState(ValidationState.DEPOSED);
 
 		returnList = projServ.retrieveList(project, "VS");
@@ -435,7 +435,6 @@ public class ProjectFacade implements IProjectFacadeLocal, IProjectFacadeRemote 
 		List<Project> returnList = new ArrayList<Project>();
 		Project project = new Project();
 
-		
 		project.setValidationState(ValidationState.WAITINGSOUT);
 
 		returnList = projServ.retrieveList(project, "VS");
@@ -448,17 +447,43 @@ public class ProjectFacade implements IProjectFacadeLocal, IProjectFacadeRemote 
 		List<Project> returnList = new ArrayList<Project>();
 		Project project = new Project();
 
-		
 		project.setValidationState(ValidationState.SOUTVALID);
 
 		returnList = projServ.retrieveList(project, "VS");
-		
-		
+
 		project.setValidationState(ValidationState.SOUTNONVALID);
 		List<Project> projList = projServ.retrieveList(project, "VS");
 
 		returnList.addAll(projList);
 
 		return returnList;
+	}
+
+	@Override
+	public boolean lastedSixMonth(int idStudent) {
+
+		Student st = new Student();
+		st.setId(idStudent);
+
+		st = (Student) studentServ.retrieve(st, "ID");
+
+		Project proj = new Project();
+		proj = st.getProject();
+
+		Date currentDate = new Date();
+
+		long diff = currentDate.getTime() - proj.getStartDate().getTime();
+
+		int diffDays = (int) (diff / (24 * 60 * 60 * 1000));
+
+		int diffMonth = diffDays / 30;
+
+		if (diffMonth > 5) {
+			return true;
+		}
+
+		else {
+			return false;
+		}
 	}
 }
