@@ -18,30 +18,32 @@ public class CoachSpaceBean {
 
 	private List<Project> coachedProjList;
 	private SimpleDateFormat simpleDate;
-	
+	private int nbreCoachedStudents;
+
 	@EJB
 	private ICoachFacadeLocal coachFacade;
-	
-	
+
 	@ManagedProperty(value = "#{authenticationBean}")
 	private AuthenticationBean authBean;
-	
-	
+
 	/************************ init method **************************/
 	@PostConstruct
-	public void init(){
+	public void init() {
 		simpleDate = new SimpleDateFormat("dd-M-yyyy");
-		
-		coachedProjList = coachFacade.listProjectsCoached(authBean.getUser().getId());
-		
+
+		coachedProjList = coachFacade.listProjectsCoached(authBean.getUser()
+				.getId());
+		if (coachedProjList == null) {
+			nbreCoachedStudents = 0;
+		} else {
+			nbreCoachedStudents = coachedProjList.size();
+		}
 	}
-	
-	
 
 	/******************** constructor *****************************/
 	public CoachSpaceBean() {
 		super();
-		
+
 	}
 
 	/*********************** getter && setter *************************/
@@ -53,22 +55,24 @@ public class CoachSpaceBean {
 		this.coachedProjList = coachedProjList;
 	}
 
-
-
 	public void setAuthBean(AuthenticationBean authBean) {
 		this.authBean = authBean;
 	}
-
-
 
 	public SimpleDateFormat getSimpleDate() {
 		return simpleDate;
 	}
 
-
-
 	public void setSimpleDate(SimpleDateFormat simpleDate) {
 		this.simpleDate = simpleDate;
+	}
+
+	public int getNbreCoachedStudents() {
+		return nbreCoachedStudents;
+	}
+
+	public void setNbreCoachedStudents(int nbreCoachedStudents) {
+		this.nbreCoachedStudents = nbreCoachedStudents;
 	}
 
 }

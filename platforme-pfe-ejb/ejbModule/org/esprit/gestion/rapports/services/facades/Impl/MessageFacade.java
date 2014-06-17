@@ -830,12 +830,7 @@ public class MessageFacade implements IMessageFacadeLocal, IMessageFacadeRemote 
 
 	}
 
-	@Override
-	public void sendAskNewKeyWord(String newCategory, String newKeyWord,
-			int idSender, Student sender) {
-		// TODO Auto-generated method stub
 
-	}
 
 	@Override
 	public void sendAskNewKeyWord(String newCategory, String newKeyWord,

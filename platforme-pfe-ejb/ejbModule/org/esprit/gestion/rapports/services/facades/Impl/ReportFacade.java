@@ -144,8 +144,7 @@ public class ReportFacade implements IReportFacadeLocal, IReportFacadeRemote {
 			}			
 			
 			
-			// TODO
-			// notifier encadrant + administration
+			// TODO notifier encadrant + administration
 		}
 
 	}
@@ -178,8 +177,8 @@ public class ReportFacade implements IReportFacadeLocal, IReportFacadeRemote {
 		selectedReport.setUploadDate(date);
 
 		reportServ.update(selectedReport);
-		// informer encadrant + admin pour affecter rapporteur
-		// TODO
+		
+		// TODO informer encadrant + admin pour affecter rapporteur
 
 	}
 

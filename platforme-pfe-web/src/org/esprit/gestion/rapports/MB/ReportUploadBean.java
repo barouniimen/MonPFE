@@ -235,7 +235,7 @@ public class ReportUploadBean {
 
 		markAsFinal = false;
 		onUpload = false;
-		// TODO render key words
+		
 
 	}
 
@@ -281,13 +281,15 @@ public class ReportUploadBean {
 	}
 
 	public void doUpload(ActionEvent event) {
+		// TODO clear tmp directory
+		
 		/*
 		 * String tmpDestination =
 		 * "C:\\PFE_Tools\\jboss-as-7.1.1.Final\\tmpUpload"; File tmpDirectory =
 		 * new File(tmpDestination); try {
 		 * FileUtils.cleanDirectory(tmpDirectory);
 		 * System.out.println("did clear!!!!!!!!!!!"); } catch (IOException e1)
-		 * { System.out.println("didnt clear!!!!!!!!!!!!"); // TODO
+		 * { System.out.println("didnt clear!!!!!!!!!!!!"); 
 		 * Auto-generated catch block e1.printStackTrace(); }
 		 */
 

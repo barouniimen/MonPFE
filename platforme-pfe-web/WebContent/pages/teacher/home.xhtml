@@ -42,7 +42,9 @@
 			<p:tabView id="tabView" activeIndex="#{tabViewIndexBean.tabIndex}"
 				style="background-color: #FFFFFF !important;  border-color:#FFFFFF !important; ">
 				<p:ajax event="tabChange" listener="#{tabViewIndexBean.onChange}" />
-				<p:tab id="coachSpace" title="Etudiants encadrés">
+				
+				
+				<p:tab id="coachSpace" title="Etudiants encadrés (#{coachSpaceBean.nbreCoachedStudents})">
 					<p:spacer style="margin-top:5%;"></p:spacer>
 					<ui:include src="/pages/teacher/coachSpace/coachSpace.xhtml" />
 				</p:tab>

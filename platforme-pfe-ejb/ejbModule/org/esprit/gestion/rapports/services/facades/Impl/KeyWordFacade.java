@@ -64,7 +64,6 @@ public class KeyWordFacade implements IKeyWordFacadeLocal, IKeyWordFacadeRemote{
 
 	@Override
 	public void askNewKeyWord(String newCategory, String newKeyWord, Student sender) {
-		// TODO Auto-generated method stub
 		msgFacade.sendAskNewKeyWord(newCategory,newKeyWord,sender);
 		
 	}

@@ -7,7 +7,7 @@
 
 	<p:dataTable var="coachedProj"
 		value="#{coachSpaceBean.coachedProjList}" rowKey="#{coachedProj.id}"
-		rows="20" emptyMessage="Aucun message a afficher" paginator="true"
+		rows="20" emptyMessage="Vous n'avez aucun étudiant à encadrer pour le moment" paginator="true"
 		paginatorPosition="bottom" liveResize="true">
 		<f:facet name="header">
           Etudiants encadrés (#{coachSpaceBean.coachedProjList.size()})

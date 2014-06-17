@@ -6,6 +6,7 @@ import javax.ejb.Local;
 
 import org.esprit.gestion.rapports.persistence.Project;
 import org.esprit.gestion.rapports.persistence.Student;
+import org.esprit.gestion.rapports.persistence.Teacher;
 
 /**
  * @author Imen Barouni
@@ -25,5 +26,9 @@ public interface IStudentFacadeLocal {
 	public List<Student> listAllStudent();
 	
 	public Project findStudentProj(int idStudent);
+
+	public boolean hasCoach(int idStudent);
+
+	public Teacher findCoach(int idStudent);
 
 }

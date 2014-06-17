@@ -4,38 +4,126 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:p="http://primefaces.org/ui">
 
-
 	<h:outputText value="Vous n'avez aucun projet en cours"
 		rendered="#{!projectDescriptionBean.projFound}" />
-	<h:panelGrid columns="2" columnClasses="label, value" styleClass="grid">
-
-		<p:outputLabel value="Sujet: " for="topic" style="font-weight: bold;"
-			rendered="#{projectDescriptionBean.projFound}" />
-
-		
-		<h:outputText id="topic"
-			value="#{projectDescriptionBean.studentProj.topic}"
-			rendered="#{projectDescriptionBean.projFound}" />
-
-		<p:outputLabel value="Date de début: " for="date"
-			style="font-weight: bold;"
-			rendered="#{projectDescriptionBean.projFound}" />
-
-		
-		<h:outputText id="date"
-			value="#{projectDescriptionBean.dateFormat.format(projectDescriptionBean.studentProj.startDate)}"
-			rendered="#{projectDescriptionBean.projFound}" />
-			
-			<p:outputLabel value="Année universitaire: " for="year" style="font-weight: bold;"
-			rendered="#{projectDescriptionBean.projFound}" />
-		
-		
-		<h:outputText id="year"
-			value="#{projectDescriptionBean.studentProj.academicYear}"
-			rendered="#{projectDescriptionBean.projFound}" />
 
 
-	</h:panelGrid>
+	<p:panel header="Informations projet"
+		rendered="#{projectDescriptionBean.projFound}" toggleable="true">
+		<h:panelGrid columns="3" columnClasses="label, value">
+
+			<p:outputLabel value="Sujet: " for="topic" style="font-weight: bold;" />
+			<p:spacer width="10" />
+			<h:outputText id="topic"
+				value="#{projectDescriptionBean.studentProj.topic}" />
+
+			<p:outputLabel value="Date de début: " for="date"
+				style="font-weight: bold;" />
+			<p:spacer width="10" />
+			<h:outputText id="date"
+				value="#{projectDescriptionBean.dateFormat.format(projectDescriptionBean.studentProj.startDate)}" />
+
+			<p:outputLabel value="Année universitaire: " for="year"
+				style="font-weight: bold;" />
+			<p:spacer width="10" />
+			<h:outputText id="year"
+				value="#{projectDescriptionBean.studentProj.academicYear}" />
+		</h:panelGrid>
+	</p:panel>
+
+	<p:panel header="Fonctionnalitées du projet"
+		rendered="#{projectDescriptionBean.projFound}" toggleable="true">
+		<h:panelGrid columns="3" columnClasses="label, value">
+
+
+			<h:outputText
+				value="#{projectDescriptionBean.studentProj.fonctionnalitites}"
+				style=" white-space: pre-wrap;" />
+
+
+		</h:panelGrid>
+	</p:panel>
+
+	<p:panel header="Informations entreprise d'acceuil" toggleable="true"
+		rendered="#{projectDescriptionBean.projFound}" collapsed="true">
+		<h:panelGrid columns="3" columnClasses="label, value"
+			styleClass="grid">
+
+			<p:outputLabel value="Entreprise: " for="comp"
+				style="font-weight: bold;" />
+			<p:spacer width="10" />
+			<h:outputText id="comp"
+				value="#{projectDescriptionBean.studentProj.companycoach.company.name}" />
+
+			<p:outputLabel value="Adresse: " for="compAdress"
+				style="font-weight: bold;" />
+			<p:spacer width="10" />
+			<h:outputText id="compAdress"
+				value="#{projectDescriptionBean.studentProj.companycoach.company.adress}" />
+
+			<p:outputLabel value="Encadrant: " for="coachComp"
+				style="font-weight: bold;" />
+			<p:spacer width="10" />
+			<h:outputText id="coachComp"
+				value="#{projectDescriptionBean.studentProj.companycoach.lastName}#{msg['message.espace']}#{projectDescriptionBean.studentProj.companycoach.firstName}" />
+
+			<p:outputLabel value="Poste de l'encadrant: " for="compPos"
+				style="font-weight: bold;" />
+			<p:spacer width="10" />
+			<h:outputText id="compPos"
+				value="#{projectDescriptionBean.studentProj.companycoach.position}" />
+
+			<p:outputLabel value="E-mail de l'encadrant: " for="compMail"
+				style="font-weight: bold;" />
+			<p:spacer width="10" />
+			<h:outputText id="compMail"
+				value="#{projectDescriptionBean.studentProj.companycoach.email}" />
+
+			<p:outputLabel value="Numéro de téléphone de l'encadrant: "
+				for="compPhone" style="font-weight: bold;" />
+			<p:spacer width="10" />
+			<h:outputText id="compPhone"
+				value="#{projectDescriptionBean.studentProj.companycoach.phoneNumber}" />
+
+
+
+		</h:panelGrid>
+
+	</p:panel>
+
+
+	<p:panel header="Informations encadrement" toggleable="true"
+		rendered="#{projectDescriptionBean.projFound}" collapsed="true">
+
+		<h:outputText value="Vous n'avez pas encore d'encadrant"
+			style="font-weight: bold;color: #DC143C;text-align: center;font-size: medium;font-style: italic;"
+			rendered="#{projectDescriptionBean.dontHaveCoach}" />
+
+		<h:panelGrid columns="3" columnClasses="label, value"
+			styleClass="grid" rendered="#{projectDescriptionBean.hasCoach}">
+
+			<p:outputLabel value="Encadrant: " for="coach"
+				style="font-weight: bold;" />
+			<p:spacer width="10" />
+			<h:outputText id="coach"
+				value="#{projectDescriptionBean.coach.lastName}#{msg['message.espace']}#{projectDescriptionBean.coach.firstName}" />
+
+			<p:outputLabel value="Email: " for="coachMail"
+				style="font-weight: bold;" />
+			<p:spacer width="10" />
+			<h:outputText id="coachMail"
+				value="#{projectDescriptionBean.coach.email}" />
+
+			<p:outputLabel value="Numéro de téléphone: " for="coachPhone"
+				style="font-weight: bold;" />
+			<p:spacer width="10" />
+			<h:outputText id="coachPhone"
+				value="#{projectDescriptionBean.coach.phoneNumber}" />
+
+		</h:panelGrid>
+
+	</p:panel>
+
 
 
 </ui:composition>

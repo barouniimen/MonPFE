@@ -11,11 +11,15 @@ import org.esprit.gestion.rapports.persistence.Registration;
 import org.esprit.gestion.rapports.persistence.RegistrationPK;
 import org.esprit.gestion.rapports.persistence.StorageSpace;
 import org.esprit.gestion.rapports.persistence.Student;
+import org.esprit.gestion.rapports.persistence.Teacher;
+import org.esprit.gestion.rapports.persistence.TeacherRole;
+import org.esprit.gestion.rapports.persistence.TeacherRoleType;
 import org.esprit.gestion.rapports.services.CRUD.Interfaces.IServiceLocal;
 import org.esprit.gestion.rapports.services.CRUD.Util.ProjectQualifier;
 import org.esprit.gestion.rapports.services.CRUD.Util.RegistrationQualifier;
 import org.esprit.gestion.rapports.services.CRUD.Util.StorageSpaceQualifier;
 import org.esprit.gestion.rapports.services.CRUD.Util.StudentQualifier;
+import org.esprit.gestion.rapports.services.CRUD.Util.TeacherQualifier;
 import org.esprit.gestion.rapports.services.facades.Interfaces.IStudentFacadeLocal;
 import org.esprit.gestion.rapports.services.facades.Interfaces.IStudentFacadeRemote;
 
@@ -37,6 +41,11 @@ public class StudentFacade implements IStudentFacadeLocal, IStudentFacadeRemote 
 	@Inject
 	@ProjectQualifier
 	IServiceLocal<Project> projServ;
+	
+	
+	@Inject
+	@TeacherQualifier
+	IServiceLocal<Teacher> teacherServ;
 
 	@Override
 	public List<Student> listStudentsWithoutProject() {
@@ -171,14 +180,74 @@ public class StudentFacade implements IStudentFacadeLocal, IStudentFacadeRemote 
 	@Override
 	public Project findStudentProj(int idStudent) {
 		Project proj = new Project();
-		
+
 		Student st = new Student();
 		st.setId(idStudent);
 		st = (Student) studentServ.retrieve(st, "ID");
-		
+
 		proj = st.getProject();
-		
+
 		return proj;
-		
+
+	}
+
+	@Override
+	public boolean hasCoach(int idStudent) {
+		Student st = new Student();
+		st.setId(idStudent);
+
+		st = (Student) studentServ.retrieve(st, "ID");
+
+		Project proj = new Project();
+		proj = st.getProject();
+
+		proj = (Project) projServ.retrieve(proj, "ID");
+
+		List<TeacherRole> roles = new ArrayList<TeacherRole>();
+		roles = proj.getTeacherRoles();
+
+		for (int i = 0; i < roles.size(); i++) {
+			if (roles.get(i).getRole().equals(TeacherRoleType.ENCADRANT)) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	@Override
+	public Teacher findCoach(int idStudent) {
+		Teacher t = new Teacher();
+		boolean found = false;
+
+		Student st = new Student();
+		st.setId(idStudent);
+
+		st = (Student) studentServ.retrieve(st, "ID");
+
+		Project proj = new Project();
+		proj = st.getProject();
+
+		proj = (Project) projServ.retrieve(proj, "ID");
+
+		List<TeacherRole> roles = new ArrayList<TeacherRole>();
+		roles = proj.getTeacherRoles();
+
+		for (int i = 0; i < roles.size(); i++) {
+			if (roles.get(i).getRole().equals(TeacherRoleType.ENCADRANT)) {
+				found = true;
+				t.setId(roles.get(i).getPk().getTeacherId());
+				t = (Teacher) teacherServ.retrieve(t, "ID");
+				
+			}
+		}
+	
+		if(found == false){
+			return null;
+		}
+		else
+		{
+			return t;
+		}
 	}
 }

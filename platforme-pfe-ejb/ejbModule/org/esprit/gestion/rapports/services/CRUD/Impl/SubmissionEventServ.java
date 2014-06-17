@@ -69,7 +69,7 @@ public class SubmissionEventServ implements IServiceLocal<SubmissionEvent>,
 
 	@Override
 	public void delete(int id) {
-		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("isn't implemented!!!!!!!");
 
 	}
 
