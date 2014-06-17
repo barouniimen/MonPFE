@@ -49,14 +49,14 @@
 				</h:selectOneMenu>
 
 				<br />
-				<p:commandLink value="Affecter à une U.P"
+				<p:commandLink value="Affecter à une U.E"
 					actionListener="#{addTeacherBean.renderAffectToUP}"
 					update="formT" disabled="#{addTeacherBean.affectToUP}"
 					style="color: #DC143C;font-weight: bold;text-decoration: underline;" />
 
 
 				<br />
-				<p:commandLink value="Ne pas affecter à une U.P"
+				<p:commandLink value="Ne pas affecter à une U.E"
 					actionListener="#{addTeacherBean.notRenderAffectToUP}"
 					update="formT" disabled="#{addTeacherBean.notAffectToUP}"
 					style="color: #DC143C;font-weight: bold;text-decoration: underline;" />
@@ -68,7 +68,7 @@
 					value="#{addTeacherBean.selectedTeachUnit.id}" rendered="#{addTeacherBean.upDispo}"
 					style="width:160px!important;">
 					<f:selectItem
-						itemLabel="S#{msg['encodage.e.accent.grave']}lectionnez une UP"
+						itemLabel="S#{msg['encodage.e.accent.grave']}lectionnez une U.E"
 						itemValue="-1" />
 					<f:selectItems value="#{addTeacherBean.listTeachUnitFromDB}" var="upList"
 						itemLabel="#{upList.name}" itemValue="#{upList.id}" />

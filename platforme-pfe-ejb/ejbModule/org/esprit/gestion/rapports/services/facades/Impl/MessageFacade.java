@@ -376,8 +376,6 @@ public class MessageFacade implements IMessageFacadeLocal, IMessageFacadeRemote 
 		// Persist UserMessage sender
 		userMsgServ.create(userMsgSender);
 
-
-
 		// update response state
 		Message msgToUpdate = new Message();
 		msgToUpdate.setIdReceiver(idCoach);
@@ -621,9 +619,15 @@ public class MessageFacade implements IMessageFacadeLocal, IMessageFacadeRemote 
 				+ " "
 				+ t.getFirstName()
 				+ ", \n Votre affectation en tant que rapporteur pour le projet intitulé "
-				+ "[" + project.getTopic() + "]" + " réalisé par " + "["
-				+ project.getStudent().getLastName() + " "
-				+ project.getStudent().getFirstName() + "], a été annulée. \n\n\n Cordialement \n Direction des Stages et PFE";
+				+ "["
+				+ project.getTopic()
+				+ "]"
+				+ " réalisé par "
+				+ "["
+				+ project.getStudent().getLastName()
+				+ " "
+				+ project.getStudent().getFirstName()
+				+ "], a été annulée. \n\n\n Cordialement \n Direction des Stages et PFE";
 		Message msgCorrector = new Message(project.getId(),
 				"Affectation en tant que rapporteur annul\u00E9e",
 				contentCorrector, correctorId, senderId, sendingDate, type,
@@ -824,6 +828,62 @@ public class MessageFacade implements IMessageFacadeLocal, IMessageFacadeRemote 
 		useMsg.setAccess(access);
 		userMsgServ.update(useMsg);
 
+	}
+
+	@Override
+	public void sendAskNewKeyWord(String newCategory, String newKeyWord,
+			int idSender, Student sender) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void sendAskNewKeyWord(String newCategory, String newKeyWord,
+			Student sender) {
+		sender = (Student) studentServ.retrieve(sender, "ID");
+		// init msg
+		Message msg = new Message();
+		msg.setContent("Bonjour,\n\n L'étudiant(e) "
+				+ sender.getLastName()
+				+ " "
+				+ sender.getFirstName()
+				+ " souhaite ajouter un nouveau mot clé pour son rapport.\n\n Il/Elle propose le mot clé: "
+				+ newKeyWord + " sous la catégorie: " + newCategory
+				+ ".\n\n Cordialement");
+		msg.setIdSender(sender.getId());
+		msg.setIncludedRef(sender.getProject().getId());
+		Date date = new Date();
+		msg.setSendingDate(date);
+		msg.setSubject("Ajout de mot clé");
+		msg.setType(MessageType.BySTUDENT);
+		Administrator reciever = new Administrator();
+		reciever = (adminServ.retrieveList(null, "ALL")).get(0);
+		msg.setIdReceiver(reciever.getId());
+
+		// create msg
+		msgServ.create(msg);
+
+		// create admin msg cx
+		UserMessagePK pkAdmin = new UserMessagePK();
+		pkAdmin.setMessageId(msg.getId());
+		pkAdmin.setUserId(reciever.getId());
+
+		UserMessage adminMsgCx = new UserMessage();
+		adminMsgCx.setAccess(MessageAccess.TOREAD);
+		adminMsgCx.setPk(pkAdmin);
+
+		userMsgServ.create(adminMsgCx);
+
+		// create student admin cx
+		UserMessagePK pkStudent = new UserMessagePK();
+		pkStudent.setMessageId(msg.getId());
+		pkStudent.setUserId(sender.getId());
+		
+		UserMessage studentMsgCx = new UserMessage();
+		studentMsgCx.setAccess(MessageAccess.SENT);
+		studentMsgCx.setPk(pkStudent);
+		
+		userMsgServ.create(studentMsgCx);
 	}
 
 }

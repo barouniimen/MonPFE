@@ -1,0 +1,82 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+
+	<p:panel toggleable="true" header="Ajouter un mot clés"
+		collapsed="true" widgetVar="panelAddKw">
+		<p:ajax event="toggle" listener="#{addKeyWordBean.handleToggle}"
+			update="formKw" />
+		<h:panelGrid columns="2" columnClasses="label, value">
+			<h:form id="formKw">
+
+
+				<h:outputText value="Sélectionnez une catégorie" />
+				<h:selectOneMenu id="selectCateg"
+					value="#{addKeyWordBean.selectedCategory.id}">
+					<p:ajax event="change"
+						listener="#{addKeyWordBean.onChangeCategory}" update="formKw" />
+					<f:selectItem
+						itemLabel="S#{msg['encodage.e.accent.grave']}lectionnez une catégorie"
+						itemValue="-1" />
+					<f:selectItems value="#{addKeyWordBean.listKwordCateg}" var="categ"
+						itemLabel="#{categ.categoryName}" itemValue="#{categ.id}" />
+				</h:selectOneMenu>
+				<br />
+				<p:commandLink value="Nouvelle catégorie"
+					actionListener="#{addKeyWordBean.renderAddKwCateg}" update="formKw"
+					style="color: #DC143C;font-weight: bold;text-decoration: underline;" />
+				<br />
+				<br />
+				<h:outputText value="Nom" rendered="#{addKeyWordBean.doAddCateg}"
+					style="margin-right: 2%;" />
+				<h:inputText value="#{addKeyWordBean.categToDB.categoryName}"
+					rendered="#{addKeyWordBean.doAddCateg}" />
+				<br />
+				<br />
+				<p:commandButton value="Ajouter catégorie"
+					actionListener="#{addKeyWordBean.addCateg}" rendered="#{addKeyWordBean.doAddCateg}"/>
+
+
+				<br />
+				<br />
+				<h:outputText value="Aucun mot clé de cette catégorie"
+					style="font-weight: bold;"
+					rendered="#{addKeyWordBean.notrenderlistKw}" />
+				<h:outputText value="Mots clés existants" style="font-weight: bold;"
+					rendered="#{addKeyWordBean.renderlistKeyW}" />
+				<br />
+
+				<ui:repeat var="kw" value="#{addKeyWordBean.listKeyWord}">
+					<h:outputText value="#{kw.name}"
+						rendered="#{addKeyWordBean.renderlistKeyW}" />
+					<br />
+				</ui:repeat>
+				<br />
+
+
+				<p:commandLink value="Nouveau mot clé"
+					actionListener="#{addKeyWordBean.renderAddKw}"
+					rendered="#{addKeyWordBean.renderAddButton}" update="formKw"
+					style="color: #DC143C;font-weight: bold;text-decoration: underline;" />
+				<br />
+				<br />
+				<h:outputText value="Nom" rendered="#{addKeyWordBean.doAddKeyWord}"
+					style="margin-right: 2%;" />
+				<h:inputText value="#{addKeyWordBean.kwToDB.name}"
+					rendered="#{addKeyWordBean.doAddKeyWord}" />
+				<br />
+				<br />
+				<p:commandButton value="Ajouter mot clé"
+					actionListener="#{addKeyWordBean.addKeyWord}" rendered="#{addKeyWordBean.doAddKeyWord}"/>
+
+
+			</h:form>
+		</h:panelGrid>
+
+	</p:panel>
+
+
+</ui:composition>

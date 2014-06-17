@@ -1,10 +1,12 @@
 package org.esprit.gestion.rapports.services.CRUD.Impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
 
 import org.esprit.gestion.rapports.persistence.KeyWordCategory;
 import org.esprit.gestion.rapports.services.CRUD.Interfaces.IServiceLocal;
@@ -13,11 +15,12 @@ import org.esprit.gestion.rapports.services.CRUD.Util.KWcategoryQualifier;
 
 @KWcategoryQualifier
 @Stateless
-public class KeyWordsCategoryServ implements IServiceLocal<KeyWordCategory>, IServiceRemote<KeyWordCategory>{
-	
+public class KeyWordsCategoryServ implements IServiceLocal<KeyWordCategory>,
+		IServiceRemote<KeyWordCategory> {
+
 	@PersistenceContext
 	EntityManager em;
-	
+
 	@Override
 	public void delete(Object object) {
 		throw new UnsupportedOperationException("isn't implemented!!!!!!!");
@@ -45,7 +48,16 @@ public class KeyWordsCategoryServ implements IServiceLocal<KeyWordCategory>, ISe
 
 	@Override
 	public List<KeyWordCategory> retrieveList(Object object, String searchBy) {
-		throw new UnsupportedOperationException("isn't implemented!!!!!!!");
+		List<KeyWordCategory> returnList = new ArrayList<KeyWordCategory>();
+		returnList = null;
+		/************************* searcheBy = ALL ******************************/
+		if (searchBy == "ALL") {
+			TypedQuery<KeyWordCategory> query = em.createNamedQuery(
+					"Keywordcategory.findAll", KeyWordCategory.class);
+			returnList = query.getResultList();
+		}
+
+		return returnList;
 	}
 
 }

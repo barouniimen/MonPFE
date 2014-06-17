@@ -21,7 +21,8 @@ import javax.persistence.OneToMany;
 @NamedQueries({
 		@NamedQuery(name = "Keyword.findAll", query = "SELECT k FROM KeyWord k"),
 		@NamedQuery(name = "Keyword.findById", query = "SELECT k FROM KeyWord k WHERE k.id = :id"),
-		@NamedQuery(name = "Keyword.findByName", query = "SELECT k FROM KeyWord k WHERE k.name = :name") })
+		@NamedQuery(name = "Keyword.findByName", query = "SELECT k FROM KeyWord k WHERE k.name = :name"),
+		@NamedQuery(name = "Keyword.findByCategory", query = "SELECT k FROM KeyWord k WHERE k.category = :category")})
 public class KeyWord implements Serializable {
 
 	private int id;

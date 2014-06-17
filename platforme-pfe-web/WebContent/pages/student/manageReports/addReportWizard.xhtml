@@ -1,0 +1,190 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+
+	<p:wizard id="wizardAddReport" widgetVar="wizAddRep"
+		flowListener="#{reportUploadBean.onFlowProcess}" backLabel="Précédent"
+		nextLabel="Suivant">
+
+		<p:tab id="info" title="Informations">
+
+			<br />
+			<h:outputText value="Version finale"
+				style="margin-right:3%;font-weight: bold;" />
+			<p:selectBooleanCheckbox value="#{reportUploadBean.finalVersion}">
+				<p:ajax onstart="confirmationFinal.show();" />
+			</p:selectBooleanCheckbox>
+			<br />
+			<br />
+			<h:outputText value="Description du document"
+				style="margin-right:3%;font-weight: bold;" />
+			<p:inputTextarea autoResize="true"
+				value="#{reportUploadBean.fileDescription}" />
+			<br />
+			<br />
+			<h:outputText value="Sélectionner une catégorie de mots clés"
+				rendered="#{reportUploadBean.renderAddKw}"
+				style="margin-right:3%;font-weight: bold;" />
+			<br />
+			<h:selectOneMenu id="selectCateg"
+				value="#{reportUploadBean.selectedCategory.id}"
+				rendered="#{reportUploadBean.renderAddKw}">
+				<p:ajax event="change"
+					listener="#{reportUploadBean.onChangeCategory}" update="uploadForm" />
+				<f:selectItem
+					itemLabel="S#{msg['encodage.e.accent.grave']}lectionnez une catégorie"
+					itemValue="-1" />
+				<f:selectItems value="#{addKeyWordBean.listKwordCateg}" var="categ"
+					itemLabel="#{categ.categoryName}" itemValue="#{categ.id}" />
+			</h:selectOneMenu>
+			<br />
+			<h:outputText value="Aucun mot clé de cette catégorie"
+				style="margin-right:3%;font-weight: bold;"
+				rendered="!#{reportUploadBean.kwfound}" />
+			<h:outputLabel value="Mots clés" for="kw"
+				style="margin-right:3%;font-weight: bold;"
+				rendered="#{reportUploadBean.kwfound}" />
+
+			<p:selectManyCheckbox id="kw"
+				value="#{reportUploadBean.listKeyWordTarget}" required="true"
+				requiredMessage="Vous devez sélectionner au moins un mot clé"
+				layout="grid" columns="3" rendered="#{reportUploadBean.kwfound}">
+
+				<f:selectItems value="#{reportUploadBean.listKeyWordSource}"
+					var="keyW" itemLabel="#{keyW}" itemValue="#{keyW}" />
+			</p:selectManyCheckbox>
+
+
+			<p:commandLink value="Ajouter à mes mots clés"
+				actionListener="#{reportUploadBean.addSelectedKw}"
+				rendered="#{reportUploadBean.kwfound}" update="uploadForm"
+				style="color: #DC143C;font-weight: bold;text-decoration: underline;" />
+			<br />
+			<br />
+			<h:outputText value="Mots clés sélectionnés: "
+				style="margin-right:3%;font-weight: bold;"
+				rendered="#{reportUploadBean.newKeyWord}" />
+			<ui:repeat var="kwSelected"
+				value="#{reportUploadBean.listKeyWordToDB}">
+				<h:outputText value="#{kwSelected}"
+					rendered="#{reportUploadBean.newKeyWord}" />
+				<br />
+			</ui:repeat>
+
+			<p:commandLink value="Ajouter un nouveau mot clé"
+				onclick="dialogNewKw.show();"
+				style="color: #DC143C;font-weight: bold;text-decoration: underline;"
+				rendered="#{reportUploadBean.newKeyWord}" />
+
+		</p:tab>
+
+		<p:tab id="upload" title="Télécharger">
+			<br />
+			<br />
+			<br />
+			<h:outputText value="Sélectionnez un document"
+				style="margin-right:3%;font-weight: bold;" />
+
+			<p:fileUpload fileUploadListener="#{reportUploadBean.fileUpload}"
+				allowTypes="/(\.|\/)(doc|docx|pdf)$/" cancelLabel="Annuler"
+				dragDropSupport="true"
+				invalidFileMessage="Seuls les fichiers de format doc, docx et pdf sont autorisés."
+				label="Choisir" multiple="false" showButtons="false" required="true"
+				requiredMessage="Veuillez sélectionner un document à télécharger." />
+
+			<br />
+			<br />
+			<br />
+		</p:tab>
+
+		<p:tab id="confir" title="Confirmation">
+
+
+			<p:panel header="Informations">
+
+
+				<br />
+
+				<h:panelGrid id="confirmationProject" columns="2" cellspacing="10px">
+
+					<h:outputText value="Version"
+						style="margin-right:3%;font-weight: bold;" />
+
+					<h:outputText value="#{reportUploadBean.reportToDB.version}" />
+
+					<h:outputText value="Titre"
+						style="margin-right:3%;font-weight: bold;" />
+
+					<h:outputText value="#{reportUploadBean.reportToDB.fileName}" />
+
+					<h:outputText value="Taille (Ko)"
+						style="margin-right:3%;font-weight: bold;" />
+
+					<h:outputText value="#{reportUploadBean.fileSize}" />
+
+					<h:outputText value="Date de téléchargement"
+						style="margin-right:3%;font-weight: bold;" />
+
+					<h:outputText
+						value="#{reportUploadBean.dateFormat.format(reportUploadBean.reportToDB.uploadDate)}" />
+
+					<h:outputText value="Description"
+						style="margin-right:3%;font-weight: bold;" />
+
+					<h:outputText value="#{reportUploadBean.reportToDB.description}"
+						style=" white-space: pre-wrap;" />
+					<h:outputText value="Mots clés sélectionnés: "
+						style="margin-right:3%;font-weight: bold;"
+						rendered="#{reportUploadBean.newKeyWord}" />
+					<ui:repeat var="kwSelected"
+						value="#{reportUploadBean.listKeyWordToDB}">
+						<h:outputText value="#{kwSelected}"
+							rendered="#{reportUploadBean.newKeyWord}" />
+						<br />
+					</ui:repeat>
+
+				</h:panelGrid>
+
+
+			</p:panel>
+
+			<br />
+			<p:commandButton value="Annuler"
+				actionListener="#{reportUploadBean.handleClose}"
+				style="float:right;" />
+			<p:commandButton value="Confirmer"
+				actionListener="#{reportUploadBean.doUpload}" style="float:right;" />
+
+			<br />
+		</p:tab>
+
+
+	</p:wizard>
+
+	<p:dialog widgetVar="dialogNewKw" header="Nouveau mot clé">
+		<h:form>
+			<h:outputText
+				value="Veuillez indiquer la catégorie et le nom du mot clé que vous voulez ajouter:" />
+			<br/>
+			<h:outputText value="Catégorie" />
+			<br/>
+			<h:inputText value="#{reportUploadBean.newCategoryToAdmin}" />
+			<br/>
+			<h:outputText value="Mot clé" />
+			<br/>
+			<h:inputText value="#{reportUploadBean.newKeyWordToAdmin}" />
+			<br/>
+			<p:commandButton value="Valider"
+				actionListener="#{reportUploadBean.askForNewKeyWord}"
+				onsuccess="dialogNewKw.hide();" />
+			<p:commandButton value="Annuler" onclick="dialogNewKw.hide();"/>
+			
+
+		</h:form>
+
+	</p:dialog>
+
+</ui:composition>

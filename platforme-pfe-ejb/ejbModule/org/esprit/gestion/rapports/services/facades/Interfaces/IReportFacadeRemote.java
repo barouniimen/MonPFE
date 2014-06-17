@@ -13,7 +13,7 @@ public interface IReportFacadeRemote {
 	
 	public List<Report> listStudentReports(int idStudent);
 	
-	public void createReport(Report report, int idStudent);
+	public void createReport(Report report, int idStudent,List<String> keyWordNames);
 	
 	public boolean deleteReport(Report report);
 	

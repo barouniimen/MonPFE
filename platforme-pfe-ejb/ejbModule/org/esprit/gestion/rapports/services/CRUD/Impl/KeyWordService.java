@@ -1,5 +1,6 @@
 package org.esprit.gestion.rapports.services.CRUD.Impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -32,13 +33,17 @@ public class KeyWordService implements IServiceLocal<KeyWord>,
 
 	@Override
 	public Object retrieve(Object object, String searchBy) {
-		KeyWord kw = em.find(KeyWord.class, 20);
-		if (kw != null) {
-			System.out.println("found key wor!!!!!!!!!!!!!!!!!!!!!!!"
-					+ kw.getId());
-		} else {
-			System.out.println("!!!!!!!!!!!!!!not found!!!!!!!!!!!");
+		KeyWord kw = new KeyWord();
+		
+		if(searchBy == "NAME"){
+			TypedQuery<KeyWord> query = em.createNamedQuery(
+					"Keyword.findByName", KeyWord.class);
+			query.setParameter("name",
+					((KeyWord) object).getName());
+
+			kw = query.getSingleResult();
 		}
+		
 		return kw;
 	}
 
@@ -50,26 +55,23 @@ public class KeyWordService implements IServiceLocal<KeyWord>,
 
 	@Override
 	public void delete(int id) {
-		System.out.println("delete begin!!!!!!!!!!!!!!!!");
-		KeyWord kw = null;
-		TypedQuery<KeyWord> query = em.createNamedQuery("Keyword.findById",
-				KeyWord.class);
-		query.setParameter("id", id);
-		try {
-			kw = query.getSingleResult();
-		} catch (Exception ex) {
-		}
-		em.remove(kw);
-		System.out.println("delete end!!!!!!!!!!!!!!!!");
-
+		throw new UnsupportedOperationException("isn't implemented!!!!!!!");	
 	}
 
-	/* (non-Javadoc)
-	 * @see org.esprit.gestion.rapports.services.CRUD.Interfaces.IServiceLocal#retrieveList(java.lang.Object, java.lang.String)
-	 */
+	
 	@Override
 	public List<KeyWord> retrieveList(Object object, String searchBy) {
-		throw new UnsupportedOperationException("isn't implemented!!!!!!!");
+		List<KeyWord> returnList = new ArrayList<KeyWord>();
+		returnList = null;
+		/************************* searcheBy = ALL ******************************/
+		if (searchBy == "Categ") {
+			TypedQuery<KeyWord> query = em.createNamedQuery(
+					"Keyword.findByCategory", KeyWord.class);
+			query.setParameter("category", ((KeyWord) object).getCategory());
+			returnList = query.getResultList();
+		}
+
+		return returnList;
 	}
 
 }

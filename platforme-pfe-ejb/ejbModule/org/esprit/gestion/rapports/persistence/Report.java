@@ -12,6 +12,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -46,13 +47,14 @@ public class Report implements Serializable {
 	private String filePath;
 	private static final long serialVersionUID = 1L;
 	private String fileName;
+	private String description;
 
 	
 
 	public Report(boolean correctorValidation,
 			Long size, ReportState state, Date uploadDate, String version,
 			Project project, List<ReportKeyWord> keyWords,
-			List<Comments> comments, String filePath, String fileName) {
+			List<Comments> comments, String filePath, String fileName, String description) {
 		super();
 		this.correctorValidation = correctorValidation;
 		this.size = size;
@@ -64,6 +66,7 @@ public class Report implements Serializable {
 		this.comments = comments;
 		this.filePath = filePath;
 		this.fileName = fileName;
+		this.description = description;
 	}
 
 	public Report() {
@@ -166,6 +169,15 @@ public class Report implements Serializable {
 
 	public void setFileName(String fileName) {
 		this.fileName = fileName;
+	}
+
+	@Lob
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
 }

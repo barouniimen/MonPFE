@@ -454,7 +454,7 @@ public class AddProjectFormBean {
 			else if (validAcademicYear(projToAdd.getAcademicYear()) == false) {
 				FacesMessage msg = new FacesMessage(
 						FacesMessage.SEVERITY_ERROR, "Format invalide",
-						"L'anné universitaire doit être de la forme [année1 - année+1]");
+						"L'année universitaire doit être de la forme [année1 - année+1]");
 				FacesContext.getCurrentInstance().addMessage(null, msg);
 				return event.getOldStep();
 			}

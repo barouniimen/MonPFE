@@ -8,12 +8,17 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import org.esprit.gestion.rapports.persistence.KeyWord;
 import org.esprit.gestion.rapports.persistence.Project;
 import org.esprit.gestion.rapports.persistence.Report;
+import org.esprit.gestion.rapports.persistence.ReportKeyWord;
+import org.esprit.gestion.rapports.persistence.ReportKeyWordPk;
 import org.esprit.gestion.rapports.persistence.ReportState;
 import org.esprit.gestion.rapports.persistence.Student;
 import org.esprit.gestion.rapports.services.CRUD.Interfaces.IServiceLocal;
+import org.esprit.gestion.rapports.services.CRUD.Util.KeyWordsQualifier;
 import org.esprit.gestion.rapports.services.CRUD.Util.ProjectQualifier;
+import org.esprit.gestion.rapports.services.CRUD.Util.ReportKeyWordQualifier;
 import org.esprit.gestion.rapports.services.CRUD.Util.ReportQualifier;
 import org.esprit.gestion.rapports.services.CRUD.Util.StudentQualifier;
 import org.esprit.gestion.rapports.services.facades.Interfaces.IReportFacadeLocal;
@@ -33,6 +38,14 @@ public class ReportFacade implements IReportFacadeLocal, IReportFacadeRemote {
 	@Inject
 	@ReportQualifier
 	IServiceLocal<Report> reportServ;
+	
+	@Inject
+	@KeyWordsQualifier
+	IServiceLocal<KeyWord> keyWordServ;
+	
+	@Inject
+	@ReportKeyWordQualifier
+	IServiceLocal<ReportKeyWord> reportKwServ;
 
 	@Override
 	public String getLastVersion(int idStudent) {
@@ -92,7 +105,8 @@ public class ReportFacade implements IReportFacadeLocal, IReportFacadeRemote {
 	}
 
 	@Override
-	public void createReport(Report report, int idStudent) {
+	public void createReport(Report report, int idStudent,
+			List<String> keyWordNames) {
 		Student st = new Student();
 		st.setId(idStudent);
 		st = (Student) studentServ.retrieve(st, "ID");
@@ -111,8 +125,25 @@ public class ReportFacade implements IReportFacadeLocal, IReportFacadeRemote {
 		// update proj
 		projServ.update(proj);
 
-		if (report.getVersion().equals("final")) {
-
+		if (report.getState().equals(ReportState.DEPOSED)) {
+			// ajouter les mots clés
+			List<ReportKeyWord> reportKws = new ArrayList<ReportKeyWord>();
+			
+			for (int i = 0; i < keyWordNames.size(); i++) {
+				KeyWord kw  = new KeyWord();
+				kw.setName(keyWordNames.get(i));
+				kw = (KeyWord) keyWordServ.retrieve(kw, "NAME");
+				ReportKeyWordPk pk = new ReportKeyWordPk();
+				pk.setKeyWordId(kw.getId());
+				pk.setReportId(report.getId());
+				ReportKeyWord reportKw = new ReportKeyWord();
+				reportKw.setPk(pk);
+				report.setKeyWords(reportKws);
+				reportServ.update(report);
+				reportKwServ.create(reportKw);
+			}			
+			
+			
 			// TODO
 			// notifier encadrant + administration
 		}

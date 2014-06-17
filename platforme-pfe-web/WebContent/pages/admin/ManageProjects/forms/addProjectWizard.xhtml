@@ -32,8 +32,9 @@
 			<p:panel header="Confirmation">
 
 				<h:panelGrid id="confirmationProject" columns="4" cellspacing="10px">
-					<h:outputText style="font-size:120%;font-weight: bold;" value="Projet:" />
-					<br/>
+					<h:outputText style="font-size:120%;font-weight: bold;"
+						value="Projet:" />
+					<br />
 					<h:outputLabel value="Sujet: " for="topicToConfirm"
 						style="font-weight: bold;" />
 					<h:outputText id="topicToConfirm" styleClass="outputLabel"
@@ -63,14 +64,22 @@
 						<br />
 					</ui:repeat>
 
+					<h:outputLabel value="Fonctionnalitées " for="fonct"
+						style="font-weight: bold;" />
+					<h:outputText id="fonct" styleClass="outputLabel"
+						value="#{addProjectFormBean.projToAdd.fonctionnalities}"
+						style=" white-space: pre-wrap;" />
+
+
 				</h:panelGrid>
 
 				<p:separator></p:separator>
 
 
 				<h:panelGrid id="confirmationStudent" columns="2" cellspacing="10px">
-					<h:outputText style="font-size:120%;font-weight: bold;" value="Etudiant:" />
-					<br/>
+					<h:outputText style="font-size:120%;font-weight: bold;"
+						value="Etudiant:" />
+					<br />
 					<h:outputLabel value="Nom de l'étudiant: " for="studentToConfirm"
 						style="font-weight: bold;" />
 					<h:outputText id="studentToConfirm" styleClass="outputLabel"
@@ -85,7 +94,7 @@
 
 				<p:commandButton id="submitProject" value="Ajouter"
 					actionListener="#{addProjectFormBean.addProject}"
-					update=":tabView:currentProject"/>
+					update=":tabView:currentProject" />
 
 				<p:commandButton value="Annuler"
 					actionListener="#{addProjectFormBean.handelCancel}"

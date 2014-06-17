@@ -8,6 +8,7 @@ import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -19,12 +20,17 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 
+import org.esprit.gestion.rapports.persistence.KeyWord;
+import org.esprit.gestion.rapports.persistence.KeyWordCategory;
 import org.esprit.gestion.rapports.persistence.Report;
 import org.esprit.gestion.rapports.persistence.ReportState;
 import org.esprit.gestion.rapports.persistence.Student;
+import org.esprit.gestion.rapports.services.facades.Interfaces.IKeyWordFacadeLocal;
 import org.esprit.gestion.rapports.services.facades.Interfaces.IReportFacadeLocal;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.FileUploadEvent;
+import org.primefaces.event.FlowEvent;
+import org.primefaces.model.DualListModel;
 import org.primefaces.model.UploadedFile;
 
 @ManagedBean
@@ -38,19 +44,46 @@ public class ReportUploadBean {
 	private Report reportToDB;
 	private boolean renderUpload;
 	private Report selectedReport;
-	private boolean onMarkAsFinal;
+	private boolean markAsFinal;
 	private boolean onUpload;
 	private SimpleDateFormat dateFormat;
+	private String fileToUploadName;
+	private InputStream inputStream;
+	private long fileSize;
+	private String fileDescription;
+	private boolean renderAddKw;
+	private List<String> listKeyWordSource;
+	private List<String> listKeyWordTarget;
+	private KeyWordCategory selectedCategory;
+	private boolean kwfound;
+	private List<KeyWord> listKeyWordFromDB;
+	private List<String> listKeyWordToDB;
+	private DualListModel<String> dualListKeyWord;
+	private boolean newKeyWord;
+	private String newCategoryToAdmin;
+	private String newKeyWordToAdmin;
+
+	// MBean-------------------------------------------
+	@ManagedProperty(value = "#{tabViewIndexBean}")
+	private TabViewIndexBean tabViewBean;
+
+	public void setTabViewBean(TabViewIndexBean tabViewBean) {
+		this.tabViewBean = tabViewBean;
+	}
 
 	@EJB
 	IReportFacadeLocal reportFacade;
+
+	@EJB
+	IKeyWordFacadeLocal keyWordFacade;
 
 	/****************************** init method ***************************/
 	@PostConstruct
 	public void init() {
 		finalVersion = false;
 		selectedReport = new Report();
-		onMarkAsFinal = false;
+		markAsFinal = false;
+		reportToDB = new Report();
 		setOnUpload(false);
 		String lastVersion = reportFacade.getLastVersion(authBean.getUser()
 				.getId());
@@ -68,20 +101,106 @@ public class ReportUploadBean {
 				.getId());
 
 		setDateFormat(new SimpleDateFormat("dd/mm/yyyy"));
+		selectedCategory = new KeyWordCategory();
+		listKeyWordSource = new ArrayList<String>();
+		listKeyWordTarget = new ArrayList<String>();
+
+		renderAddKw = false;
+		kwfound = false;
+		listKeyWordToDB = new ArrayList<String>();
+
+		newKeyWord = false;
 	}
 
 	/*********************** listeners ********************************/
+	public void askForNewKeyWord(ActionEvent event) {
+		keyWordFacade.askNewKeyWord(newCategoryToAdmin, newKeyWordToAdmin,
+				(Student) authBean.getUser());
+
+		FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO,
+				"Message envoyé", "L'administrateur traitera votre requête");
+		FacesContext.getCurrentInstance().addMessage(null, msg);
+	}
+
+	public void onChangeCategory() {
+		listKeyWordSource.clear();
+		listKeyWordFromDB = keyWordFacade.keyWordsByCateg(selectedCategory);
+		setDualListKeyWord(new DualListModel<>(listKeyWordSource,
+				listKeyWordTarget));
+
+		if (listKeyWordFromDB.isEmpty()) {
+			kwfound = false;
+
+		} else {
+			for (int i = 0; i < listKeyWordFromDB.size(); i++) {
+				listKeyWordSource.add(listKeyWordFromDB.get(i).getName());
+			}
+			kwfound = true;
+		}
+
+	}
+
+	public void addSelectedKw(ActionEvent event) {
+
+		listKeyWordToDB.addAll(listKeyWordTarget);
+
+		// hashset to remove duplicated values!
+		HashSet<String> hs = new HashSet<String>();
+		hs.addAll(listKeyWordToDB);
+		listKeyWordToDB.clear();
+		listKeyWordToDB.addAll(hs);
+		listKeyWordTarget.clear();
+		listKeyWordSource.clear();
+		setNewKeyWord(true);
+		selectedCategory = new KeyWordCategory();
+		kwfound = false;
+
+	}
+
+	public void handleClose() {
+		int tabIndex;
+		tabIndex = tabViewBean.getTabIndex();
+		try {
+			RequestContext.getCurrentInstance().execute("location.reload();");
+		} catch (Exception e) {
+		}
+		tabViewBean.setTabIndex(tabIndex);
+	}
+
+	public String onFlowProcess(FlowEvent event) {
+		if (event.getOldStep().equals("upload")) {
+			if (fileToUploadName == null) {
+				FacesMessage msg = new FacesMessage(
+						FacesMessage.SEVERITY_ERROR, "Aucun fichier",
+						"Veuillez sélectionner un fichier à télécharger!");
+				FacesContext.getCurrentInstance().addMessage(null, msg);
+				return event.getOldStep();
+			}
+
+		}
+
+		return event.getNewStep();
+
+	}
+
 	public void confirmFinalVersion(ActionEvent event) {
-		if (onMarkAsFinal) {
+		// markAsFinal=true if button marquer comme finale is pressed and not on
+		// upload new file
+
+		if (markAsFinal) {
 			reportFacade.changeToFinal(selectedReport);
 			FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO,
 					"Depôt réussi",
 					"Vous avez déposé la version finale de votre rapport");
 			FacesContext.getCurrentInstance().addMessage(null, msg);
+		} else {
+			renderAddKw = true;
 		}
 
-		onMarkAsFinal = false;
+		markAsFinal = false;
 		onUpload = false;
+		// TODO render key words
+
 	}
 
 	public void deleteReport(ActionEvent event) {
@@ -125,8 +244,58 @@ public class ReportUploadBean {
 
 	}
 
-	public void fileUpload(FileUploadEvent event) {
+	public void doUpload(ActionEvent event) {
+		/*String tmpDestination = "C:\\PFE_Tools\\jboss-as-7.1.1.Final\\tmpUpload";
+		File tmpDirectory = new File(tmpDestination);
+		try {
+			FileUtils.cleanDirectory(tmpDirectory);
+			System.out.println("did clear!!!!!!!!!!!");
+		} catch (IOException e1) {
+			System.out.println("didnt clear!!!!!!!!!!!!");
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}*/
+
+		int tabIndex;
+		tabIndex = tabViewBean.getTabIndex();
+
+		reportFacade.createReport(reportToDB, authBean.getUser().getId(),
+				listKeyWordToDB);
+		Student student = new Student();
+		student = (Student) authBean.getUser();
+		String destination = "C:\\PFE_Tools\\jboss-as-7.1.1.Final\\UploadedFiles\\"
+				+ student.getRegistrationNumber() + "\\";
+
+		try {
+			OutputStream out = new FileOutputStream(new File(destination
+					+ fileToUploadName));
+			int read = 0;
+			byte[] bytes = new byte[1024];
+			while ((read = inputStream.read(bytes)) != -1) {
+				out.write(bytes, 0, read);
+			}
+			inputStream.close();
+			out.flush();
+			out.close();
+
+		} catch (IOException e) {
+			System.out.println(e.getMessage());
+
+		}
+
+		try {
+			RequestContext.getCurrentInstance().execute("location.reload();");
+		} catch (Exception e) {
+		}
+		tabViewBean.setTabIndex(tabIndex);
+
+	}
+
+	public void fileUpload(FileUploadEvent event) throws IOException {
 		String createResult;
+
+		fileToUploadName = event.getFile().getFileName();
+		inputStream = event.getFile().getInputstream();
 
 		try {
 			createResult = copyFile(event.getFile().getFileName(), event
@@ -169,13 +338,11 @@ public class ReportUploadBean {
 	}
 
 	public String copyFile(String fileName, InputStream in, UploadedFile file) {
-
 		Student student = new Student();
 		student = (Student) authBean.getUser();
 		String destination = "C:\\PFE_Tools\\jboss-as-7.1.1.Final\\UploadedFiles\\"
 				+ student.getRegistrationNumber() + "\\";
 
-		boolean exist = fileExist(destination + fileName);
 		File folderLocation = new File(destination);
 
 		if (folderLocation.exists()) {
@@ -188,6 +355,7 @@ public class ReportUploadBean {
 			}
 		}
 
+		boolean exist = fileExist(destination + fileName);
 		if (exist) {
 
 			return "exist";
@@ -202,8 +370,11 @@ public class ReportUploadBean {
 			reportToDB.setFileName(fileName);
 			reportToDB.setFilePath(destination);
 			reportToDB.setProject(student.getProject());
-			reportToDB.setSize((file.getSize() / 1000));
+			fileSize = file.getSize() / 1000;
+			reportToDB.setSize(fileSize);
 			reportToDB.setUploadDate(uploadDate);
+
+			reportToDB.setDescription(fileDescription);
 
 			if (finalVersion) {
 				reportToDB.setState(ReportState.DEPOSED);
@@ -214,25 +385,6 @@ public class ReportUploadBean {
 				reportToDB.setKeyWords(null);
 				reportToDB.setState(ReportState.WAITINGDEPO);
 				reportToDB.setVersion(version);
-			}
-
-			reportFacade.createReport(reportToDB, authBean.getUser().getId());
-
-			try {
-				OutputStream out = new FileOutputStream(new File(destination
-						+ fileName));
-				int read = 0;
-				byte[] bytes = new byte[1024];
-				while ((read = in.read(bytes)) != -1) {
-					out.write(bytes, 0, read);
-				}
-				in.close();
-				out.flush();
-				out.close();
-
-			} catch (IOException e) {
-				System.out.println(e.getMessage());
-				return "fileNotCreated";
 			}
 
 			return "success";
@@ -257,7 +409,7 @@ public class ReportUploadBean {
 
 	public void toUpload(ActionEvent event) {
 		onUpload = true;
-		onMarkAsFinal = false;
+		markAsFinal = false;
 	}
 
 	public void markAsFinal(ActionEvent event) {
@@ -273,7 +425,7 @@ public class ReportUploadBean {
 			} catch (Exception e) {
 			}
 
-			onMarkAsFinal = true;
+			markAsFinal = true;
 			onUpload = false;
 		}
 	}
@@ -353,14 +505,6 @@ public class ReportUploadBean {
 		this.selectedReport = selectedReport;
 	}
 
-	public boolean isOnMarkAsFinal() {
-		return onMarkAsFinal;
-	}
-
-	public void setOnMarkAsFinal(boolean onMarkAsFinal) {
-		this.onMarkAsFinal = onMarkAsFinal;
-	}
-
 	public boolean isOnUpload() {
 		return onUpload;
 	}
@@ -375,6 +519,134 @@ public class ReportUploadBean {
 
 	public void setDateFormat(SimpleDateFormat dateFormat) {
 		this.dateFormat = dateFormat;
+	}
+
+	public String getFileToUploadName() {
+		return fileToUploadName;
+	}
+
+	public void setFileToUploadName(String fileToUploadName) {
+		this.fileToUploadName = fileToUploadName;
+	}
+
+	public InputStream getInputStream() {
+		return inputStream;
+	}
+
+	public void setInputStream(InputStream inputStream) {
+		this.inputStream = inputStream;
+	}
+
+	public long getFileSize() {
+		return fileSize;
+	}
+
+	public void setFileSize(long fileSize) {
+		this.fileSize = fileSize;
+	}
+
+	public String getFileDescription() {
+		return fileDescription;
+	}
+
+	public void setFileDescription(String fileDescription) {
+		this.fileDescription = fileDescription;
+	}
+
+	public boolean isMarkAsFinal() {
+		return markAsFinal;
+	}
+
+	public void setMarkAsFinal(boolean markAsFinal) {
+		this.markAsFinal = markAsFinal;
+	}
+
+	public boolean isRenderAddKw() {
+		return renderAddKw;
+	}
+
+	public void setRenderAddKw(boolean renderAddKw) {
+		this.renderAddKw = renderAddKw;
+	}
+
+	public KeyWordCategory getSelectedCategory() {
+		return selectedCategory;
+	}
+
+	public void setSelectedCategory(KeyWordCategory selectedCategory) {
+		this.selectedCategory = selectedCategory;
+	}
+
+	public boolean isKwfound() {
+		return kwfound;
+	}
+
+	public void setKwfound(boolean kwfound) {
+		this.kwfound = kwfound;
+	}
+
+	public boolean isNewKeyWord() {
+		return newKeyWord;
+	}
+
+	public void setNewKeyWord(boolean newKeyWord) {
+		this.newKeyWord = newKeyWord;
+	}
+
+	public List<KeyWord> getListKeyWordFromDB() {
+		return listKeyWordFromDB;
+	}
+
+	public void setListKeyWordFromDB(List<KeyWord> listKeyWordFromDB) {
+		this.listKeyWordFromDB = listKeyWordFromDB;
+	}
+
+	public DualListModel<String> getDualListKeyWord() {
+		return dualListKeyWord;
+	}
+
+	public void setDualListKeyWord(DualListModel<String> dualListKeyWord) {
+		this.dualListKeyWord = dualListKeyWord;
+	}
+
+	public List<String> getListKeyWordSource() {
+		return listKeyWordSource;
+	}
+
+	public void setListKeyWordSource(List<String> listKeyWordSource) {
+		this.listKeyWordSource = listKeyWordSource;
+	}
+
+	public List<String> getListKeyWordTarget() {
+		return listKeyWordTarget;
+	}
+
+	public void setListKeyWordTarget(List<String> listKeyWordTarget) {
+		this.listKeyWordTarget = listKeyWordTarget;
+	}
+
+	public List<String> getListKeyWordToDB() {
+		return listKeyWordToDB;
+	}
+
+	public void setListKeyWordToDB(List<String> listKeyWordToDB) {
+		this.listKeyWordToDB = listKeyWordToDB;
+	}
+
+	public String getNewCategoryToAdmin() {
+		return newCategoryToAdmin;
+	}
+
+	public void setNewCategoryToAdmin(String newCategoryToAdmin) {
+		this.newCategoryToAdmin = newCategoryToAdmin;
+	}
+
+	public String getNewKeyWordToAdmin() {
+		return newKeyWordToAdmin;
+	}
+
+	public void setNewKeyWordToAdmin(String newKeyWordToAdmin) {
+		this.newKeyWordToAdmin = newKeyWordToAdmin;
 	}
 
 }

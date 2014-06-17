@@ -15,11 +15,12 @@
 		<br />
 		<p:commandButton value="Ajouter un rapport"
 			onclick="uploadDialog.show();" style="margin-right:3%;"
-			rendered="#{reportUploadBean.renderUpload}" actionListener="#{reportUploadBean.toUpload}"/>
+			rendered="#{reportUploadBean.renderUpload}"
+			actionListener="#{reportUploadBean.toUpload}" />
 
 		<p:commandButton value="Marquer la sélection comme finale"
 			style="margin-right:3%;" rendered="#{reportUploadBean.renderUpload}"
-			actionListener="#{reportUploadBean.markAsFinal}"/>
+			actionListener="#{reportUploadBean.markAsFinal}" />
 
 		<p:commandButton value="Supprimer la sélection"
 			actionListener="#{reportUploadBean.toDeleteReport}" />
@@ -52,7 +53,8 @@
 				<h:outputText value="#{report.state.description}" />
 			</p:column>
 			<p:column headerText="Date de téléchargement">
-				<h:outputText value="#{reportUploadBean.dateFormat.format(report.uploadDate)}" />
+				<h:outputText
+					value="#{reportUploadBean.dateFormat.format(report.uploadDate)}" />
 			</p:column>
 
 		</p:dataTable>
@@ -66,6 +68,7 @@
 		message="Vous #{msg['encodage.e.chapeau']}tes sur le point de supprimer le document sélectionné. Voulez-vous continuer ?"
 		header="Confirmez la suppression ..." severity="alert"
 		widgetVar="confirmationDeleteDoc" appendToBody="true">
+
 		<h:form>
 			<h:outputText
 				value="Remarque: Seul le document sera supprimé, toutes les informations relatives à ce document seront conservées." />
@@ -83,13 +86,14 @@
 		message="Vous #{msg['encodage.e.chapeau']}tes sur le point de déposer une version finale de votre rapport. Voulez-vous continuer ?"
 		header="Confirmez le dépôt ..." severity="alert"
 		widgetVar="confirmationFinal" appendToBody="true">
+
 		<h:form>
 			<p:commandButton id="confirmRemove" value="Continuer"
 				onclick="confirmationFinal.hide();"
-				actionListener="#{reportUploadBean.confirmFinalVersion}" />
+				actionListener="#{reportUploadBean.confirmFinalVersion}" update=":tabView:uploadForm"/>
 			<p:commandButton id="declineFinal" value="Annuler"
 				actionListener="#{reportUploadBean.cancelFinalVersion}"
-				onclick="confirmationFinal.close(); uploadDialog.close();" />
+				onclick="confirmationFinal.hide();" update=":tabView:uploadForm" />
 		</h:form>
 
 	</p:confirmDialog>
@@ -97,30 +101,13 @@
 
 	<!-- ************************** upload report dialog ********************************* -->
 
-	<p:dialog widgetVar="uploadDialog" header="Ajouter un rapport">
-
-		<h:form enctype="multipart/form-data">
+	<p:dialog widgetVar="uploadDialog" header="Ajouter un rapport"
+		width="600" height="380">
+		<p:ajax event="close" listener="#{reportUploadBean.handleClose}" />
+		<h:form id="uploadForm" enctype="multipart/form-data">
 			<p:growl autoUpdate="true" />
 			<br />
-
-			<h:outputText value="Version finale"
-				style="margin-right:3%;font-weight: bold;" />
-			<p:selectBooleanCheckbox value="#{reportUploadBean.finalVersion}">
-				<p:ajax onstart="confirmationFinal.show();" />
-			</p:selectBooleanCheckbox>
-			<br />
-			<br />
-
-			<p:fileUpload fileUploadListener="#{reportUploadBean.fileUpload}"
-				allowTypes="/(\.|\/)(doc|docx|pdf)$/" cancelLabel="Annuler"
-				dragDropSupport="true"
-				invalidFileMessage="Seuls les fichiers de format doc, docx et pdf sont autorisés."
-				label="Choisir" multiple="false" />
-
-			<br />
-			<br />
-			<br />
-
+			<ui:include src="/pages/student/manageReports/addReportWizard.xhtml" />
 
 		</h:form>
 

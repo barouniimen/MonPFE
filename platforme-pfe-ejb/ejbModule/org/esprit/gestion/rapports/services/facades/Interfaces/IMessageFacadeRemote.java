@@ -9,6 +9,7 @@ import org.esprit.gestion.rapports.persistence.Message;
 import org.esprit.gestion.rapports.persistence.MessageAccess;
 import org.esprit.gestion.rapports.persistence.MessageType;
 import org.esprit.gestion.rapports.persistence.Project;
+import org.esprit.gestion.rapports.persistence.Student;
 import org.esprit.gestion.rapports.utils.MessageStats;
 
 @Remote
@@ -47,4 +48,6 @@ public interface IMessageFacadeRemote {
 	public List<Message> listMsgByType(int idUser, MessageType type);
 	
 	public MessageStats listNbrMsg(int idUser);
+	
+	public void sendAskNewKeyWord(String newCategory, String newKeyWord, int idSender, Student sender);
 }

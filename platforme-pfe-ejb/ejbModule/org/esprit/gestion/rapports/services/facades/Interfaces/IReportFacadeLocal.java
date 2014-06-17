@@ -1,6 +1,5 @@
 package org.esprit.gestion.rapports.services.facades.Interfaces;
 
-import java.util.Date;
 import java.util.List;
 
 import javax.ejb.Local;
@@ -14,7 +13,7 @@ public interface IReportFacadeLocal {
 
 	public List<Report> listStudentReports(int idStudent);
 
-	public void createReport(Report report, int idStudent);
+	public void createReport(Report report, int idStudent,List<String> keyWordNames);
 
 	public boolean deleteReport(Report report);
 
