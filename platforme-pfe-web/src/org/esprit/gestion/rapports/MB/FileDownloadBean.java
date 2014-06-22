@@ -6,19 +6,20 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 
 import javax.annotation.PostConstruct;
-import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
-import javax.faces.bean.ViewScoped;
-import javax.faces.context.FacesContext;
+import javax.faces.bean.RequestScoped;
 import javax.faces.event.ActionEvent;
 
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
 
 @ManagedBean
-@ViewScoped
+@RequestScoped
 public class FileDownloadBean {
+
+	@ManagedProperty(value = "#{tabViewIndexBean}")
+	private TabViewIndexBean tabViewBean;
 
 	@ManagedProperty(value = "#{manageReportsByCoachBean}")
 	private ManageReportsByCoachBean manageReportBean;
@@ -34,18 +35,21 @@ public class FileDownloadBean {
 				+ manageReportBean.getSelectedReport().getFileName();
 		sourcePath = sourcePath.replaceAll("\\\\", "/");
 		sourceFileName = manageReportBean.getSelectedReport().getFileName();
-		System.out.println("path!!!!!!!!!: " + sourcePath);
+
 	}
 
 	public FileDownloadBean() {
 
 	}
 
-	public void findPath(ActionEvent event)  throws FileNotFoundException{
-		System.out.println("upload!!!!!!!!!!!");
+	public void findPath(ActionEvent event) throws FileNotFoundException {
 		InputStream stream = new FileInputStream(new File(sourcePath));
+
 		file = new DefaultStreamedContent(stream, "application/pdf",
 				sourceFileName);
+		
+		
+		 
 	}
 
 	public StreamedContent getFile() {
@@ -70,5 +74,9 @@ public class FileDownloadBean {
 
 	public void setSourceFileName(String sourceFileName) {
 		this.sourceFileName = sourceFileName;
+	}
+
+	public void setTabViewBean(TabViewIndexBean tabViewBean) {
+		this.tabViewBean = tabViewBean;
 	}
 }

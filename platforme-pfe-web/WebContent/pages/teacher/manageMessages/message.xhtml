@@ -29,16 +29,45 @@
 			</p:menu>
 
 		</div>
-<div
-		style="display: table-cell !important; vertical-align: top !important; table-layout: auto !important;width: 200%;">
-		
-		<ui:include
-			src="/pages/teacher/manageMessages/datatables/msgSeen.xhtml" />
-		<ui:include
-			src="/pages/teacher/manageMessages/datatables/msgSent.xhtml" />
-		<ui:include
-			src="/pages/teacher/manageMessages/datatables/msgToRead.xhtml" />
-</div>
+		<div
+			style="display: table-cell !important; vertical-align: top !important; table-layout: auto !important; width: 200%;">
+
+			<h:panelGrid columns="2" rendered="#{mailBoxBean.renderStat}" style="margin-left:10% !important;">
+				<p:panel header="Indicateurs: Messages d'affectations">
+
+					<h:outputText
+						value="Nombre de messages d'affectations en encadrement"
+						style="font-weight: bold;" />
+					<br />
+					<h:outputText value="#{mailBoxBean.msgStats.nbrAssignCoach}" />
+					<br />
+					<br />
+					<br />
+					<h:outputText
+						value="Nombre de messages d'affecation en tant que rapporteur"
+						style="font-weight: bold;" />
+					<br />
+					<h:outputText value="#{mailBoxBean.msgStats.nbrAssignCorrector}" />
+					<br />
+				</p:panel>
+
+				<h:graphicImage rendered="#{mailBoxBean.renderImagePleine}"
+					library="images" name="messagesPlein.png"
+					style="height:30%;width:40%;margin-left:30% !important;" />
+
+				<h:graphicImage rendered="#{mailBoxBean.renderImageVide}"
+					library="images" name="messagesVide.png"
+					style="height:30%;width:40%;margin-left:30% !important;" />
+
+			</h:panelGrid>
+
+			<ui:include
+				src="/pages/teacher/manageMessages/datatables/msgSeen.xhtml" />
+			<ui:include
+				src="/pages/teacher/manageMessages/datatables/msgSent.xhtml" />
+			<ui:include
+				src="/pages/teacher/manageMessages/datatables/msgToRead.xhtml" />
+		</div>
 
 	</h:form>
 
@@ -113,9 +142,9 @@
 
 	<!-- ******************************* declineAffectation Dialog *********************************** -->
 	<p:dialog header="Décliner" widgetVar="declineAffectDialog"
-		 listener="#{mailBoxBean.handleClose}">
+		listener="#{mailBoxBean.handleClose}">
 		<h:form>
-		<h:outputText
+			<h:outputText
 				value="Vous #{msg['encodage.e.chapeau']}tes sur le point de décliner cette affectation . Voulez-vous continuer ?" />
 			<br />
 			<br />

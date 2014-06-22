@@ -253,9 +253,8 @@ public class ProjectsBean implements Serializable {
 		projFacade.deleteProject(projectToDelete);
 		try {
 			RequestContext.getCurrentInstance().execute(
-					"confirmationRemove.hide();");
+					"location.reload();");
 
-			RequestContext.getCurrentInstance().execute(" location.reload();");
 		} catch (Exception e) {
 		}
 

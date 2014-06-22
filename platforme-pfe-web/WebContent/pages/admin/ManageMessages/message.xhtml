@@ -5,9 +5,9 @@
 	xmlns:p="http://primefaces.org/ui">
 
 	<h:form id="formMsgMenuAdmin"
-		style="display: table !important; border-collapse: separate !important; border-spacing: 20px 5px !important;">
+		style="display: table !important; border-collapse: separate !important; border-spacing: 20px 5px !important;width: 100% !important;">
 		<div
-			style="display: table-cell !important;vertical-align: top !important; table-layout: auto !important;">
+			style="display: table-cell !important; vertical-align: top !important; table-layout: auto !important;">
 
 			<p:menu>
 				<p:submenu label="Boite de réception">
@@ -31,13 +31,25 @@
 
 		</div>
 
-<div
-		style="display: table-cell !important; vertical-align: top !important; table-layout: auto !important;width: 200%;">
-		<ui:include src="/pages/admin/ManageMessages/datatables/msgSeen.xhtml" />
-		<ui:include src="/pages/admin/ManageMessages/datatables/msgSent.xhtml" />
-		<ui:include
-			src="/pages/admin/ManageMessages/datatables/msgToRead.xhtml" />
-</div>
+		<div
+			style="display: table-cell !important; vertical-align: top !important; table-layout: auto !important; width: 200%;">
+
+
+			<h:graphicImage rendered="#{mailBoxBean.renderImagePleine}"
+				library="images" name="messagesPlein.png"
+				style="height:30%;width:30%;margin-left:20% !important;" />
+
+			<h:graphicImage rendered="#{mailBoxBean.renderImageVide}"
+				library="images" name="messagesVide.png"
+				style="height:30%;width:30%;margin-left:20% !important;" />
+
+			<ui:include
+				src="/pages/admin/ManageMessages/datatables/msgSeen.xhtml" />
+			<ui:include
+				src="/pages/admin/ManageMessages/datatables/msgSent.xhtml" />
+			<ui:include
+				src="/pages/admin/ManageMessages/datatables/msgToRead.xhtml" />
+		</div>
 
 
 
@@ -74,6 +86,19 @@
 				value="L'enseignant a décliné cette affectation. Il a indiqué la raison suivante: [#{mailBoxBean.selectedMsgSeen.declineCause}]"
 				style="color: #DC143C;text-align: center;font-size: medium;font-style: italic;font-weight: bold"
 				rendered="#{mailBoxBean.assignDeclined}" />
+			<h:outputText
+				value="Est ce que vous confirmez l'ajout de ce mot clé?"
+				style="font-weight: bold;"
+				rendered="#{mailBoxBean.renderAddKeyWordResponse}" />
+			<br />
+			<br />
+			<br />
+
+			<p:commandButton value="Accepter" onclick="acceptAddKw.show();"
+				rendered="#{mailBoxBean.renderAddKeyWordResponse}" />
+
+			<p:commandButton value="Refuser" onclick="toReadDialog.hide();"
+				rendered="#{mailBoxBean.renderAddKeyWordResponse}" />
 			<br />
 			<br />
 			<br />
@@ -109,10 +134,20 @@
 			<h:outputText value="Cette affectation a été annulée."
 				style="color: #DC143C;text-align: center;font-size: medium;font-style: italic;font-weight: bold"
 				rendered="#{mailBoxBean.assignCancelled}" />
+
 			<h:outputText
-				value="L'enseignant a décliné cette affectation. Il a indiqué la raison suivante: [#{mailBoxBean.selectedMsgToRead.declineCause}]"
-				style="color: #DC143C;text-align: center;font-size: medium;font-style: italic;font-weight: bold"
-				rendered="#{mailBoxBean.assignDeclined}" />
+				value="Est ce que vous confirmez l'ajout de ce mot clé?"
+				style="font-weight: bold;"
+				rendered="#{mailBoxBean.renderAddKeyWordResponse}" />
+			<br />
+			<br />
+			<br />
+
+			<p:commandButton value="Accepter" onclick="acceptAddKw.show();"
+				rendered="#{mailBoxBean.renderAddKeyWordResponse}" />
+
+			<p:commandButton value="Refuser" onclick="toReadDialog.hide();"
+				rendered="#{mailBoxBean.renderAddKeyWordResponse}" />
 			<br />
 			<br />
 			<br />
@@ -142,5 +177,75 @@
 		</h:form>
 	</p:dialog>
 
+	<!--  **************************************** add keyWord Dialog *****************************/ -->
+	<p:dialog widgetVar="acceptAddKw"
+		header="Confirmer l'ajout d'un nouveau mot clé">
+		<h:form id="formKw">
+			<h:outputText style="font-weight: bold;"
+				value="Veuillez resaisir la catégorie et le nom du mot clé à ajouter afin de confirmer l'ajout." />
+			<h:panelGrid columns="2">
+				<h:outputText value="Sélectionnez une catégorie" />
+				<h:selectOneMenu id="selectCateg"
+					value="#{addKeyWordBean.selectedCategory.id}">
+					<p:ajax event="change"
+						listener="#{addKeyWordBean.onChangeCategory}" update="formKw" />
+					<f:selectItem
+						itemLabel="S#{msg['encodage.e.accent.grave']}lectionnez une catégorie"
+						itemValue="-1" />
+					<f:selectItems value="#{addKeyWordBean.listKwordCateg}" var="categ"
+						itemLabel="#{categ.categoryName}" itemValue="#{categ.id}" />
+				</h:selectOneMenu>
+
+				<p:commandLink value="Nouvelle catégorie"
+					actionListener="#{addKeyWordBean.renderAddKwCateg}" update="formKw"
+					style="color: #DC143C;font-weight: bold;text-decoration: underline;" />
+				<br />
+
+				<h:outputText value="Nom" rendered="#{addKeyWordBean.doAddCateg}"
+					style="margin-right: 2%;" />
+				<h:inputText value="#{addKeyWordBean.categToDB.categoryName}"
+					rendered="#{addKeyWordBean.doAddCateg}" />
+
+				<p:commandButton value="Ajouter catégorie"
+					actionListener="#{addKeyWordBean.addCateg}"
+					rendered="#{addKeyWordBean.doAddCateg}" />
+				<br />
+
+				<h:outputText value="Aucun mot clé de cette catégorie"
+					style="font-weight: bold;"
+					rendered="#{addKeyWordBean.notrenderlistKw}" />
+				<p:spacer height="10" width="0"
+					rendered="#{addKeyWordBean.notrenderlistKw}" />
+
+
+				<h:outputText value="Mots clés existants" style="font-weight: bold;"
+					rendered="#{addKeyWordBean.renderlistKeyW}" />
+				<ui:repeat var="kw" value="#{addKeyWordBean.listKeyWord}">
+					<h:outputText value="#{kw.name}"
+						rendered="#{addKeyWordBean.renderlistKeyW}" />
+				</ui:repeat>
+
+
+				<p:commandLink value="Nouveau mot clé"
+					actionListener="#{addKeyWordBean.renderAddKw}"
+					rendered="#{addKeyWordBean.renderAddButton}" update="formKw"
+					style="color: #DC143C;font-weight: bold;text-decoration: underline;" />
+				<p:spacer height="10" width="0"
+					rendered="#{addKeyWordBean.renderAddButton}" />
+
+
+				<h:outputText value="Nom" rendered="#{addKeyWordBean.doAddKeyWord}"
+					style="margin-right: 2%;" />
+				<h:inputText value="#{addKeyWordBean.kwToDB.name}"
+					rendered="#{addKeyWordBean.doAddKeyWord}" />
+
+			</h:panelGrid>
+		
+			<p:commandButton value="Ajouter"
+				actionListener="#{addKeyWordBean.addKeyWordStudent}" />
+			<p:commandButton value="Annuler" onclick="acceptAddKw.hide();" />
+		</h:form>
+
+	</p:dialog>
 
 </ui:composition>

@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -32,6 +31,7 @@ import javax.persistence.TemporalType;
 		@NamedQuery(name = "Report.findBySize", query = "SELECT r FROM Report r WHERE r.size = :size"),
 		@NamedQuery(name = "Report.findByState", query = "SELECT r FROM Report r WHERE r.state = :state"),
 		@NamedQuery(name = "Report.findByUploadDate", query = "SELECT r FROM Report r WHERE r.uploadDate = :uploadDate"),
+		@NamedQuery(name = "Report.findByProject", query = "SELECT r FROM Report r WHERE r.project = :project"),
 		@NamedQuery(name = "Report.findByVersion", query = "SELECT r FROM Report r WHERE r.version = :version") })
 public class Report implements Serializable {
 
@@ -137,7 +137,7 @@ public class Report implements Serializable {
 		this.project = project;
 	}
 
-	@OneToMany(mappedBy = "report", cascade = CascadeType.PERSIST)
+	@OneToMany(mappedBy = "report")
 	public List<ReportKeyWord> getKeyWords() {
 		return keyWords;
 	}

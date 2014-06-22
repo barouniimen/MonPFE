@@ -203,22 +203,46 @@ public class SubmissionEventFacade implements ISubmissionFacadeLocal,
 		List<Report> foundFinal = reportServ.retrieveList(report, "state");
 
 		if (!(foundFinal.isEmpty())) {
-		
+
 			for (int i = 0; i < foundFinal.size(); i++) {
 				long diffDue = submitEvent.getDueDate().getTime()
 						- foundFinal.get(i).getUploadDate().getTime();
 				long diffStart = submitEvent.getStartDate().getTime()
 						- foundFinal.get(i).getUploadDate().getTime();
-			
-				
-				if( (diffDue>=0) || (diffStart<=0) ){
-				
+
+				if ((diffDue >= 0) || (diffStart <= 0)) {
+
 					submittedReports.add(foundFinal.get(i));
 				}
-				
+
 			}
 		}
 
 		return submittedReports;
+	}
+
+	@Override
+	public void updateDates() {
+		List<SubmissionEvent> allEvent = new ArrayList<SubmissionEvent>();
+		allEvent = listAllSubmitEvent();
+
+		if (!(allEvent.isEmpty())) {
+
+			for (int i = 0; i < allEvent.size(); i++) {
+				if (allEvent.get(i).getState().equals(EventState.STARTED)) {
+					Date currentDate = new Date();
+					if ((allEvent.get(i).getDueDate().equals(currentDate))
+							|| (allEvent.get(i).getDueDate()
+									.before(currentDate))) {
+
+						allEvent.get(i).setState(EventState.FINISHED);
+
+						submitEventServ.update(allEvent.get(i));
+
+					}
+				}
+			}
+
+		}
 	}
 }

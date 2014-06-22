@@ -17,6 +17,7 @@ public class TabViewIndexBean {
 	public void onChange(TabChangeEvent e) {
 		TabView tv = (TabView) e.getComponent();
 		this.setTabIndex(tv.getChildren().indexOf(e.getTab()));
+	
 		
 	}
 
@@ -39,7 +40,5 @@ public class TabViewIndexBean {
 	}
 
 
-	/*public void setMailboxBean(MailBoxBean mailboxBean) {
-		this.mailboxBean = mailboxBean;
-	}*/
+	
 }

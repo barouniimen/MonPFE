@@ -23,6 +23,7 @@ import javax.persistence.NamedQuery;
 		@NamedQuery(name = "Teacherrole.findByRole", query = "SELECT t FROM TeacherRole t WHERE t.role = :role"),
 		@NamedQuery(name = "Teacherrole.findByRoleAndTeacherId", query = "SELECT t FROM TeacherRole t WHERE t.role = :role AND t.pk.teacherId = :teacherId"),
 		@NamedQuery(name = "Teacherrole.findByRoleAndProjectId", query = "SELECT t FROM TeacherRole t WHERE t.role = :role AND t.pk.projectId = :projectId"),
+		@NamedQuery(name = "Teacherrole.findByProject", query = "SELECT t FROM TeacherRole t WHERE t.project = :project"),
 		@NamedQuery(name = "Teacherrole.findByTeacherIdANDProjectId", query = "SELECT t FROM TeacherRole t WHERE t.pk.teacherId = :teacherId and t.pk.projectId = :projectId")})
 public class TeacherRole implements Serializable {
 

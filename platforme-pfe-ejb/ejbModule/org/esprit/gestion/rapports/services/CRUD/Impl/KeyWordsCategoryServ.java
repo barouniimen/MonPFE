@@ -33,7 +33,20 @@ public class KeyWordsCategoryServ implements IServiceLocal<KeyWordCategory>,
 
 	@Override
 	public Object retrieve(Object object, String searchBy) {
-		throw new UnsupportedOperationException("isn't implemented!!!!!!!");
+		KeyWordCategory categ = new KeyWordCategory();
+		categ = null;
+
+		if (searchBy.equals("name")) {
+			TypedQuery<KeyWordCategory> query = em.createNamedQuery(
+					"Keywordcategory.findByCategoryName", KeyWordCategory.class);
+			query.setParameter("categoryName",
+					((KeyWordCategory) object).getCategoryName());
+
+			categ = query.getSingleResult();
+		}
+		
+		
+		return categ;
 	}
 
 	@Override

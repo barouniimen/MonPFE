@@ -26,6 +26,7 @@ import org.esprit.gestion.rapports.services.CRUD.Interfaces.IServiceLocal;
 import org.esprit.gestion.rapports.services.CRUD.Util.UserQualifier;
 import org.esprit.gestion.rapports.services.facades.Interfaces.ICoachFacadeLocal;
 import org.esprit.gestion.rapports.services.facades.Interfaces.ICorrectorFacadeLocal;
+import org.esprit.gestion.rapports.services.facades.Interfaces.IKeyWordFacadeLocal;
 import org.esprit.gestion.rapports.services.facades.Interfaces.IMessageFacadeLocal;
 import org.esprit.gestion.rapports.utils.MessageStats;
 import org.primefaces.context.RequestContext;
@@ -61,8 +62,17 @@ public class MailBoxBean implements Serializable {
 	private boolean assignAccepted;
 	private boolean assignCancelled;
 	private boolean assignDeclined;
+	private boolean renderImageVide;
+	private boolean renderImagePleine;
+	private boolean renderStat;
+
+	private boolean renderAddKeyWordResponse;
+	private int idProjectKeyWord;
 	
 	private String declineCause;
+
+	@EJB
+	IKeyWordFacadeLocal keyWordFacade;
 
 	@Inject
 	@UserQualifier
@@ -89,9 +99,21 @@ public class MailBoxBean implements Serializable {
 	public void init() {
 		sent = false;
 		seen = false;
-		toRead = true;
+		toRead = false;
 		msgStats = new MessageStats();
 		msgStats = msgFacade.listNbrMsg(authBean.getUser().getId());
+
+		renderStat = true;
+		if (msgStats.getNbrToRead() != 0) {
+			renderImagePleine = true;
+			renderImageVide = false;
+		}
+
+		else {
+			renderImagePleine = false;
+			renderImageVide = true;
+		}
+
 		dateFormat = new SimpleDateFormat("dd-MM-yyyy");
 
 		assignConfirmation = false;
@@ -102,9 +124,15 @@ public class MailBoxBean implements Serializable {
 		assignAccepted = false;
 		assignCancelled = false;
 		assignDeclined = false;
+
+		renderAddKeyWordResponse = false;
+		
+
 	}
 
 	/******************************* action listeners ************************************/
+	
+
 	public void handleClose() {
 
 		int tabIndex;
@@ -216,8 +244,7 @@ public class MailBoxBean implements Serializable {
 		if (selectedMsgOnDecline.getType().equals(MessageType.COACHASSIGN)) {
 
 			coachFacade.coachDeclineAssign(authBean.getUser().getId(),
-					selectedMsgOnDecline.getIncludedRef(),
-					declineCause,
+					selectedMsgOnDecline.getIncludedRef(), declineCause,
 					selectedMsgOnDecline.getIdSender(),
 					selectedMsgOnDecline.getId());
 		}
@@ -268,7 +295,6 @@ public class MailBoxBean implements Serializable {
 					assignAccepted = false;
 					assignCancelled = false;
 					assignDeclined = true;
-					
 
 				}
 
@@ -295,6 +321,13 @@ public class MailBoxBean implements Serializable {
 					assignCancelled = false;
 					assignDeclined = false;
 				}
+
+			}
+
+			else if (selectedMsgToRead.getType().equals(
+					MessageType.ADD_KEY_WORD)) {
+				renderAddKeyWordResponse = true;
+				idProjectKeyWord = selectedMsgToRead.getIncludedRef();
 
 			}
 
@@ -320,7 +353,6 @@ public class MailBoxBean implements Serializable {
 					assignAccepted = false;
 					assignCancelled = false;
 					assignDeclined = true;
-				
 
 				}
 
@@ -347,6 +379,12 @@ public class MailBoxBean implements Serializable {
 					assignCancelled = false;
 					assignDeclined = false;
 				}
+			} else if (selectedMsgSeen.getType().equals(
+					MessageType.ADD_KEY_WORD)) {
+				renderAddKeyWordResponse = true;
+				System.out.println("on seen!!!!!!!!!!!!");
+				idProjectKeyWord = selectedMsgSeen.getIncludedRef();
+				System.out.println("included ref " + idProjectKeyWord);
 			}
 
 			try {
@@ -359,6 +397,10 @@ public class MailBoxBean implements Serializable {
 	}
 
 	public void renderSent() {
+		renderImageVide = false;
+		renderImagePleine = false;
+		renderStat = false;
+
 		listMsgSent = new ArrayList<Message>();
 		listMsgSent = msgFacade.listMsgSent(authBean.getUser().getId());
 		if (listMsgSent.isEmpty()) {
@@ -388,10 +430,13 @@ public class MailBoxBean implements Serializable {
 	}
 
 	public void renderSeen() {
+		renderImageVide = false;
+		renderImagePleine = false;
+		renderStat = false;
 
 		listMsgSeen = new ArrayList<Message>();
 		listMsgSeen = msgFacade.listMsgSeen(authBean.getUser().getId());
-		
+
 		if (listMsgSeen.isEmpty()) {
 			FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO,
 					"Aucun message", "Vous n'avez lu aucun message");
@@ -407,9 +452,10 @@ public class MailBoxBean implements Serializable {
 			for (int i = 0; i < listMsgSeen.size(); i++) {
 				MessageModel msgModel = new MessageModel();
 				msgModel = formatMsg(listMsgSeen.get(i));
-				
-				System.out.println("dec cause "+i+"  "+listMsgSeen.get(i).getDeclineCause());
-				
+
+				System.out.println("dec cause " + i + "  "
+						+ listMsgSeen.get(i).getDeclineCause());
+
 				listMsgModelSeen.add(msgModel);
 			}
 
@@ -421,6 +467,10 @@ public class MailBoxBean implements Serializable {
 	}
 
 	public void renderToRead() {
+		renderImageVide = false;
+		renderImagePleine = false;
+		renderStat = false;
+
 		listMsgToRead = new ArrayList<Message>();
 		listMsgToRead = msgFacade.listMsgToRead(authBean.getUser().getId());
 
@@ -466,12 +516,11 @@ public class MailBoxBean implements Serializable {
 
 		if (sender instanceof Administrator) {
 			senderName = "Direction des stages et PFE";
-		} 
-		
-		else if(msg.getIdSender() == -1){
+		}
+
+		else if (msg.getIdSender() == -1) {
 			senderName = "Message automatique";
-		}		
-		else {
+		} else {
 			senderName = sender.getLastName() + " " + sender.getFirstName();
 		}
 
@@ -674,6 +723,47 @@ public class MailBoxBean implements Serializable {
 
 	public void setDeclineCause(String declineCause) {
 		this.declineCause = declineCause;
+	}
+
+	public boolean isRenderImagePleine() {
+		return renderImagePleine;
+	}
+
+	public void setRenderImagePleine(boolean renderImagePleine) {
+		this.renderImagePleine = renderImagePleine;
+	}
+
+	public boolean isRenderImageVide() {
+		return renderImageVide;
+	}
+
+	public void setRenderImageVide(boolean renderImageVide) {
+		this.renderImageVide = renderImageVide;
+	}
+
+	public boolean isRenderStat() {
+		return renderStat;
+	}
+
+	public void setRenderStat(boolean renderStat) {
+		this.renderStat = renderStat;
+	}
+
+	public boolean isRenderAddKeyWordResponse() {
+		return renderAddKeyWordResponse;
+	}
+
+	public void setRenderAddKeyWordResponse(boolean renderAddKeyWordResponse) {
+		this.renderAddKeyWordResponse = renderAddKeyWordResponse;
+	}
+
+
+	public int getIdProjectKeyWord() {
+		return idProjectKeyWord;
+	}
+
+	public void setIdProjectKeyWord(int idProjectKeyWord) {
+		this.idProjectKeyWord = idProjectKeyWord;
 	}
 
 }

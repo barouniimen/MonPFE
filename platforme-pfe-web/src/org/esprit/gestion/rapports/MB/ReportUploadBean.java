@@ -93,11 +93,13 @@ public class ReportUploadBean {
 	/****************************** init method ***************************/
 	@PostConstruct
 	public void init() {
+
 		finalVersion = false;
 		selectedReport = new Report();
 		markAsFinal = false;
 		reportToDB = new Report();
 		setOnUpload(false);
+
 		String lastVersion = reportFacade.getLastVersion(authBean.getUser()
 				.getId());
 
@@ -125,8 +127,17 @@ public class ReportUploadBean {
 		newKeyWord = false;
 
 		submitSessionOpened = submissionFacade.sessionOpened();
-		allowdedPeriodToSubmit = projFacad.allawdedPeriodToSubmit(authBean.getUser().getId(),
-				submitSessionOpened.getMinPeriodToSubmit());
+
+		if (submitSessionOpened != null) {
+
+			allowdedPeriodToSubmit = projFacad.allawdedPeriodToSubmit(authBean
+					.getUser().getId(), submitSessionOpened
+					.getMinPeriodToSubmit());
+		} else {
+
+			allowdedPeriodToSubmit = false;
+		}
+
 	}
 
 	/*********************** listeners ********************************/
@@ -201,40 +212,40 @@ public class ReportUploadBean {
 	}
 
 	public void confirmFinalVersion(ActionEvent event) {
-		if ((submitSessionOpened != null) && allowdedPeriodToSubmit) {
-			/*
-			 * markAsFinal=true if button marquer comme finale is pressed and
-			 * not on upload new file
-			 */
-			if (markAsFinal) {
-				reportFacade.changeToFinal(selectedReport);
-				FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO,
-						"Depôt réussi",
-						"Vous avez déposé la version finale de votre rapport");
-				FacesContext.getCurrentInstance().addMessage(null, msg);
+		if (submitSessionOpened != null) {
+			if (allowdedPeriodToSubmit) {
+				/*
+				 * markAsFinal=true if button marquer comme finale is pressed
+				 * and not on upload new file
+				 */
+				if (markAsFinal) {
+					reportFacade.changeToFinal(selectedReport);
+					FacesMessage msg = new FacesMessage(
+							FacesMessage.SEVERITY_INFO, "Depôt réussi",
+							"Vous avez déposé la version finale de votre rapport");
+					FacesContext.getCurrentInstance().addMessage(null, msg);
+				} else {
+					renderAddKw = true;
+				}
 			} else {
-				renderAddKw = true;
-			}
-		}
-
-		else {
-
-			if (submitSessionOpened == null) {
 				FacesMessage msg = new FacesMessage(
 						FacesMessage.SEVERITY_WARN,
-						"Pas de session",
-						"Aucune session de dépôt n'est ouverte en ce moment, vous ne pouvez pas déposer une version finale!");
+						"Moins de" + submitSessionOpened.getMinPeriodToSubmit()
+								+ "mois",
+						"Votre projet a duré moins que "
+								+ submitSessionOpened.getMinPeriodToSubmit()
+								+ " mois, vous ne pouvez pas le déposer maintenant!");
 				FacesContext.getCurrentInstance().addMessage(null, msg);
 			}
-			if (!allowdedPeriodToSubmit) {
-				FacesMessage msg = new FacesMessage(
-						FacesMessage.SEVERITY_WARN,
-						"Moins de" +submitSessionOpened.getMinPeriodToSubmit()+ "mois",
-						"Votre projet a duré moins que "+submitSessionOpened.getMinPeriodToSubmit()+" mois, vous ne pouvez pas le déposer maintenant!");
-				FacesContext.getCurrentInstance().addMessage(null, msg);
-			}
-			markAsFinal = false;
-			finalVersion = false;
+
+		} else {
+
+			FacesMessage msg = new FacesMessage(
+					FacesMessage.SEVERITY_WARN,
+					"Pas de session",
+					"Aucune session de dépôt n'est ouverte en ce moment, vous ne pouvez pas déposer une version finale!");
+			FacesContext.getCurrentInstance().addMessage(null, msg);
+
 		}
 
 		markAsFinal = false;
@@ -284,18 +295,7 @@ public class ReportUploadBean {
 	}
 
 	public void doUpload(ActionEvent event) {
-		// TODO clear tmp directory
-
-		/*
-		 * String tmpDestination =
-		 * "C:\\PFE_Tools\\jboss-as-7.1.1.Final\\tmpUpload"; File tmpDirectory =
-		 * new File(tmpDestination); try {
-		 * FileUtils.cleanDirectory(tmpDirectory);
-		 * System.out.println("did clear!!!!!!!!!!!"); } catch (IOException e1)
-		 * { System.out.println("didnt clear!!!!!!!!!!!!"); Auto-generated catch
-		 * block e1.printStackTrace(); }
-		 */
-
+	
 		int tabIndex;
 		tabIndex = tabViewBean.getTabIndex();
 
@@ -693,7 +693,6 @@ public class ReportUploadBean {
 	public void setNewKeyWordToAdmin(String newKeyWordToAdmin) {
 		this.newKeyWordToAdmin = newKeyWordToAdmin;
 	}
-
 
 	public boolean isLastedSixMonth() {
 		return allowdedPeriodToSubmit;

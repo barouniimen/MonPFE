@@ -27,7 +27,7 @@ public class ProjectDescriptionBean {
 
 	private boolean hasCoach;
 	private boolean dontHaveCoach;
-	
+
 	private Teacher coach;
 
 	private SimpleDateFormat dateFormat;
@@ -35,9 +35,9 @@ public class ProjectDescriptionBean {
 	/**************************** init method ****************************/
 	@PostConstruct
 	public void init() {
-
 		dateFormat = new SimpleDateFormat("dd-MM-yyyy");
 		studentProj = studentFacade.findStudentProj(authBean.getUser().getId());
+
 		if (studentProj == null) {
 			projFound = false;
 		}
@@ -46,12 +46,10 @@ public class ProjectDescriptionBean {
 			projFound = true;
 			hasCoach = studentFacade.hasCoach(authBean.getUser().getId());
 			dontHaveCoach = !hasCoach;
-		if(hasCoach){
-			coach = new Teacher();
-			coach = studentFacade.findCoach(authBean.getUser().getId());
-		}
-		
-			
+			if (hasCoach) {
+				coach = new Teacher();
+				coach = studentFacade.findCoach(authBean.getUser().getId());
+			}
 
 		}
 

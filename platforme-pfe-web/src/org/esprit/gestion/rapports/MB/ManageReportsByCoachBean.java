@@ -22,8 +22,6 @@ import org.esprit.gestion.rapports.services.facades.Interfaces.IProjectFacadeLoc
 import org.esprit.gestion.rapports.services.facades.Interfaces.IReportFacadeLocal;
 import org.esprit.gestion.rapports.services.facades.Interfaces.IStudentFacadeLocal;
 import org.primefaces.context.RequestContext;
-import org.primefaces.event.SelectEvent;
-import org.primefaces.event.UnselectEvent;
 
 @ManagedBean
 @ViewScoped
@@ -89,17 +87,11 @@ public class ManageReportsByCoachBean {
 		renderNoReports = false;
 		showDocument = false;
 		studentTogetPath = new Student();
-		filePath = "/ressources/uploadedFiles/03-FT-33/guide.pdf";
 
 		disableDownload = false;
 	}
 
 	/****************************** action listeners ****************************/
-	public void onRowSelect(SelectEvent event) {
-		System.out.println("on row select");
-		disableDownload = true;
-	}
-
 	public void readComment(ActionEvent event) {
 		if (selectedReport == null) {
 			int tabIndex = tabViewBean.getTabIndex();
@@ -128,14 +120,19 @@ public class ManageReportsByCoachBean {
 
 	public void cancelAddComment(ActionEvent event) {
 		fileComments = null;
+		try {
+			RequestContext.getCurrentInstance().execute("location.reload();");
+		} catch (Exception e) {
+		}
 	}
 
 	public void doAddComment(ActionEvent event) {
+		System.out.println("on add comment!!!!!!!!!!!");
+
 		reportFacad.addComment(selectedReport, authBean.getUser().getId(),
 				fileComments);
 		try {
-			RequestContext.getCurrentInstance().execute(
-					"addCommentDialog.hide();");
+			RequestContext.getCurrentInstance().execute("location.reload();");
 		} catch (Exception e) {
 		}
 
@@ -146,15 +143,10 @@ public class ManageReportsByCoachBean {
 
 		try {
 			RequestContext.getCurrentInstance().execute(
-					"addCommentDialog.hide();");
+					"location.reload();");
 		} catch (Exception e) {
 		}
 
-		try {
-			RequestContext.getCurrentInstance().execute(
-					"readCommentDialog.hide();");
-		} catch (Exception e) {
-		}
 
 	}
 

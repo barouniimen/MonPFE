@@ -22,4 +22,6 @@ public interface ISubmissionFacadeLocal {
 
 	public List<Report> listSubmittedReports(SubmissionEvent submitEvent);
 
+	public void updateDates();
+
 }

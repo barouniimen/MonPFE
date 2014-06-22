@@ -4,10 +4,6 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:p="http://primefaces.org/ui">
 
-
-
-
-
 	<h:form>
 		<p:growl autoUpdate="true" />
 
@@ -17,18 +13,22 @@
 			rendered="#{!reportUploadBean.renderUpload}"
 			style="color: #DC143C;text-align: center;font-size: medium;font-style: italic;font-weight: bold;" />
 
+		<h:outputText
+			value="Vous n'avez aucun projet en cours, vous ne pouvez pas télécharger des documents."
+			rendered="#{!projectDescriptionBean.projFound}"
+			style="color: #DC143C;text-align: center;font-size: medium;font-style: italic;font-weight: bold;" />
 		<br />
 		<br />
-		<p:commandButton value="Ajouter un rapport"
+		<p:commandButton value="Ajouter un rapport" disabled="#{!projectDescriptionBean.projFound}"
 			onclick="uploadDialog.show();" style="margin-right:3%;"
 			rendered="#{reportUploadBean.renderUpload}"
 			actionListener="#{reportUploadBean.toUpload}" />
 
-		<p:commandButton value="Marquer la sélection comme finale"
+		<p:commandButton value="Marquer la sélection comme finale" disabled="#{!projectDescriptionBean.projFound}"
 			style="margin-right:3%;" rendered="#{reportUploadBean.renderUpload}"
 			actionListener="#{reportUploadBean.markAsFinal}" />
 
-		<p:commandButton value="Supprimer la sélection"
+		<p:commandButton value="Supprimer la sélection" disabled="#{!projectDescriptionBean.projFound}"
 			actionListener="#{reportUploadBean.toDeleteReport}" />
 		<br />
 		<br />

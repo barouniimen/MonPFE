@@ -5,12 +5,9 @@
 	xmlns:p="http://primefaces.org/ui">
 
 
-	<p:dialog modal="true" widgetVar="statusDialog" header="Status"
-		draggable="false" closable="false" resizable="false">
-		<p:graphicImage name="/resources/images/bar120.gif" />
-	</p:dialog>
-
 	<h:form id="formProfile">
+	
+	
 		<h:panelGrid columns="5" columnClasses="label, value">
 			<h:outputText value="Sélectionnez un profile: "
 				style="font-weight: bold;" />
@@ -62,7 +59,7 @@
 				update=":tabView:readCommentDialog" />
 
 			<p:commandButton value="Telecharger" ajax="false" title="download"
-				actionListener="#{fileDownloadBean.findPath}"
+				actionListener="#{fileDownloadBean.findPath}" 
 				rendered="#{manageReportsByCoachBean.renderTableReports}">
 				<p:fileDownload value="#{fileDownloadBean.file}" />
 			</p:commandButton>
@@ -80,6 +77,8 @@
 			selection="#{manageReportsByCoachBean.selectedReport}"
 			paginator="true" paginatorPosition="bottom" liveResize="true"
 			style="margin-top:1% !important;">
+
+			
 
 			<f:facet name="header">
 				<h:outputText
@@ -144,16 +143,6 @@
 
 	</h:form>
 
-
-	<script type="text/javascript">
-function start() {
-    PF('statusDialog').show();
-}
- 
-function stop() {
-    PF('statusDialog').hide();
-}
-</script>
 
 
 	<p:dialog widgetVar="addCommentDialog" header="Ajouter une remarque"

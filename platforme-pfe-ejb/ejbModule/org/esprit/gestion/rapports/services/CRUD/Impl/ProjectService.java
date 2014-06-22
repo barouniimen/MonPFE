@@ -36,7 +36,7 @@ public class ProjectService implements IServiceLocal<Project>,
 		Project projectSearched = null;
 
 		/*************************** search by ID *********************************************/
-		if (searchBy == "ID") {
+		if (searchBy.equals("ID")) {
 			TypedQuery<Project> query = em.createNamedQuery("Project.findById",
 					Project.class);
 			query.setParameter("id", ((Project) object).getId());
@@ -44,13 +44,20 @@ public class ProjectService implements IServiceLocal<Project>,
 		}
 
 		/******************************* By Topic ***************************************************/
-		else if (searchBy == "TOPIC") {
+		else if (searchBy.equals("TOPIC")) {
 			TypedQuery<Project> query = em.createNamedQuery(
 					"Project.findByTopic", Project.class);
 			query.setParameter("topic", ((Project) object).getTopic());
 			projectSearched = query.getSingleResult();
 
 		}
+		else if(searchBy.equals("ST")){
+			TypedQuery<Project> query = em.createNamedQuery(
+					"Project.findByStudent", Project.class);
+			query.setParameter("student", ((Project) object).getStudent());
+			projectSearched = query.getSingleResult();
+		}
+		
 		return projectSearched;
 	}
 

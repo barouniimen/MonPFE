@@ -5,9 +5,9 @@
 	xmlns:p="http://primefaces.org/ui">
 
 	<h:form id="formMsgMenuStudent"
-		style="display: table !important; border-collapse: separate !important; border-spacing: 20px 5px !important;">
+		style="display: table !important; border-collapse: separate !important; border-spacing: 20px 5px !important;width:100% !important;">
 		<div
-			style="display: table-cell !important;  vertical-align: top !important; table-layout: auto !important;">
+			style="display: table-cell !important; vertical-align: top !important; table-layout: auto !important;">
 
 			<p:menu>
 				<p:submenu label="Boite de réception">
@@ -30,23 +30,36 @@
 
 
 		</div>
-<div
-		style="display: table-cell !important; vertical-align: top !important; table-layout: auto !important;width: 80%;">
-		
-		<ui:include
-			src="/pages/teacher/manageMessages/datatables/msgSeen.xhtml" />
-		<ui:include
-			src="/pages/teacher/manageMessages/datatables/msgSent.xhtml" />
-		<ui:include
-			src="/pages/teacher/manageMessages/datatables/msgToRead.xhtml" />
-</div>
+		<div
+			style="display: table-cell !important; vertical-align: top !important; table-layout: auto !important; width: 80%;">
+
+			
+				
+				<h:graphicImage rendered="#{mailBoxBean.renderImagePleine}"
+					library="images" name="messagesPlein.png"
+					style="height:30%;width:30%;margin-left:20% !important;" />
+					
+				<h:graphicImage rendered="#{mailBoxBean.renderImageVide}"
+					library="images" name="messagesVide.png"
+					style="height:30%;width:30%;margin-left:20% !important;" />
+
+
+
+
+			<ui:include
+				src="/pages/teacher/manageMessages/datatables/msgSeen.xhtml" />
+			<ui:include
+				src="/pages/teacher/manageMessages/datatables/msgSent.xhtml" />
+			<ui:include
+				src="/pages/teacher/manageMessages/datatables/msgToRead.xhtml" />
+		</div>
 	</h:form>
 
 
 	<!-- ******************************** Message Seen content Dialog *****************************  -->
 	<p:dialog header="Objet: #{mailBoxBean.selectedMsgSeen.subject}"
 		widgetVar="seenDialog" resizable="false" hideEffect="explode">
-		<p:ajax event="close" listener="#{mailBoxBean.handleClose}"/>
+		<p:ajax event="close" listener="#{mailBoxBean.handleClose}" />
 		<h:form id="dialogSeenForm">
 			<br />
 			<h:outputLabel value="De la part de: " for="senderSeen"

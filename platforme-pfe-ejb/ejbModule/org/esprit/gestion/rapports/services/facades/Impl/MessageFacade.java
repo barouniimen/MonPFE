@@ -850,7 +850,7 @@ public class MessageFacade implements IMessageFacadeLocal, IMessageFacadeRemote 
 		Date date = new Date();
 		msg.setSendingDate(date);
 		msg.setSubject("Ajout de mot clé");
-		msg.setType(MessageType.BySTUDENT);
+		msg.setType(MessageType.ADD_KEY_WORD);
 		Administrator reciever = new Administrator();
 		reciever = (adminServ.retrieveList(null, "ALL")).get(0);
 		msg.setIdReceiver(reciever.getId());

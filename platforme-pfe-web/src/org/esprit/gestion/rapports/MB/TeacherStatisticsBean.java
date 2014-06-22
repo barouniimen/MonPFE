@@ -132,7 +132,6 @@ public class TeacherStatisticsBean {
 				for (int i = 0; i < domainsCorrector.size(); i++) {
 					if (domainsNamesCorrector.get(j).equals(
 							domainsCorrector.get(i))) {
-						System.out.println("found dom corrector!!!!!");
 						countCorrecotr = countCorrecotr + 1;
 					}
 				}

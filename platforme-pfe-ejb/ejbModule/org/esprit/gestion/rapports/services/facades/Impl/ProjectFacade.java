@@ -10,9 +10,11 @@ import javax.inject.Inject;
 
 import org.esprit.gestion.rapports.persistence.Administrator;
 import org.esprit.gestion.rapports.persistence.AssignResponseState;
+import org.esprit.gestion.rapports.persistence.Comments;
 import org.esprit.gestion.rapports.persistence.CompanyCoach;
 import org.esprit.gestion.rapports.persistence.Domain;
 import org.esprit.gestion.rapports.persistence.Message;
+import org.esprit.gestion.rapports.persistence.MessageAccess;
 import org.esprit.gestion.rapports.persistence.MessageType;
 import org.esprit.gestion.rapports.persistence.Project;
 import org.esprit.gestion.rapports.persistence.ProjectDomain;
@@ -26,9 +28,12 @@ import org.esprit.gestion.rapports.persistence.TeacherRole;
 import org.esprit.gestion.rapports.persistence.TeacherRolePK;
 import org.esprit.gestion.rapports.persistence.TeacherRoleType;
 import org.esprit.gestion.rapports.persistence.User;
+import org.esprit.gestion.rapports.persistence.UserMessage;
+import org.esprit.gestion.rapports.persistence.UserMessagePK;
 import org.esprit.gestion.rapports.persistence.ValidationState;
 import org.esprit.gestion.rapports.services.CRUD.Interfaces.IServiceLocal;
 import org.esprit.gestion.rapports.services.CRUD.Util.AdminQualifier;
+import org.esprit.gestion.rapports.services.CRUD.Util.CommentQualifier;
 import org.esprit.gestion.rapports.services.CRUD.Util.CompanyCoachQualifier;
 import org.esprit.gestion.rapports.services.CRUD.Util.DomainQualifier;
 import org.esprit.gestion.rapports.services.CRUD.Util.MessagesQualifier;
@@ -39,6 +44,7 @@ import org.esprit.gestion.rapports.services.CRUD.Util.ReportQualifier;
 import org.esprit.gestion.rapports.services.CRUD.Util.StudentQualifier;
 import org.esprit.gestion.rapports.services.CRUD.Util.TeacherQualifier;
 import org.esprit.gestion.rapports.services.CRUD.Util.TecherRoleQualifier;
+import org.esprit.gestion.rapports.services.CRUD.Util.UserMessageQualifier;
 import org.esprit.gestion.rapports.services.CRUD.Util.UserQualifier;
 import org.esprit.gestion.rapports.services.facades.Interfaces.IMessageFacadeLocal;
 import org.esprit.gestion.rapports.services.facades.Interfaces.IProjectFacadeLocal;
@@ -73,6 +79,10 @@ public class ProjectFacade implements IProjectFacadeLocal, IProjectFacadeRemote 
 	IServiceLocal<ProjectDomain> projDomServ;
 
 	@Inject
+	@CommentQualifier
+	IServiceLocal<Comments> commServ;
+
+	@Inject
 	@StudentQualifier
 	IServiceLocal<Student> studentServ;
 
@@ -102,6 +112,10 @@ public class ProjectFacade implements IProjectFacadeLocal, IProjectFacadeRemote 
 	@Inject
 	@AdminQualifier
 	IServiceLocal<Administrator> adminServ;
+
+	@Inject
+	@UserMessageQualifier
+	IServiceLocal<UserMessage> userMsgServ;
 
 	@Override
 	public void assignCoachToProject(Teacher teacher, int iDproject, User sender) {
@@ -235,23 +249,68 @@ public class ProjectFacade implements IProjectFacadeLocal, IProjectFacadeRemote 
 		studentToDelete.setProject(null);
 		studentServ.update(studentToDelete);
 
+		System.out.println("update student done!!!!!!!!!!!!!!!!!!");
+
 		for (int i = 0; i < proj.getProjectDomains().size(); i++) {
 			ProjectDomain projDom = new ProjectDomain();
 			projDom = proj.getProjectDomains().get(i);
 			projDomServ.delete(projDom);
 		}
 
-		// TODO notify coach if affected && delete affectations if there is
+		List<TeacherRole> listTeacherRole = new ArrayList<TeacherRole>();
+		TeacherRole role = new TeacherRole();
+
+		role.setProject(proj);
+		listTeacherRole = teachRoleServ.retrieveList(role, "proj");
+
+		if (!(listTeacherRole.isEmpty())) {
+			for (int comptTrole = 0; comptTrole < listTeacherRole.size(); comptTrole++) {
+
+				// notify teacher
+				Message msg = new Message();
+				msg.setContent("Bonjour,\n\n Le projet: "
+						+ proj.getTopic()
+						+ "affecté à l'étudiant(e): "
+						+ studentToDelete.getLastName()
+						+ " "
+						+ studentToDelete.getFirstName()
+						+ " a été supprimé de la plateforme.\n\n Cordialement\n\n Direction Des Dtages et PFE");
+				msg.setIdReceiver(listTeacherRole.get(comptTrole).getPk()
+						.getTeacherId());
+				msg.setIdSender(-1);
+				Date sendingDate = new Date();
+				msg.setSendingDate(sendingDate);
+				msg.setSubject("Suppression de projet");
+				msg.setType(MessageType.ByADMIN);
+
+				msgServ.create(msg);
+
+				UserMessagePK pk = new UserMessagePK();
+				pk.setMessageId(msg.getId());
+				pk.setUserId(listTeacherRole.get(comptTrole).getPk()
+						.getTeacherId());
+
+				UserMessage cx = new UserMessage();
+				cx.setAccess(MessageAccess.TOREAD);
+				cx.setPk(pk);
+
+				userMsgServ.create(cx);
+
+				// delete
+				teachRoleServ.delete(listTeacherRole.get(comptTrole));
+			}
+		}
+
 		List<Report> listReport = new ArrayList<Report>();
 		listReport = proj.getReports();
 
 		if (!(listReport.isEmpty())) {
 
-			for (int i = 0; i < listReport.size(); i++) {
+			for (int comptReport = 0; comptReport < listReport.size(); comptReport++) {
 
 				ReportKeyWordPk pk = new ReportKeyWordPk();
 
-				pk.setReportId(listReport.get(i).getId());
+				pk.setReportId(listReport.get(comptReport).getId());
 
 				ReportKeyWord repKw = new ReportKeyWord();
 				repKw.setPk(pk);
@@ -261,13 +320,28 @@ public class ProjectFacade implements IProjectFacadeLocal, IProjectFacadeRemote 
 
 				if (!(listRepKw.isEmpty())) {
 
-					for (int j = 0; j < listRepKw.size(); j++) {
-						reportKeyWordServ.delete(listRepKw.get(i));
+					for (int comptKeyW = 0; comptKeyW < listRepKw.size(); comptKeyW++) {
+						reportKeyWordServ.delete(listRepKw.get(comptKeyW));
 					}
 
 				}
 
-				reportServ.delete(listReport.get(i));
+				List<Comments> listComment = new ArrayList<Comments>();
+				Comments comment = new Comments();
+				comment.setReport(listReport.get(comptReport));
+
+				listComment = commServ.retrieveList(comment, "report");
+
+				if (!(listComment.isEmpty())) {
+					for (int comptComment = 0; comptComment < listComment
+							.size(); comptComment++) {
+						commServ.delete(listComment.get(comptComment));
+					}
+				}
+
+				listComment = commServ.retrieveList(comment, "report");
+
+				reportServ.delete(listReport.get(comptReport));
 			}
 		}
 		projServ.delete(proj);
@@ -511,19 +585,23 @@ public class ProjectFacade implements IProjectFacadeLocal, IProjectFacadeRemote 
 		Project proj = new Project();
 		proj = st.getProject();
 
-		Date currentDate = new Date();
+		if (proj != null) {
+			Date currentDate = new Date();
 
-		long diff = currentDate.getTime() - proj.getStartDate().getTime();
+			long diff = currentDate.getTime() - proj.getStartDate().getTime();
 
-		int diffDays = (int) (diff / (24 * 60 * 60 * 1000));
+			int diffDays = (int) (diff / (24 * 60 * 60 * 1000));
 
-		int diffMonth = diffDays / 30;
+			int diffMonth = diffDays / 30;
 
-		if (diffMonth > period) {
-			return true;
-		}
+			if (diffMonth > period) {
+				return true;
+			}
 
-		else {
+			else {
+				return false;
+			}
+		} else {
 			return false;
 		}
 	}

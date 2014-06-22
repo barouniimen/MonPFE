@@ -62,7 +62,12 @@ public class CommentServ implements IServiceLocal<Comments>,
 
 	@Override
 	public void delete(Object object) {
-		// TODO Auto-generated method stub
+		try{
+			em.remove(object);
+		}
+		catch(Exception e){
+			System.out.println("not deleted!!!!!!!!!!!!!");
+		}
 
 	}
 

@@ -3,6 +3,7 @@ package org.esprit.gestion.rapports.MB;
 import java.io.Serializable;
 
 import javax.annotation.PostConstruct;
+import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
@@ -15,10 +16,11 @@ import org.esprit.gestion.rapports.persistence.Teacher;
 import org.esprit.gestion.rapports.persistence.User;
 import org.esprit.gestion.rapports.services.CRUD.Interfaces.IServiceLocal;
 import org.esprit.gestion.rapports.services.CRUD.Util.UserQualifier;
+import org.esprit.gestion.rapports.services.facades.Interfaces.ISubmissionFacadeLocal;
 
 @ManagedBean
 @SessionScoped
-public class AuthenticationBean implements Serializable{
+public class AuthenticationBean implements Serializable {
 
 	/**
 	 * 
@@ -35,6 +37,10 @@ public class AuthenticationBean implements Serializable{
 	private boolean student;
 	private boolean admin;
 
+	@EJB
+	ISubmissionFacadeLocal submitEventFacade;
+
+	/************************************** init method ***************************/
 	@PostConstruct
 	public void init() {
 		user = new User();
@@ -43,31 +49,20 @@ public class AuthenticationBean implements Serializable{
 		teacher = false;
 	}
 
+	/************************************* constructor ****************************/
 	public AuthenticationBean() {
 	}
 
-	public User getUser() {
-		return user;
-	}
-
-	public void setUser(User user) {
-		this.user = user;
-	}
-
-	public boolean isLoggedIn() {
-		return loggedIn;
-	}
-
-	public void setLoggedIn(boolean loggedIn) {
-		this.loggedIn = loggedIn;
-	}
-
+	/****************************************** listeners *********************************/
 	public String performAuthetication() {
 		String forward = null;
 		user = (User) userSer.retrieve(user, "LP");
+		
 		if (null != user) {
 
 			if (user instanceof Student) {
+				submitEventFacade.updateDates();
+
 				student = true;
 				admin = false;
 				teacher = false;
@@ -75,6 +70,8 @@ public class AuthenticationBean implements Serializable{
 				loggedIn = true;
 
 			} else if (user instanceof Teacher) {
+				submitEventFacade.updateDates();
+
 				student = false;
 				admin = false;
 				teacher = true;
@@ -82,6 +79,8 @@ public class AuthenticationBean implements Serializable{
 				loggedIn = true;
 
 			} else if (user instanceof Administrator) {
+				submitEventFacade.updateDates();
+
 				student = false;
 				admin = true;
 				teacher = false;
@@ -108,17 +107,19 @@ public class AuthenticationBean implements Serializable{
 	}
 
 	public String performLogout() {
+
 		user = new User();
 		loggedIn = false;
-		
+
 		FacesContext.getCurrentInstance().getExternalContext()
 				.invalidateSession();
-		
+
 		String forward = "/pages/index?faces-redirect=true";
 
 		return forward;
 	}
 
+	/*************************************** getter && setter ********************************/
 	public boolean isTeacher() {
 		return teacher;
 	}
@@ -141,6 +142,22 @@ public class AuthenticationBean implements Serializable{
 
 	public void setAdmin(boolean admin) {
 		this.admin = admin;
+	}
+
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
+	}
+
+	public boolean isLoggedIn() {
+		return loggedIn;
+	}
+
+	public void setLoggedIn(boolean loggedIn) {
+		this.loggedIn = loggedIn;
 	}
 
 }

@@ -6,6 +6,7 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
 import javax.faces.event.ActionEvent;
 
@@ -34,7 +35,13 @@ public class AddKeyWordBean {
 	private DualListModel<KeyWord> keyWordPicklis;
 	private List<KeyWord> listKwSource;
 	private List<KeyWord> listKwTarget;
+	private int idProjectKeyWord;
+	
+	@ManagedProperty(value = "#{mailBoxBean}")
+	private MailBoxBean mailBoxBean;
 
+	
+	
 	@EJB
 	IKeyWordFacadeLocal keyWordFacade;
 
@@ -60,10 +67,22 @@ public class AddKeyWordBean {
 		
 		listKwSource.add(kw);
 		keyWordPicklis = new DualListModel<>(listKwSource, listKwTarget);
+		
+		kwToDB = new KeyWord();
+		categToDB = new KeyWordCategory();
 	}
 
 	/************************ listeners ********************************/
-	
+	public void addKeyWordStudent(ActionEvent event) {
+		idProjectKeyWord = mailBoxBean.getIdProjectKeyWord();
+		System.out.println("id proj "+idProjectKeyWord);
+		kwToDB.setCategory(categToDB);
+		keyWordFacade.addKeyWordToStudent(kwToDB, idProjectKeyWord);
+		try {
+			RequestContext.getCurrentInstance().execute("acceptAddKw.hide();");
+		} catch (Exception e) {
+		}
+	}
 	
 
 	public void addCateg(ActionEvent event) {
@@ -75,6 +94,8 @@ public class AddKeyWordBean {
 		}
 	}
 
+	
+	
 	public void addKeyWord(ActionEvent event) {
 		kwToDB.setCategory(selectedCategory);
 		keyWordFacade.addKeyWord(kwToDB);
@@ -95,7 +116,7 @@ public class AddKeyWordBean {
 	}
 
 	public void onChangeCategory() {
-		kwToDB = new KeyWord();
+		
 		// find catégories
 		listKeyWord = keyWordFacade.keyWordsByCateg(selectedCategory);
 
@@ -249,5 +270,19 @@ public class AddKeyWordBean {
 	public void setListKwTarget(List<KeyWord> listKwTarget) {
 		this.listKwTarget = listKwTarget;
 	}
+
+	public int getIdProjectKeyWord() {
+		return idProjectKeyWord;
+	}
+
+	public void setIdProjectKeyWord(int idProjectKeyWord) {
+		this.idProjectKeyWord = idProjectKeyWord;
+	}
+
+	public void setMailBoxBean(MailBoxBean mailBoxBean) {
+		this.mailBoxBean = mailBoxBean;
+	}
+
+
 
 }

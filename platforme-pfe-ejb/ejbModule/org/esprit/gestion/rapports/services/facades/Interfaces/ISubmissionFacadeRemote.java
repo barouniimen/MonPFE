@@ -20,4 +20,6 @@ public interface ISubmissionFacadeRemote {
 			Administrator user);
 	
 	public List<Report> listSubmittedReports(SubmissionEvent submitEvent);
+	
+	public void updateDates();
 }

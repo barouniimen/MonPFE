@@ -62,13 +62,21 @@ public class ReportService implements IServiceLocal<Report>,
 		List<Report> returnList = new ArrayList<Report>();
 
 		/*************************** search ALL *************************************/
-		if (searchBy == "state") {
+		if (searchBy.equals("state")) {
 			TypedQuery<Report> query = em.createNamedQuery(
 					"Report.findByState", Report.class);
 			query.setParameter("state", ((Report) object).getState());
 
 			returnList = query.getResultList();
 
+		}
+		
+		else if(searchBy.equals("proj")){
+			TypedQuery<Report> query = em.createNamedQuery(
+					"Report.findByProject", Report.class);
+			query.setParameter("project", ((Report) object).getProject());
+
+			returnList = query.getResultList();
 		}
 
 		return returnList;

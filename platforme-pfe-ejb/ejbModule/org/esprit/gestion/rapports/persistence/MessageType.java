@@ -14,7 +14,8 @@ public enum MessageType {
 	ByTEACHER("message d'un enseignant"),
 	ByVISITOR("envoy\u00E9 par un visitor non enregistr\u00E9 \u00E0   la BD"),
 	PJURYASSIGN("affecter un pr\u00E9sident de jury au projet"),
-	SUBMIT_EVENT_NOTIF("Ouverture d'une session de d\u00E9p\u00F4t");
+	SUBMIT_EVENT_NOTIF("Ouverture d'une session de d\u00E9p\u00F4t"),
+	ADD_KEY_WORD("Ajouter un mot cl\u00E9");
 	
 	private String description;
 	

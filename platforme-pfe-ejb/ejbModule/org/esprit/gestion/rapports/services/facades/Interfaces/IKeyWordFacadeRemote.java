@@ -21,5 +21,7 @@ public interface IKeyWordFacadeRemote {
 	
 	public void askNewKeyWord(String newCategory,
 			String newKeyWord, Student sender);
+	
+	public void addKeyWordToStudent(KeyWord keyWord, int idProject);
 
 }

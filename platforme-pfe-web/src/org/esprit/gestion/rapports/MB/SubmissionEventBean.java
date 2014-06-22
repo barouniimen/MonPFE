@@ -23,7 +23,6 @@ import org.esprit.gestion.rapports.services.facades.Interfaces.IReportFacadeLoca
 import org.esprit.gestion.rapports.services.facades.Interfaces.ISubmissionFacadeLocal;
 import org.esprit.gestion.rapports.utils.AssignState;
 import org.primefaces.context.RequestContext;
-import org.primefaces.model.chart.MeterGaugeChartModel;
 
 @ManagedBean
 @ViewScoped
@@ -34,7 +33,7 @@ public class SubmissionEventBean {
 	private SimpleDateFormat dateFormat;
 	private int nbreSessionOpened;
 	private SubmissionEvent submitEventToDB;
-	private MeterGaugeChartModel model;
+	
 	private String startDate;
 	private String endDate;
 	private List<Report> submittedReports;
@@ -81,20 +80,7 @@ public class SubmissionEventBean {
 		toAssignCorrector = false;
 		assignedCorrector = false;
 
-		List<Number> intervals = new ArrayList<Number>() {
-			/**
-			 * 
-			 */
-			private static final long serialVersionUID = 1L;
-
-			{
-				add(20);
-				add(50);
-				add(120);
-				add(220);
-			}
-		};
-		model = new MeterGaugeChartModel(140, intervals);
+		
 
 	}
 
@@ -374,13 +360,7 @@ public class SubmissionEventBean {
 		this.authBean = authBean;
 	}
 
-	public MeterGaugeChartModel getModel() {
-		return model;
-	}
 
-	public void setModel(MeterGaugeChartModel model) {
-		this.model = model;
-	}
 
 	public String getStartDate() {
 		return startDate;

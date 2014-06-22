@@ -45,7 +45,7 @@ public class ReportFacade implements IReportFacadeLocal, IReportFacadeRemote {
 	@Inject
 	@StudentQualifier
 	IServiceLocal<Student> studentServ;
-	
+
 	@Inject
 	@CommentQualifier
 	IServiceLocal<Comments> commentServ;
@@ -91,7 +91,6 @@ public class ReportFacade implements IReportFacadeLocal, IReportFacadeRemote {
 
 		else {
 			version = reportsList.get(0).getVersion();
-
 			Date lastDate = reportsList.get(0).getUploadDate();
 
 			for (int i = 1; i < reportsList.size(); i++) {
@@ -125,10 +124,11 @@ public class ReportFacade implements IReportFacadeLocal, IReportFacadeRemote {
 		proj = st.getProject();
 
 		if (proj != null) {
-			proj = (Project) projServ.retrieve(proj, "ID");
-			System.out.println("proj retrieved " + proj.getId());
+			Report report = new Report();
+			report.setProject(proj);
+
 			// find all reports linked to project
-			reportsList = proj.getReports();
+			reportsList = reportServ.retrieveList(report, "proj");
 
 		}
 		return reportsList;
@@ -138,27 +138,35 @@ public class ReportFacade implements IReportFacadeLocal, IReportFacadeRemote {
 	@Override
 	public void createReport(Report report, int idStudent,
 			List<String> keyWordNames) {
+
+		System.out.println("on create facade!!!!!!!!!!!!!!!!!!!");
 		Student st = new Student();
 		st.setId(idStudent);
 		st = (Student) studentServ.retrieve(st, "ID");
 
 		// create report
 		reportServ.create(report);
+		
+		System.out.println("report created!!!!!!!!!!!!!!");
+		System.out.println(report.getFileName());
+		System.out.println(report.getId());
 
 		Project proj = new Project();
 		proj = st.getProject();
 
-		List<Report> projReports = new ArrayList<Report>();
-		projReports = proj.getReports();
+		if (proj != null) {
+			// update proj
+			List<Report> projReports = new ArrayList<Report>();
+			projReports = proj.getReports();
 
-		projReports.add(report);
+			projReports.add(report);
 
-		if (report.getState().equals(ReportState.DEPOSED)) {
-			proj.setValidationState(ValidationState.DEPOSED);
+			if (report.getState().equals(ReportState.DEPOSED)) {
+				proj.setValidationState(ValidationState.DEPOSED);
+			}
+
+			projServ.update(proj);
 		}
-
-		// update proj
-		projServ.update(proj);
 
 		if (report.getState().equals(ReportState.DEPOSED)) {
 			// ajouter les mots clés
@@ -184,42 +192,47 @@ public class ReportFacade implements IReportFacadeLocal, IReportFacadeRemote {
 
 			String uploadDate = dateFormat.format(report.getUploadDate());
 
+			// notify coach
 			List<TeacherRole> roles = new ArrayList<TeacherRole>();
 			roles = proj.getTeacherRoles();
-			for (int i = 0; i < roles.size(); i++) {
-				if (roles.get(i).getRole().equals(TeacherRoleType.ENCADRANT)) {
-					idReciever = roles.get(i).getPk().getTeacherId();
+
+			if (!(roles.isEmpty())) {
+				for (int i = 0; i < roles.size(); i++) {
+					if (roles.get(i).getRole()
+							.equals(TeacherRoleType.ENCADRANT)) {
+						idReciever = roles.get(i).getPk().getTeacherId();
+					}
 				}
+
+				if (idReciever != -1) {
+					Message msgToCoach = new Message();
+
+					msgToCoach.setContent("Bonjour,\n\n L'étudiant "
+							+ st.getLastName() + " " + st.getFirstName()
+							+ " que vous encadrez a déposé son rapport le "
+							+ uploadDate + ".\n\n Cordialement");
+					msgToCoach.setIdSender(-1);
+					Date sendingDate = new Date();
+					msgToCoach.setSendingDate(sendingDate);
+					msgToCoach.setSubject("Dépôt de rapport");
+					msgToCoach.setType(MessageType.SUBMIT_EVENT_NOTIF);
+					msgToCoach.setIdReceiver(idReciever);
+
+					msgServ.create(msgToCoach);
+
+					UserMessagePK pkCoach = new UserMessagePK();
+					pkCoach.setMessageId(msgToCoach.getId());
+					pkCoach.setUserId(idReciever);
+
+					UserMessage coachMsgCx = new UserMessage();
+					coachMsgCx.setAccess(MessageAccess.TOREAD);
+					coachMsgCx.setPk(pkCoach);
+
+					userMsgServ.create(coachMsgCx);
+
+				}
+
 			}
-
-			if (idReciever != -1) {
-				Message msgToCoach = new Message();
-
-				msgToCoach.setContent("Bonjour,\n\n L'étudiant "
-						+ st.getLastName() + " " + st.getFirstName()
-						+ " que vous encadrez a déposé son rapport le "
-						+ uploadDate + ".\n\n Cordialement");
-				msgToCoach.setIdSender(-1);
-				Date sendingDate = new Date();
-				msgToCoach.setSendingDate(sendingDate);
-				msgToCoach.setSubject("Dépôt de rapport");
-				msgToCoach.setType(MessageType.SUBMIT_EVENT_NOTIF);
-				msgToCoach.setIdReceiver(idReciever);
-
-				msgServ.create(msgToCoach);
-
-				UserMessagePK pkCoach = new UserMessagePK();
-				pkCoach.setMessageId(msgToCoach.getId());
-				pkCoach.setUserId(idReciever);
-
-				UserMessage coachMsgCx = new UserMessage();
-				coachMsgCx.setAccess(MessageAccess.TOREAD);
-				coachMsgCx.setPk(pkCoach);
-
-				userMsgServ.create(coachMsgCx);
-
-			}
-
 		}
 
 	}
@@ -310,30 +323,67 @@ public class ReportFacade implements IReportFacadeLocal, IReportFacadeRemote {
 	@Override
 	public void addComment(Report report, int idCoach, String comments) {
 		report = (Report) reportServ.retrieve(report, "ID");
-		
-		Comments comment = new  Comments();
+
+		Comments comment = new Comments();
 		comment.setContent(comments);
 		Date date = new Date();
 		comment.setDate(date);
 		Teacher coach = new Teacher();
 		coach.setId(idCoach);
 		coach = (Teacher) teacherServ.retrieve(coach, "ID");
-		
-		comment.setEditorName(coach.getLastName()+" "+coach.getFirstName());
+
+		comment.setEditorName(coach.getLastName() + " " + coach.getFirstName());
 		comment.setReport(report);
-		
+
 		commentServ.create(comment);
-		
+
 		List<Comments> listComment = new ArrayList<Comments>();
 		listComment = report.getComments();
-		
+
 		listComment.add(comment);
-		
+
 		report.setComments(listComment);
-		
+
 		reportServ.update(report);
-		
-	
+
+		// notify student
+
+		Project proj = new Project();
+		proj = report.getProject();
+
+		proj = (Project) projServ.retrieve(proj, "ID");
+
+		Student st = new Student();
+		st = proj.getStudent();
+
+		Message msgStudent = new Message();
+		msgStudent
+				.setContent("Bonjour,\n\n Votre encadrant a commenté le document ["
+						+ report.getFileName()
+						+ "] que vous avez téléchargé le ["
+						+ report.getUploadDate()
+						+ "].\n Commentaire:\n "
+						+ comment.getContent() + "\n\n\n Cordialement");
+
+		msgStudent.setIdReceiver(st.getId());
+		msgStudent.setIdSender(-1);
+		msgStudent.setIncludedRef(report.getId());
+		Date sendingDate = new Date();
+		msgStudent.setSendingDate(sendingDate);
+		msgStudent.setSubject("Nouveau commentaire");
+		msgStudent.setType(MessageType.ByCOACH);
+
+		msgServ.create(msgStudent);
+
+		UserMessagePK pkStudent = new UserMessagePK();
+		pkStudent.setMessageId(msgStudent.getId());
+		pkStudent.setUserId(st.getId());
+
+		UserMessage stMsgCx = new UserMessage();
+		stMsgCx.setAccess(MessageAccess.TOREAD);
+		stMsgCx.setPk(pkStudent);
+
+		userMsgServ.create(stMsgCx);
 
 	}
 
@@ -345,16 +395,16 @@ public class ReportFacade implements IReportFacadeLocal, IReportFacadeRemote {
 
 	@Override
 	public Report findReport(Report report) {
-		
+
 		report = (Report) reportServ.retrieve(report, "ID");
 		List<Comments> commList = new ArrayList<Comments>();
-		
+
 		Comments comment = new Comments();
 		comment.setReport(report);
 		commList = commentServ.retrieveList(comment, "report");
-		
+
 		report.setComments(commList);
-	
+
 		return report;
 	}
 

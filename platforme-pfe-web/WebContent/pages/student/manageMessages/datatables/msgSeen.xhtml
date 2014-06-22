@@ -8,7 +8,7 @@
 		<p:dataTable id="seenTable" rendered="#{mailBoxBean.seen}"
 			var="msgSeen" value="#{mailBoxBean.listMsgModelSeen}"
 			selection="#{mailBoxBean.selectedMsgSeen}" rowKey="#{msgSeen.id}"
-			rows="20" emptyMessage="Aucun message a afficher" paginator="true"
+			rows="5" emptyMessage="Aucun message a afficher" paginator="true"
 			paginatorPosition="bottom" >
 			<f:facet name="header">
            Messages lus (#{mailBoxBean.msgStats.nbrSeen})

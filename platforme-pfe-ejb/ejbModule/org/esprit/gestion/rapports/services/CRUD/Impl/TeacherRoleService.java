@@ -102,7 +102,13 @@ public class TeacherRoleService implements IServiceLocal<TeacherRole>,
 			listRoles = query.getResultList();
 			
 		}
-		
+		else if(searchBy.equals("proj")){
+			TypedQuery<TeacherRole> query = em.createNamedQuery("Teacherrole.findByProject",
+					TeacherRole.class);
+			query.setParameter("project", ((TeacherRole) object).getProject());
+			listRoles = query.getResultList();
+			
+		}
 		return listRoles;
 	}
 

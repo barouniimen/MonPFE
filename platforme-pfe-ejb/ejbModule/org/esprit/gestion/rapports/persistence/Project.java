@@ -7,7 +7,6 @@ import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -31,6 +30,7 @@ import javax.persistence.TemporalType;
 		@NamedQuery(name = "Project.findById", query = "SELECT p FROM Project p WHERE p.id = :id"),
 		@NamedQuery(name = "Project.findByAcademicYear", query = "SELECT p FROM Project p WHERE p.academicYear = :academicYear"),
 		@NamedQuery(name = "Project.findByTopic", query = "SELECT p FROM Project p WHERE p.topic = :topic"),
+		@NamedQuery(name = "Project.findByStudent", query = "SELECT p FROM Project p WHERE p.student = :student"),
 		@NamedQuery(name = "Project.findByValidationState", query = "SELECT p FROM Project p WHERE p.validationState = :validationState") })
 public class Project implements Serializable {
 
@@ -111,7 +111,7 @@ public class Project implements Serializable {
 		this.teacherRoles = teacherRoles;
 	}
 
-	@OneToMany(mappedBy = "project", fetch = FetchType.EAGER)
+	@OneToMany(mappedBy = "project" )
 	public List<Report> getReports() {
 		return reports;
 	}

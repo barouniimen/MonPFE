@@ -7,7 +7,7 @@
 		<p:dataTable id="sentTable" rendered="#{mailBoxBean.sent}"
 			var="msgSent" value="#{mailBoxBean.listMsgModelSent}"
 			selection="#{mailBoxBean.selectedMsgSent}" rowKey="#{msgSent.id}"
-			rows="20" emptyMessage="Aucun message a afficher" paginator="true"
+			rows="5" emptyMessage="Aucun message a afficher" paginator="true"
 			paginatorPosition="bottom">
 			<f:facet name="header">
            Messages envoyés (#{mailBoxBean.msgStats.nbrSent})

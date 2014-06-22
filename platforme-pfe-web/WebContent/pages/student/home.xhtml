@@ -29,15 +29,9 @@
 
 		<p:layoutUnit id="storage" position="west" size="250"
 			header="Indicateurs" resizable="true" collapsible="true"
-			styleClass="myLayoutStyleClass" >
+			styleClass="myLayoutStyleClass">
 
-			<p:meterGaugeChart value="#{submissionEventBean.model}" showTickLabels="false" labelHeightAdjust="53"
-		intervalOuterRadius="58"
-		seriesColors="66cc66, 93b75f, E7E658, cc6666"
-		style="width:200px;height:130px; float: left" label="Espace de stockage"/>
-<br/>
-<h:outputText value="sessions de depot" />
-
+			<ui:include src="/pages/student/indicators.xhtml" />
 		</p:layoutUnit>
 
 
@@ -57,6 +51,8 @@
 			<p:tabView id="tabView" activeIndex="#{tabViewIndexBean.tabIndex}"
 				style="background-color: #FFFFFF !important;  border-color:#FFFFFF !important;">
 				<p:ajax event="tabChange" listener="#{tabViewIndexBean.onChange}" />
+
+
 				<p:tab id="proj" title="Description du projet">
 					<p:spacer style="margin-top:5%;"></p:spacer>
 					<ui:include src="/pages/student/projectDescription.xhtml" />

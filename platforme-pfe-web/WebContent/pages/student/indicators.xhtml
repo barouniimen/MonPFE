@@ -1,0 +1,83 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+	<h:form>
+		<p:spacer height="10" />
+		<p:meterGaugeChart value="#{indicatorsBean.model}"
+			showTickLabels="false" labelHeightAdjust="53"
+			intervalOuterRadius="58" seriesColors="93b75f, E7E658, cc6666"
+			style="width:200px;height:130px;margin-left:8% !important;"
+			label="Espace de stockage" />
+		<p:spacer height="20" />
+
+		<p:panel header="Session de dépôt en cours" toggleable="true"
+			style="margin-right:4% !important;margin-left:4% !important;">
+
+			<h:panelGrid columns="1">
+				<h:outputText style="color: #DC143C;"
+					value="Aucune session de dépôt n'est ouverte pour le moment."
+					rendered="#{indicatorsBean.noCurrentSubmitEvent}" />
+
+
+				<h:outputText value="Date d'ouverture" style="font-weight: bold;"
+					rendered="#{indicatorsBean.openedSubmitEvent}" />
+				<h:outputText
+					value="#{indicatorsBean.dateFormat.format(indicatorsBean.lastSubmitEvent.startDate)}"
+					rendered="#{indicatorsBean.openedSubmitEvent}" />
+
+				<h:outputText value="Date de clôture" style="font-weight: bold;"
+					rendered="#{indicatorsBean.openedSubmitEvent}" />
+				<h:outputText
+					value="#{indicatorsBean.dateFormat.format(indicatorsBean.lastSubmitEvent.dueDate)}"
+					rendered="#{indicatorsBean.openedSubmitEvent}" />
+
+				<h:outputText value="Durée minimale d'un projet"
+					style="font-weight: bold;"
+					rendered="#{indicatorsBean.openedSubmitEvent}" />
+				<h:outputText
+					value="#{indicatorsBean.lastSubmitEvent.minPeriodToSubmit}"
+					rendered="#{indicatorsBean.openedSubmitEvent}" />
+			</h:panelGrid>
+		</p:panel>
+		
+		<p:spacer height="10" />
+		
+		<p:panel header="Dernière session de dépôt" toggleable="true"
+			style="margin-right:4% !important;margin-left:4% !important;">
+
+			<h:panelGrid columns="1">
+				<h:outputText style="color: #DC143C;"
+					value="Aucune session de dépôt n'a été planifié pour le moment."
+					rendered="#{indicatorsBean.noSubmitEvent}" />
+
+				<h:outputText value="Date d'ouverture" style="font-weight: bold;"
+					rendered="#{indicatorsBean.submitEventExist}" />
+				<h:outputText
+					value="#{indicatorsBean.dateFormat.format(indicatorsBean.lastSubmitEvent.startDate)}"
+					rendered="#{indicatorsBean.submitEventExist}" />
+
+				<h:outputText value="Date de clôture" style="font-weight: bold;"
+					rendered="#{indicatorsBean.submitEventExist}" />
+				<h:outputText
+					value="#{indicatorsBean.dateFormat.format(indicatorsBean.lastSubmitEvent.dueDate)}"
+					rendered="#{indicatorsBean.submitEventExist}" />
+
+				<h:outputText value="Durée minimale d'un projet"
+					style="font-weight: bold;"
+					rendered="#{indicatorsBean.submitEventExist}" />
+				<h:outputText
+					value="#{indicatorsBean.lastSubmitEvent.minPeriodToSubmit}"
+					rendered="#{indicatorsBean.submitEventExist}" />
+
+			</h:panelGrid>
+		</p:panel>
+
+	</h:form>
+
+
+
+
+</ui:composition>

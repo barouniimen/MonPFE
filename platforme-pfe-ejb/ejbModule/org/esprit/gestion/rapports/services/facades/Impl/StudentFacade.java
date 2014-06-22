@@ -43,13 +43,11 @@ public class StudentFacade implements IStudentFacadeLocal, IStudentFacadeRemote 
 	@Inject
 	@ProjectQualifier
 	IServiceLocal<Project> projServ;
-	
-	
+
 	@Inject
 	@TeacherQualifier
 	IServiceLocal<Teacher> teacherServ;
-	
-	
+
 	@EJB
 	IProjectFacadeLocal projFacade;
 
@@ -185,12 +183,10 @@ public class StudentFacade implements IStudentFacadeLocal, IStudentFacadeRemote 
 
 	@Override
 	public Project findStudentProj(int idStudent) {
-		Project proj = new Project();
-
 		Student st = new Student();
 		st.setId(idStudent);
 		st = (Student) studentServ.retrieve(st, "ID");
-
+		Project proj = new Project();
 		proj = st.getProject();
 
 		return proj;
@@ -223,6 +219,8 @@ public class StudentFacade implements IStudentFacadeLocal, IStudentFacadeRemote 
 
 	@Override
 	public Teacher findCoach(int idStudent) {
+		System.out.println("on hasCoach!!!!!!!!!!!!!");
+
 		Teacher t = new Teacher();
 		boolean found = false;
 
@@ -244,53 +242,55 @@ public class StudentFacade implements IStudentFacadeLocal, IStudentFacadeRemote 
 				found = true;
 				t.setId(roles.get(i).getPk().getTeacherId());
 				t = (Teacher) teacherServ.retrieve(t, "ID");
-				
+
 			}
 		}
-	
-		if(found == false){
+
+		if (found == false) {
+			System.out.println("result hasCoach" + found);
 			return null;
-		}
-		else
-		{
+		} else {
+
+			System.out.println("rexsult hasCoach" + t);
 			return t;
 		}
+
 	}
 
 	@Override
 	public List<Student> listCoachStudents(int idCoach) {
 		List<Student> studentList = new ArrayList<Student>();
-		
+
 		List<Project> lisProj = new ArrayList<Project>();
-		
+
 		lisProj = projFacade.listProjCoached(idCoach);
-		
+
 		for (int i = 0; i < lisProj.size(); i++) {
 			Student st = new Student();
 			st = lisProj.get(i).getStudent();
 			st = (Student) studentServ.retrieve(st, "ID");
-			
+
 			studentList.add(st);
 		}
-	
+
 		return studentList;
 	}
 
 	@Override
 	public List<Student> listCorrectorStudents(int idCoach) {
-	List<Student> studentList = new ArrayList<Student>();
-		
+		List<Student> studentList = new ArrayList<Student>();
+
 		List<Project> lisProj = new ArrayList<Project>();
-		
+
 		lisProj = projFacade.listProjCorrector(idCoach);
-		
+
 		for (int i = 0; i < lisProj.size(); i++) {
 			Student st = new Student();
 			st = lisProj.get(i).getStudent();
 			st = (Student) studentServ.retrieve(st, "ID");
 			studentList.add(st);
 		}
-	
+
 		return studentList;
 	}
 }
