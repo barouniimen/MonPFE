@@ -2,18 +2,27 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:p="http://primefaces.org/ui">
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions">
 
 	<h:form>
 
 		<div
-			style="display: table-cell !important; float: left !important; vertical-align: top !important; table-layout: auto !important; margin-right:3%;">
+			style="display: table-cell !important; float: left !important; vertical-align: top !important; table-layout: auto !important; margin-right: 3%;">
 			<h:panelGrid columns="1">
-			<p:commandButton value="Créer une session"
-				actionListener="#{submissionEventBean.tocreateEvent}" />
-				<br/>
-				<p:commandButton value="Rapports déposés" title="Liste des rapports déposés pour la session sélectionnée"/>
-		</h:panelGrid>
+				<p:commandButton value="Créer une session" style="width:100%;"
+					actionListener="#{submissionEventBean.tocreateEvent}"
+					icon="ui-icon-arrowthickstop-1-n" />
+				<br />
+				<p:commandButton value="Modifier une session" style="width:100%;"
+					actionListener="#{submissionEventBean.toEdit}"
+					update=":tabView:updateSession" icon="ui-icon-pencil" />
+				<br />
+				<p:commandButton value="Rapports déposés" icon="ui-icon-document"
+					style="width:100%;" update=":tabView:reportDialog"
+					actionListener="#{submissionEventBean.showReports}" />
+			</h:panelGrid>
+			
 		</div>
 
 		<div
@@ -39,6 +48,9 @@
 				</p:column>
 				<p:column headerText="Etat">
 					<h:outputText value="#{event.state.description}" />
+				</p:column>
+				<p:column headerText="Durée minimale d'un projet">
+					<h:outputText value="#{event.minPeriodToSubmit} (mois)" />
 				</p:column>
 
 			</p:dataTable>
@@ -70,17 +82,14 @@
 					value="#{submissionEventBean.submitEventToDB.dueDate}"
 					required="true"
 					requiredMessage="Veuillez indiquer une date de clôture" />
+				<h:outputLabel value="Durée minimale de projet (en mois)" />
+				<h:inputText
+					value="#{submissionEventBean.submitEventToDB.minPeriodToSubmit}" />
 
 				<p:commandButton value="Ajouter"
 					actionListener="#{submissionEventBean.createSubmitEvent}" />
 
-
-
-
 			</h:panelGrid>
-
-
-
 
 		</h:form>
 
@@ -96,4 +105,101 @@
 		</h:form>
 
 	</p:confirmDialog>
-</ui:composition>
+
+
+	<p:dialog widgetVar="editSessionDialog"
+		header="Modifier la session de dépôt">
+		<p:ajax event="close" listener="#{submissionEventBean.handleClose}" />
+
+
+		<h:form id="updateSession">
+			<p:messages showDetail="true" autoUpdate="true" closable="true" />
+			<h:panelGrid columns="5" columnClasses="label, value"
+				styleClass="grid">
+
+				<h:outputText value="Durée minimale"
+					title="Cliquez sur la valeur pour la modifier" />
+				<p:spacer width="10" height="0" />
+				<p:inplace editor="true">
+					<p:ajax event="save" update="updateSession" />
+					<p:inputText id="min"
+						value="#{submissionEventBean.selectedSubmitEvent.minPeriodToSubmit}" />
+				</p:inplace>
+				<p:spacer width="10" height="0" />
+				<p:spacer width="10" height="0" />
+
+
+				<h:outputText value="Date d'ouverture" />
+				<p:spacer width="10" height="0" />
+				<h:outputText value="#{submissionEventBean.startDate}" />
+				<p:spacer width="10" height="0" />
+				<p:calendar id="start" showOn="button"
+					value="#{submissionEventBean.submitEventToDB.startDate}">
+
+				</p:calendar>
+
+
+				<h:outputText value="Date de clôture" />
+				<p:spacer width="10" height="0" />
+				<h:outputText value="#{submissionEventBean.endDate}" />
+				<p:spacer width="10" height="0" />
+				<p:calendar id="end" showOn="button"
+					value="#{submissionEventBean.submitEventToDB.dueDate}" />
+
+
+
+			</h:panelGrid>
+			<br />
+			<p:commandButton value="Valider"
+				actionListener="#{submissionEventBean.editSubmitEvent}" />
+			<p:commandButton value="Annuler"
+				actionListener="#{submissionEventBean.handleClose}" />
+
+		</h:form>
+
+	</p:dialog>
+
+
+	<p:dialog widgetVar="showReportsDialog"
+		
+		width="1000" height="300">
+		<p:ajax event="close" listener="#{submissionEventBean.handleClose}" />
+
+		<h:form id="reportDialog">
+			<p:messages showDetail="true" autoUpdate="true" closable="true" />
+
+			<ui:include
+				src="/pages/admin/ManageEvents/ManageDepot/submittedReports.xhtml" />
+		</h:form>
+	</p:dialog>
+
+	<!-- ********************************************* Assign corrector Dialog **********************************************************  -->
+	<p:dialog id="dialogCorrector" header="Ajouter un rapporteur"
+		widgetVar="CorrectorDialog" height="450px">
+		<p:ajax event="close" onsuccess="CorrectorDialog.hide();" />
+		<h:form id="assignCorrectorForm"
+			rendered="#{submissionEventBean.toAssignCorrector}">
+			<ui:include
+				src="/pages/admin/ManageProjects/forms/assignCorrectorToProject.xhtml" />
+		</h:form>
+
+		<h:form id="correctorAssignedForm"
+			rendered="#{submissionEventBean.assignedCorrector}">
+			<ui:include
+				src="/pages/admin/ManageProjects/forms/assignedCorrector.xhtml" />
+		</h:form>
+	</p:dialog>
+	
+	<!-- ****************************************** cancel final version ***********************************************  -->
+	<p:confirmDialog id="cancelSubmit" widgetVar="cancelSubmitDialog" appendToBody="true"
+		header="Annuler le dépôt du rapport"
+		message="Vous êtes sur le point d'annuler le dépôt du rapport de l'étudiant(e) #{submissionEventBean.selectedReport.project.student.lastName}#{msg['message.espace']}#{submissionEventBean.selectedReport.project.student.firstName}, Voulez vous continuer?">
+		<h:form>
+			<p:commandButton value="Oui" actionListener="#{submissionEventBean.cancelSubmission}" />
+			<p:commandButton value="Non" onclick="cancelSubmitDialog.hide();" />
+
+		</h:form>
+
+	</p:confirmDialog>
+
+	</ui:composition>

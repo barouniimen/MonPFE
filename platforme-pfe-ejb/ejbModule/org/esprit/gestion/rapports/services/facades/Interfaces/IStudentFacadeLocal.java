@@ -31,4 +31,8 @@ public interface IStudentFacadeLocal {
 
 	public Teacher findCoach(int idStudent);
 
+	public List<Student> listCoachStudents(int idCoach);
+
+	public List<Student> listCorrectorStudents(int idCoach);
+
 }

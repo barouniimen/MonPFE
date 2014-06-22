@@ -21,21 +21,19 @@
 	</welcome-file-list>
 
 
+
+
 	<filter>
 		<filter-name>PrimeFaces FileUpload Filter</filter-name>
 		<filter-class>org.primefaces.webapp.filter.FileUploadFilter</filter-class>
-		<init-param>
-			<param-name>uploadDirectory</param-name>
-			<param-value>C:\PFE_Tools\jboss-as-7.1.1.Final\tmpUpload</param-value>
-		</init-param>
+	
 	</filter>
 	<filter-mapping>
 		<filter-name>PrimeFaces FileUpload Filter</filter-name>
 		<servlet-name>Faces Servlet</servlet-name>
 	</filter-mapping>
-	
-	
-	
+
+
 
 
 </web-app>

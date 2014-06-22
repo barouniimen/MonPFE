@@ -29,7 +29,7 @@ import javax.persistence.Table;
 	@NamedQuery(name = "User.findByFirstAndLastName", query = "SELECT u FROM User u WHERE u.firstName = :firstName and u.lastName = :lastName"),
 	@NamedQuery(name = "User.findByLoginAndPassword", query = "SELECT u FROM User u WHERE u.login = :login and u.password = :password")
 })
-public class User implements Serializable {
+public class User implements Serializable{
 
 	private int id;
 	private String firstName;
@@ -41,8 +41,6 @@ public class User implements Serializable {
 	private List<UserMessage> messages;
 	private List<Appointement> appointements;
 	private static final long serialVersionUID = 1L;
-
-	
 	
 	
 
@@ -142,4 +140,6 @@ public class User implements Serializable {
 	public void setAppointements(List<Appointement> appointements) {
 		this.appointements = appointements;
 	}
+
+
 }

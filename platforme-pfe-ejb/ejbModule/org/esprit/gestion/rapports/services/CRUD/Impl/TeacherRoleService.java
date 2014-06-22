@@ -39,10 +39,20 @@ public class TeacherRoleService implements IServiceLocal<TeacherRole>,
 		TeacherRole roleFound = null;
 
 		/****************** search by PK (object == TeacherRolePK) ***********************/
-		if (searchBy == "PK") {
+		if (searchBy.equals("PK")) {
 			TypedQuery<TeacherRole> query = em.createNamedQuery(
 					"Teacherrole.findByTeacherIdANDProjectId",TeacherRole.class);
 			query.setParameter("teacherId",((TeacherRolePK) object).getTeacherId());
+			query.setParameter("projectId",((TeacherRolePK) object).getProjectId());
+			
+				roleFound = query.getSingleResult();
+			
+		}
+		
+		else if(searchBy.equals("roleAndProj") ){
+			TypedQuery<TeacherRole> query = em.createNamedQuery(
+					"Teacherrole.findByRoleAndProjectId",TeacherRole.class);
+			query.setParameter("role",((TeacherRole) object).getRole());
 			query.setParameter("projectId",((TeacherRolePK) object).getProjectId());
 			try {
 				roleFound = query.getSingleResult();
@@ -60,7 +70,7 @@ public class TeacherRoleService implements IServiceLocal<TeacherRole>,
 		List<TeacherRole >listRoles = null;
 		
 		
-		if(searchBy=="ROLE"){
+		if(searchBy.equals("ROLE")){
 			TypedQuery<TeacherRole> query = em.createNamedQuery("Teacherrole.findByRole",
 					TeacherRole.class);
 			query.setParameter("role", ((TeacherRole) object).getRole());
@@ -68,7 +78,13 @@ public class TeacherRoleService implements IServiceLocal<TeacherRole>,
 
 		}
 		
-		else if(searchBy == "RoleAndCoach"){
+		else if(searchBy.equals("ALL")){
+			TypedQuery<TeacherRole> query = em.createNamedQuery("Teacherrole.findAll",
+					TeacherRole.class);
+			listRoles = query.getResultList();
+		}
+		
+		else if(searchBy.equals("RoleAndCoach")){
 			
 			TypedQuery<TeacherRole> query = em.createNamedQuery("Teacherrole.findByRoleAndTeacherId",
 					TeacherRole.class);
@@ -79,7 +95,7 @@ public class TeacherRoleService implements IServiceLocal<TeacherRole>,
 		}
 		
 		
-		else if(searchBy == "projId"){
+		else if(searchBy.equals("projId")){
 			TypedQuery<TeacherRole> query = em.createNamedQuery("Teacherrole.findByProjectId",
 					TeacherRole.class);
 			query.setParameter("projectId", ((TeacherRole) object).getPk().getProjectId());

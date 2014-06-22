@@ -18,5 +18,10 @@ public interface IReportFacadeRemote {
 	public boolean deleteReport(Report report);
 	
 	public void changeToFinal(Report selectedReport);
+	
+	public void addComment(Report report, int idCoach, String comments);
+	
+	public void update(Report report);
 
+	public Report findReport(Report report);
 }

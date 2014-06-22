@@ -1,0 +1,41 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+	
+	
+			<h:panelGrid columns="3" columnClasses="label, value">
+				<p:spacer width="30" height="30" />
+				<p:spacer width="30" height="0" />
+				<p:spacer width="30" height="0" />
+				<h:outputText value="Document:" style="font-weight: bold;" />
+				<p:spacer width="30" height="0" />
+				<h:outputText
+					value="#{manageReportsByCoachBean.selectedReport.fileName}" />
+
+				<h:outputText value="Date de téléchargement:"
+					style="font-weight: bold;" />
+				<p:spacer width="30" height="0" />
+				<h:outputText
+					rendered="#{manageReportsByCoachBean.renderTableReports}"
+					value="#{manageReportsByCoachBean.dateFormate.format(manageReportsByCoachBean.selectedReport.uploadDate)}" />
+
+
+				<h:outputText value="Remarques:" style="font-weight: bold;" />
+				<p:spacer width="30" height="0" />
+				<p:inputTextarea autoResize="true" cols="200"
+					value="#{manageReportsByCoachBean.fileComments}" />
+
+
+				<p:spacer width="30" height="30" />
+				<p:spacer width="30" height="0" />
+				<p:spacer width="30" height="0" />
+			</h:panelGrid>
+
+			<p:commandButton value="Valider"
+				actionListener="#{manageReportsByCoachBean.doAddComment}" />
+			<p:commandButton value="Annuler" onclick="addCommentDialog.hide();"
+				actionListener="#{manageReportsByCoachBean.cancelAddComment}" />
+	
+	</ui:composition>

@@ -7,7 +7,7 @@
 	<h:form id="formMsgMenuStudent"
 		style="display: table !important; border-collapse: separate !important; border-spacing: 20px 5px !important;">
 		<div
-			style="display: table-cell !important; float: left !important; vertical-align: top !important; table-layout: auto !important;">
+			style="display: table-cell !important;  vertical-align: top !important; table-layout: auto !important;">
 
 			<p:menu>
 				<p:submenu label="Boite de réception">
@@ -30,14 +30,16 @@
 
 
 		</div>
-
+<div
+		style="display: table-cell !important; vertical-align: top !important; table-layout: auto !important;width: 80%;">
+		
 		<ui:include
 			src="/pages/teacher/manageMessages/datatables/msgSeen.xhtml" />
 		<ui:include
 			src="/pages/teacher/manageMessages/datatables/msgSent.xhtml" />
 		<ui:include
 			src="/pages/teacher/manageMessages/datatables/msgToRead.xhtml" />
-
+</div>
 	</h:form>
 
 

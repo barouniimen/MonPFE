@@ -7,7 +7,7 @@
 	<h:form id="formMsgMenuAdmin"
 		style="display: table !important; border-collapse: separate !important; border-spacing: 20px 5px !important;">
 		<div
-			style="display: table-cell !important; float: left !important; vertical-align: top !important; table-layout: auto !important;">
+			style="display: table-cell !important;vertical-align: top !important; table-layout: auto !important;">
 
 			<p:menu>
 				<p:submenu label="Boite de réception">
@@ -31,11 +31,15 @@
 
 		</div>
 
-
+<div
+		style="display: table-cell !important; vertical-align: top !important; table-layout: auto !important;width: 200%;">
 		<ui:include src="/pages/admin/ManageMessages/datatables/msgSeen.xhtml" />
 		<ui:include src="/pages/admin/ManageMessages/datatables/msgSent.xhtml" />
 		<ui:include
 			src="/pages/admin/ManageMessages/datatables/msgToRead.xhtml" />
+</div>
+
+
 
 	</h:form>
 

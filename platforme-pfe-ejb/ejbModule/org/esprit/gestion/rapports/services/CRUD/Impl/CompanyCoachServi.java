@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.Stateless;
-import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
@@ -28,11 +27,9 @@ public class CompanyCoachServi implements IServiceLocal<CompanyCoach>, IServiceR
 
 	@Override
 	public void create(Object object) {
-		try {
+	
 			em.persist(object);
-			} catch (EntityExistsException exist) {
-			System.out.println("!!!!!!!!!!!!!!!!!!!!!User existe!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-		}
+			
 	}
 
 	@Override
@@ -57,7 +54,7 @@ public class CompanyCoachServi implements IServiceLocal<CompanyCoach>, IServiceR
 		returnList = null;
 		
 		/*************************** search ALL *************************************/
-		if (searchBy == "ALL") {
+		if (searchBy.equals("ALL")) {
 			TypedQuery<CompanyCoach> query = em.createNamedQuery("CompanyCoach.findAll", CompanyCoach.class);
 			returnList = query.getResultList();
 		}

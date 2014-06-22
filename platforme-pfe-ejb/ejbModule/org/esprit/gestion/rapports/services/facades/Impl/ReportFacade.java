@@ -1,6 +1,7 @@
 package org.esprit.gestion.rapports.services.facades.Impl;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -8,19 +9,33 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import org.esprit.gestion.rapports.persistence.Comments;
 import org.esprit.gestion.rapports.persistence.KeyWord;
+import org.esprit.gestion.rapports.persistence.Message;
+import org.esprit.gestion.rapports.persistence.MessageAccess;
+import org.esprit.gestion.rapports.persistence.MessageType;
 import org.esprit.gestion.rapports.persistence.Project;
 import org.esprit.gestion.rapports.persistence.Report;
 import org.esprit.gestion.rapports.persistence.ReportKeyWord;
 import org.esprit.gestion.rapports.persistence.ReportKeyWordPk;
 import org.esprit.gestion.rapports.persistence.ReportState;
 import org.esprit.gestion.rapports.persistence.Student;
+import org.esprit.gestion.rapports.persistence.Teacher;
+import org.esprit.gestion.rapports.persistence.TeacherRole;
+import org.esprit.gestion.rapports.persistence.TeacherRoleType;
+import org.esprit.gestion.rapports.persistence.UserMessage;
+import org.esprit.gestion.rapports.persistence.UserMessagePK;
+import org.esprit.gestion.rapports.persistence.ValidationState;
 import org.esprit.gestion.rapports.services.CRUD.Interfaces.IServiceLocal;
+import org.esprit.gestion.rapports.services.CRUD.Util.CommentQualifier;
 import org.esprit.gestion.rapports.services.CRUD.Util.KeyWordsQualifier;
+import org.esprit.gestion.rapports.services.CRUD.Util.MessagesQualifier;
 import org.esprit.gestion.rapports.services.CRUD.Util.ProjectQualifier;
 import org.esprit.gestion.rapports.services.CRUD.Util.ReportKeyWordQualifier;
 import org.esprit.gestion.rapports.services.CRUD.Util.ReportQualifier;
 import org.esprit.gestion.rapports.services.CRUD.Util.StudentQualifier;
+import org.esprit.gestion.rapports.services.CRUD.Util.TeacherQualifier;
+import org.esprit.gestion.rapports.services.CRUD.Util.UserMessageQualifier;
 import org.esprit.gestion.rapports.services.facades.Interfaces.IReportFacadeLocal;
 import org.esprit.gestion.rapports.services.facades.Interfaces.IReportFacadeRemote;
 
@@ -30,6 +45,10 @@ public class ReportFacade implements IReportFacadeLocal, IReportFacadeRemote {
 	@Inject
 	@StudentQualifier
 	IServiceLocal<Student> studentServ;
+	
+	@Inject
+	@CommentQualifier
+	IServiceLocal<Comments> commentServ;
 
 	@Inject
 	@ProjectQualifier
@@ -38,14 +57,25 @@ public class ReportFacade implements IReportFacadeLocal, IReportFacadeRemote {
 	@Inject
 	@ReportQualifier
 	IServiceLocal<Report> reportServ;
-	
+
 	@Inject
 	@KeyWordsQualifier
 	IServiceLocal<KeyWord> keyWordServ;
-	
+
 	@Inject
 	@ReportKeyWordQualifier
 	IServiceLocal<ReportKeyWord> reportKwServ;
+
+	@Inject
+	@TeacherQualifier
+	IServiceLocal<Teacher> teacherServ;
+	@Inject
+	@MessagesQualifier
+	IServiceLocal<Message> msgServ;
+
+	@Inject
+	@UserMessageQualifier
+	IServiceLocal<UserMessage> userMsgServ;
 
 	@Override
 	public String getLastVersion(int idStudent) {
@@ -96,9 +126,10 @@ public class ReportFacade implements IReportFacadeLocal, IReportFacadeRemote {
 
 		if (proj != null) {
 			proj = (Project) projServ.retrieve(proj, "ID");
-
+			System.out.println("proj retrieved " + proj.getId());
 			// find all reports linked to project
 			reportsList = proj.getReports();
+
 		}
 		return reportsList;
 
@@ -122,15 +153,19 @@ public class ReportFacade implements IReportFacadeLocal, IReportFacadeRemote {
 
 		projReports.add(report);
 
+		if (report.getState().equals(ReportState.DEPOSED)) {
+			proj.setValidationState(ValidationState.DEPOSED);
+		}
+
 		// update proj
 		projServ.update(proj);
 
 		if (report.getState().equals(ReportState.DEPOSED)) {
 			// ajouter les mots clés
 			List<ReportKeyWord> reportKws = new ArrayList<ReportKeyWord>();
-			
+
 			for (int i = 0; i < keyWordNames.size(); i++) {
-				KeyWord kw  = new KeyWord();
+				KeyWord kw = new KeyWord();
 				kw.setName(keyWordNames.get(i));
 				kw = (KeyWord) keyWordServ.retrieve(kw, "NAME");
 				ReportKeyWordPk pk = new ReportKeyWordPk();
@@ -141,10 +176,50 @@ public class ReportFacade implements IReportFacadeLocal, IReportFacadeRemote {
 				report.setKeyWords(reportKws);
 				reportServ.update(report);
 				reportKwServ.create(reportKw);
-			}			
-			
-			
-			// TODO notifier encadrant + administration
+			}
+
+			SimpleDateFormat dateFormat = new SimpleDateFormat("dd-m-yyy");
+
+			int idReciever = -1;
+
+			String uploadDate = dateFormat.format(report.getUploadDate());
+
+			List<TeacherRole> roles = new ArrayList<TeacherRole>();
+			roles = proj.getTeacherRoles();
+			for (int i = 0; i < roles.size(); i++) {
+				if (roles.get(i).getRole().equals(TeacherRoleType.ENCADRANT)) {
+					idReciever = roles.get(i).getPk().getTeacherId();
+				}
+			}
+
+			if (idReciever != -1) {
+				Message msgToCoach = new Message();
+
+				msgToCoach.setContent("Bonjour,\n\n L'étudiant "
+						+ st.getLastName() + " " + st.getFirstName()
+						+ " que vous encadrez a déposé son rapport le "
+						+ uploadDate + ".\n\n Cordialement");
+				msgToCoach.setIdSender(-1);
+				Date sendingDate = new Date();
+				msgToCoach.setSendingDate(sendingDate);
+				msgToCoach.setSubject("Dépôt de rapport");
+				msgToCoach.setType(MessageType.SUBMIT_EVENT_NOTIF);
+				msgToCoach.setIdReceiver(idReciever);
+
+				msgServ.create(msgToCoach);
+
+				UserMessagePK pkCoach = new UserMessagePK();
+				pkCoach.setMessageId(msgToCoach.getId());
+				pkCoach.setUserId(idReciever);
+
+				UserMessage coachMsgCx = new UserMessage();
+				coachMsgCx.setAccess(MessageAccess.TOREAD);
+				coachMsgCx.setPk(pkCoach);
+
+				userMsgServ.create(coachMsgCx);
+
+			}
+
 		}
 
 	}
@@ -171,15 +246,116 @@ public class ReportFacade implements IReportFacadeLocal, IReportFacadeRemote {
 
 	@Override
 	public void changeToFinal(Report selectedReport) {
+
+		int idReciever = -1;
+
+		SimpleDateFormat dateFormat = new SimpleDateFormat("dd-m-yyy");
+
 		selectedReport.setVersion("final");
 		selectedReport.setState(ReportState.DEPOSED);
 		Date date = new Date();
 		selectedReport.setUploadDate(date);
 
 		reportServ.update(selectedReport);
-		
-		// TODO informer encadrant + admin pour affecter rapporteur
 
+		Project proj = new Project();
+		proj = selectedReport.getProject();
+		proj = (Project) projServ.retrieve(proj, "ID");
+		Student student = new Student();
+		student = proj.getStudent();
+		proj.setValidationState(ValidationState.DEPOSED);
+		projServ.update(proj);
+
+		// TODO informer admin pour affecter rapporteur
+		String uploadDate = dateFormat.format(selectedReport.getUploadDate());
+
+		List<TeacherRole> roles = new ArrayList<TeacherRole>();
+		roles = proj.getTeacherRoles();
+		for (int i = 0; i < roles.size(); i++) {
+			if (roles.get(i).getRole().equals(TeacherRoleType.ENCADRANT)) {
+				idReciever = roles.get(i).getPk().getTeacherId();
+			}
+		}
+
+		if (idReciever != -1) {
+			Message msgToCoach = new Message();
+
+			msgToCoach.setContent("Bonjour,\n\n L'étudiant "
+					+ student.getLastName() + " " + student.getFirstName()
+					+ " que vous encadrez a déposé son rapport le "
+					+ uploadDate + ".\n\n Cordialement");
+			msgToCoach.setIdSender(-1);
+			Date sendingDate = new Date();
+			msgToCoach.setSendingDate(sendingDate);
+			msgToCoach.setSubject("Dépôt de rapport");
+			msgToCoach.setType(MessageType.SUBMIT_EVENT_NOTIF);
+			msgToCoach.setIdReceiver(idReciever);
+
+			msgServ.create(msgToCoach);
+
+			UserMessagePK pkCoach = new UserMessagePK();
+			pkCoach.setMessageId(msgToCoach.getId());
+			pkCoach.setUserId(idReciever);
+
+			UserMessage coachMsgCx = new UserMessage();
+			coachMsgCx.setAccess(MessageAccess.TOREAD);
+			coachMsgCx.setPk(pkCoach);
+
+			userMsgServ.create(coachMsgCx);
+
+		}
+
+	}
+
+	@Override
+	public void addComment(Report report, int idCoach, String comments) {
+		report = (Report) reportServ.retrieve(report, "ID");
+		
+		Comments comment = new  Comments();
+		comment.setContent(comments);
+		Date date = new Date();
+		comment.setDate(date);
+		Teacher coach = new Teacher();
+		coach.setId(idCoach);
+		coach = (Teacher) teacherServ.retrieve(coach, "ID");
+		
+		comment.setEditorName(coach.getLastName()+" "+coach.getFirstName());
+		comment.setReport(report);
+		
+		commentServ.create(comment);
+		
+		List<Comments> listComment = new ArrayList<Comments>();
+		listComment = report.getComments();
+		
+		listComment.add(comment);
+		
+		report.setComments(listComment);
+		
+		reportServ.update(report);
+		
+	
+
+	}
+
+	@Override
+	public void update(Report report) {
+		reportServ.update(report);
+
+	}
+
+	@Override
+	public Report findReport(Report report) {
+		
+		report = (Report) reportServ.retrieve(report, "ID");
+		List<Comments> commList = new ArrayList<Comments>();
+		
+		Comments comment = new Comments();
+		comment.setReport(report);
+		commList = commentServ.retrieveList(comment, "report");
+		
+		report.setComments(commList);
+	
+		return report;
 	}
 
 }

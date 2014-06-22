@@ -4,15 +4,13 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:p="http://primefaces.org/ui">
 
-	<div
-		style="display: table-cell !important; vertical-align: top !important; table-layout: auto !important;">
 	
 	
 		<p:dataTable rendered="#{mailBoxBean.sent}"
 			var="msgSent" value="#{mailBoxBean.listMsgModelSent}"
 			selection="#{mailBoxBean.selectedMsgSent}" rowKey="#{msgSent.id}"
 			rows="20" emptyMessage="Aucun message a afficher" paginator="true"
-			paginatorPosition="bottom" liveResize="true" style="min-width: 210% !important;">
+			paginatorPosition="bottom">
 			<f:facet name="header">
            Messages envoyés (#{mailBoxBean.msgStats.nbrSent})
         </f:facet>
@@ -37,8 +35,6 @@
 		<p:commandButton icon="ui-icon-search" value="Lire"
 			actionListener="#{mailBoxBean.showContent}" update=":tabView:message"
 			rendered="#{mailBoxBean.sent}" />
-
-	</div>
 
 
 </ui:composition>

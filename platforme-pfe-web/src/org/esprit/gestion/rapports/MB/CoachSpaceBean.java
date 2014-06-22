@@ -1,6 +1,7 @@
 package org.esprit.gestion.rapports.MB;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -29,11 +30,15 @@ public class CoachSpaceBean {
 	/************************ init method **************************/
 	@PostConstruct
 	public void init() {
-		simpleDate = new SimpleDateFormat("dd-M-yyyy");
+		coachedProjList = new ArrayList<Project>();
+
+		simpleDate = new SimpleDateFormat("dd-MM-yyyy");
 
 		coachedProjList = coachFacade.listProjectsCoached(authBean.getUser()
 				.getId());
+
 		if (coachedProjList == null) {
+
 			nbreCoachedStudents = 0;
 		} else {
 			nbreCoachedStudents = coachedProjList.size();

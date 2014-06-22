@@ -5,13 +5,18 @@
 	xmlns:p="http://primefaces.org/ui">
 
 
+
+
+
 	<h:form>
 		<p:growl autoUpdate="true" />
+
+		
 		<h:outputText
 			value="Vous avez déposé la version finale de votre rapport, vous n'avez plus le droit de télécharger des documents."
 			rendered="#{!reportUploadBean.renderUpload}"
-			style="color: #DC143C;text-align: center;font-size: medium;font-style: italic;font-weight: bold" />
-		
+			style="color: #DC143C;text-align: center;font-size: medium;font-style: italic;font-weight: bold;" />
+
 		<br />
 		<br />
 		<p:commandButton value="Ajouter un rapport"
@@ -48,7 +53,8 @@
 				<h:outputText value="#{report.fileName}" />
 			</p:column>
 			<p:column headerText="Description">
-				<h:outputText value="#{report.description}" style=" white-space: pre-wrap;"/>
+				<h:outputText value="#{report.description}"
+					style=" white-space: pre-wrap;" />
 			</p:column>
 			<p:column headerText="Taille (Ko)">
 				<h:outputText value="#{report.size}" />

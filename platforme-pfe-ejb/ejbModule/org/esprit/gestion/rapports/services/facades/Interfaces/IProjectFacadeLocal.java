@@ -42,5 +42,9 @@ public interface IProjectFacadeLocal {
 
 	public List<TeacherRole> findTeacherRolesToProj(int idProj);
 
-	public boolean lastedSixMonth(int idStudent);
+	public boolean allawdedPeriodToSubmit(int idStudent, int period);
+
+	public List<Project> listProjCoached(int idCoach);
+	
+	public List<Project> listProjCorrector(int idCoach);
 }

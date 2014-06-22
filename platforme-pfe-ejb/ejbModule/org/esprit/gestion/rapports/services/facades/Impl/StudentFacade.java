@@ -3,6 +3,7 @@ package org.esprit.gestion.rapports.services.facades.Impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
@@ -20,6 +21,7 @@ import org.esprit.gestion.rapports.services.CRUD.Util.RegistrationQualifier;
 import org.esprit.gestion.rapports.services.CRUD.Util.StorageSpaceQualifier;
 import org.esprit.gestion.rapports.services.CRUD.Util.StudentQualifier;
 import org.esprit.gestion.rapports.services.CRUD.Util.TeacherQualifier;
+import org.esprit.gestion.rapports.services.facades.Interfaces.IProjectFacadeLocal;
 import org.esprit.gestion.rapports.services.facades.Interfaces.IStudentFacadeLocal;
 import org.esprit.gestion.rapports.services.facades.Interfaces.IStudentFacadeRemote;
 
@@ -46,6 +48,10 @@ public class StudentFacade implements IStudentFacadeLocal, IStudentFacadeRemote 
 	@Inject
 	@TeacherQualifier
 	IServiceLocal<Teacher> teacherServ;
+	
+	
+	@EJB
+	IProjectFacadeLocal projFacade;
 
 	@Override
 	public List<Student> listStudentsWithoutProject() {
@@ -249,5 +255,42 @@ public class StudentFacade implements IStudentFacadeLocal, IStudentFacadeRemote 
 		{
 			return t;
 		}
+	}
+
+	@Override
+	public List<Student> listCoachStudents(int idCoach) {
+		List<Student> studentList = new ArrayList<Student>();
+		
+		List<Project> lisProj = new ArrayList<Project>();
+		
+		lisProj = projFacade.listProjCoached(idCoach);
+		
+		for (int i = 0; i < lisProj.size(); i++) {
+			Student st = new Student();
+			st = lisProj.get(i).getStudent();
+			st = (Student) studentServ.retrieve(st, "ID");
+			
+			studentList.add(st);
+		}
+	
+		return studentList;
+	}
+
+	@Override
+	public List<Student> listCorrectorStudents(int idCoach) {
+	List<Student> studentList = new ArrayList<Student>();
+		
+		List<Project> lisProj = new ArrayList<Project>();
+		
+		lisProj = projFacade.listProjCorrector(idCoach);
+		
+		for (int i = 0; i < lisProj.size(); i++) {
+			Student st = new Student();
+			st = lisProj.get(i).getStudent();
+			st = (Student) studentServ.retrieve(st, "ID");
+			studentList.add(st);
+		}
+	
+		return studentList;
 	}
 }

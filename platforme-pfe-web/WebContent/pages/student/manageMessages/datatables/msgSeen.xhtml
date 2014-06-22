@@ -5,16 +5,11 @@
 	xmlns:p="http://primefaces.org/ui">
 
 
-	<div
-		style="display: table-cell !important; vertical-align: top !important; table-layout: auto !important;">
-
-
 		<p:dataTable id="seenTable" rendered="#{mailBoxBean.seen}"
 			var="msgSeen" value="#{mailBoxBean.listMsgModelSeen}"
 			selection="#{mailBoxBean.selectedMsgSeen}" rowKey="#{msgSeen.id}"
 			rows="20" emptyMessage="Aucun message a afficher" paginator="true"
-			paginatorPosition="bottom" liveResize="true"
-			style="min-width: 150% !important;">
+			paginatorPosition="bottom" >
 			<f:facet name="header">
            Messages lus (#{mailBoxBean.msgStats.nbrSeen})
         </f:facet>
@@ -37,10 +32,6 @@
 		<p:commandButton icon="ui-icon-search" value="Lire"
 			actionListener="#{mailBoxBean.showContent}" update=":tabView:messages"
 			rendered="#{mailBoxBean.seen}" />
-
-	</div>
-
-
 
 
 

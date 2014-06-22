@@ -4,16 +4,12 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:p="http://primefaces.org/ui">
 
-	<div
-		style="display: table-cell !important; vertical-align: top !important; table-layout: auto !important;">
-		
 		
 		<p:dataTable id="toReadTable" rendered="#{mailBoxBean.toRead}"
 			var="msgToRead" value="#{mailBoxBean.listMsgModelToRead}"
 			selection="#{mailBoxBean.selectedMsgToRead}" rowKey="#{msgToRead.id}"
 			rows="20" emptyMessage="Aucun message a afficher" paginator="true"
-			paginatorPosition="bottom" liveResize="true"
-			style="min-width: 150% !important;">
+			paginatorPosition="bottom">
 			<f:facet name="header">
            Messages non lus (#{mailBoxBean.msgStats.nbrToRead})
         </f:facet>
@@ -36,8 +32,5 @@
 		<p:commandButton icon="ui-icon-search" value="Lire"
 			actionListener="#{mailBoxBean.showContent}" update=":tabView:messages"
 			rendered="#{mailBoxBean.toRead}" />
-
-	</div>
-	
 
 </ui:composition>

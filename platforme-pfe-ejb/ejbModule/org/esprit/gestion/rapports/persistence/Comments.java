@@ -23,6 +23,7 @@ import javax.persistence.TemporalType;
 	@NamedQuery(name = "Comments.findAll", query = "SELECT c FROM Comments c"),
 	@NamedQuery(name = "Comments.findById", query = "SELECT c FROM Comments c WHERE c.id = :id"),
 	@NamedQuery(name = "Comments.findBydate", query = "SELECT c FROM Comments c WHERE c.date = :date"),
+	@NamedQuery(name = "Comments.findByReport", query = "SELECT c FROM Comments c WHERE c.report = :report"),
 	@NamedQuery(name = "Comments.findByeditorName", query = "SELECT c FROM Comments c WHERE c.editorName = :editorName")})
 public class Comments implements Serializable {
 

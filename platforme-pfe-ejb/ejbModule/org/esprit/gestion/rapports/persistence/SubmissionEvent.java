@@ -32,6 +32,7 @@ public class SubmissionEvent implements Serializable {
 	private List<Project> submittedProjects;
 	private Date dueDate;
 	private Date startDate;
+	private int minPeriodToSubmit;
 	private EventState state;
 	private static final long serialVersionUID = 1L;
 	
@@ -39,12 +40,13 @@ public class SubmissionEvent implements Serializable {
 	
 
 	public SubmissionEvent(List<Project> submittedProjects, Date dueDate,
-			Date startDate, EventState state) {
+			Date startDate, EventState state, int minPeriodToSubmit) {
 		super();
 		this.submittedProjects = submittedProjects;
 		this.dueDate = dueDate;
 		this.startDate = startDate;
 		this.state = state;
+		this.minPeriodToSubmit =  minPeriodToSubmit;
 	}
 
 
@@ -97,5 +99,15 @@ public class SubmissionEvent implements Serializable {
 
 	public void setSubmittedProjects(List<Project> submittedProjects) {
 		this.submittedProjects = submittedProjects;
+	}
+
+
+	public int getMinPeriodToSubmit() {
+		return minPeriodToSubmit;
+	}
+
+
+	public void setMinPeriodToSubmit(int minPeriodToSubmit) {
+		this.minPeriodToSubmit = minPeriodToSubmit;
 	}
 }

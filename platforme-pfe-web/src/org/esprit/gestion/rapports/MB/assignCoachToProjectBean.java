@@ -115,7 +115,7 @@ public class assignCoachToProjectBean {
 	}
 
 	public void cancelCoachAssign(ActionEvent event) {
-		
+		System.out.println("on cancel coach assign");
 		int tabIndex = tabViewBean.getTabIndex();
 
 		if (cancel.equals("true")) {

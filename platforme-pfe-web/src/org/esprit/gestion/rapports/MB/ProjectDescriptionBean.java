@@ -36,7 +36,7 @@ public class ProjectDescriptionBean {
 	@PostConstruct
 	public void init() {
 
-		dateFormat = new SimpleDateFormat("dd/MM/YYYY");
+		dateFormat = new SimpleDateFormat("dd-MM-yyyy");
 		studentProj = studentFacade.findStudentProj(authBean.getUser().getId());
 		if (studentProj == null) {
 			projFound = false;

@@ -1,0 +1,26 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+	
+	<br />
+	<h:outputText value="Historiques des remarques relatives au document:#{msg['message.espace']}" />
+	<h:outputText
+		value="#{manageReportsByCoachBean.selectedReport.fileName}" style="font-weight: bold;" />
+	<br />
+	<br />
+	<ui:repeat var="com"
+		value="#{manageReportsByCoachBean.selectedReport.comments}">
+
+		<p:panel
+			header="#{manageReportsByCoachBean.dateFormate.format(com.date)}">
+
+			<h:outputText value="#{com.content}" />
+
+		</p:panel>
+	</ui:repeat>
+
+
+</ui:composition>

@@ -1,0 +1,69 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+
+
+	<!-- ******************************************************** Context Menu ************************************************************************  -->
+
+	<p:contextMenu for="submitProj" style="width:200px">
+		<p:menuitem value="Affecter un rapporteur" icon="ui-icon-person"
+			update=":tabView:dialogCorrector"
+			actionListener="#{submissionEventBean.assignCorrectorMenu}" />
+
+		<p:menuitem value="Annuler dépôt" icon="ui-icon-trash"
+			oncomplete="cancelSubmitDialog.show()" update=":tabView:cancelSubmit" />
+	</p:contextMenu>
+	<p:spacer height="10" />
+
+
+	<p:dataTable id="submitProj" var="rep"
+		value="#{submissionEventBean.submittedReports}"
+		selection="#{submissionEventBean.selectedReport}"
+		selectionMode="single" rowKey="#{rep.id}" rows="20"
+		emptyMessage="Aucun rapport déposé" paginator="true"
+		paginatorPosition="bottom" liveResize="true">
+
+
+		<f:facet name="header">
+			<h:outputText
+				value="Rapports déposés pour la session du #{submissionEventBean.startDate}#{msg['message.espace']}au#{msg['message.espace']} #{submissionEventBean.endDate}" />
+		</f:facet>
+
+		<p:column headerText="Sujet">
+			<h:outputText value="#{rep.project.topic}" />
+		</p:column>
+
+
+		<p:column headerText="Etudiant">
+			<h:outputText
+				value="#{rep.project.student.lastName}#{msg['message.espace']}#{rep.project.student.firstName}" />
+		</p:column>
+
+
+		<p:column headerText="Entreprise">
+			<h:outputText value="#{rep.project.companycoach.company.name}" />
+		</p:column>
+
+		<p:column headerText="Date de début">
+			<h:outputText
+				value="#{submissionEventBean.dateFormat.format(rep.project.startDate)}" />
+		</p:column>
+
+		<p:column headerText="Date de dépôt">
+			<h:outputText
+				value="#{submissionEventBean.dateFormat.format(rep.uploadDate)}" />
+		</p:column>
+
+		<p:column headerText="Titre du rapport">
+			<h:outputText value="#{rep.fileName}" />
+		</p:column>
+
+
+
+	</p:dataTable>
+
+
+</ui:composition>

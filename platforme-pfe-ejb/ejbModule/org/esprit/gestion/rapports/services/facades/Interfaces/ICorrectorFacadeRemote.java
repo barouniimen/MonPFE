@@ -13,7 +13,7 @@ public interface ICorrectorFacadeRemote {
 	
 	public List<Teacher> listerCorrectorDisponibles();
 	
-	public List<Teacher> listCorrectorsSameDom(List<String> projectDomains);
+	public List<Teacher> listCorrectorsSameDom(List<String> projectDomains, int idProj);
 	
 	public void correctorDeclineAssign(int id, int includedRef,
 			String declineCause, int idAdmin, int idAssignMsg);

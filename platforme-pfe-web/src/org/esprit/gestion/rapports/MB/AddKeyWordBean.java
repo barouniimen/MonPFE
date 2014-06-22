@@ -14,7 +14,6 @@ import org.esprit.gestion.rapports.persistence.KeyWordCategory;
 import org.esprit.gestion.rapports.services.facades.Interfaces.IKeyWordFacadeLocal;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.ToggleEvent;
-import org.primefaces.event.TransferEvent;
 import org.primefaces.model.DualListModel;
 
 @ManagedBean
@@ -65,10 +64,6 @@ public class AddKeyWordBean {
 
 	/************************ listeners ********************************/
 	
-	
-	public void onTransferPicklist(TransferEvent event){
-		
-	}
 	
 
 	public void addCateg(ActionEvent event) {

@@ -26,7 +26,23 @@
 			<!-- end Header -->
 		</p:layoutUnit>
 
-		<p:layoutUnit position="south" size="50" style="width:100% !important;">
+
+		<p:layoutUnit id="storage" position="west" size="250"
+			header="Indicateurs" resizable="true" collapsible="true"
+			styleClass="myLayoutStyleClass" >
+
+			<p:meterGaugeChart value="#{submissionEventBean.model}" showTickLabels="false" labelHeightAdjust="53"
+		intervalOuterRadius="58"
+		seriesColors="66cc66, 93b75f, E7E658, cc6666"
+		style="width:200px;height:130px; float: left" label="Espace de stockage"/>
+<br/>
+<h:outputText value="sessions de depot" />
+
+		</p:layoutUnit>
+
+
+		<p:layoutUnit position="south" size="50"
+			style="width:100% !important;">
 			<!-- footer -->
 
 			<ui:include src="/template/footer.xhtml" />
@@ -51,7 +67,8 @@
 					<ui:include src="/pages/student/manageReports/reports.xhtml" />
 				</p:tab>
 
-				<p:tab id="messages" title="Messages (#{mailBoxBean.msgStats.nbrToRead})">
+				<p:tab id="messages"
+					title="Messages (#{mailBoxBean.msgStats.nbrToRead})">
 					<p:spacer style="margin-top:5%;"></p:spacer>
 					<ui:include src="/pages/student/manageMessages/message.xhtml" />
 				</p:tab>

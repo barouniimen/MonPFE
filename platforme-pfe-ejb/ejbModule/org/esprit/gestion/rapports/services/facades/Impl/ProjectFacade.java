@@ -17,10 +17,14 @@ import org.esprit.gestion.rapports.persistence.MessageType;
 import org.esprit.gestion.rapports.persistence.Project;
 import org.esprit.gestion.rapports.persistence.ProjectDomain;
 import org.esprit.gestion.rapports.persistence.ProjectDomainPK;
+import org.esprit.gestion.rapports.persistence.Report;
+import org.esprit.gestion.rapports.persistence.ReportKeyWord;
+import org.esprit.gestion.rapports.persistence.ReportKeyWordPk;
 import org.esprit.gestion.rapports.persistence.Student;
 import org.esprit.gestion.rapports.persistence.Teacher;
 import org.esprit.gestion.rapports.persistence.TeacherRole;
 import org.esprit.gestion.rapports.persistence.TeacherRolePK;
+import org.esprit.gestion.rapports.persistence.TeacherRoleType;
 import org.esprit.gestion.rapports.persistence.User;
 import org.esprit.gestion.rapports.persistence.ValidationState;
 import org.esprit.gestion.rapports.services.CRUD.Interfaces.IServiceLocal;
@@ -30,6 +34,8 @@ import org.esprit.gestion.rapports.services.CRUD.Util.DomainQualifier;
 import org.esprit.gestion.rapports.services.CRUD.Util.MessagesQualifier;
 import org.esprit.gestion.rapports.services.CRUD.Util.ProjectDomainQualifier;
 import org.esprit.gestion.rapports.services.CRUD.Util.ProjectQualifier;
+import org.esprit.gestion.rapports.services.CRUD.Util.ReportKeyWordQualifier;
+import org.esprit.gestion.rapports.services.CRUD.Util.ReportQualifier;
 import org.esprit.gestion.rapports.services.CRUD.Util.StudentQualifier;
 import org.esprit.gestion.rapports.services.CRUD.Util.TeacherQualifier;
 import org.esprit.gestion.rapports.services.CRUD.Util.TecherRoleQualifier;
@@ -73,6 +79,14 @@ public class ProjectFacade implements IProjectFacadeLocal, IProjectFacadeRemote 
 	@Inject
 	@CompanyCoachQualifier
 	IServiceLocal<CompanyCoach> compCoachServ;
+
+	@Inject
+	@ReportKeyWordQualifier
+	IServiceLocal<ReportKeyWord> reportKeyWordServ;
+
+	@Inject
+	@ReportQualifier
+	IServiceLocal<Report> reportServ;
 
 	@Inject
 	@MessagesQualifier
@@ -228,7 +242,34 @@ public class ProjectFacade implements IProjectFacadeLocal, IProjectFacadeRemote 
 		}
 
 		// TODO notify coach if affected && delete affectations if there is
+		List<Report> listReport = new ArrayList<Report>();
+		listReport = proj.getReports();
 
+		if (!(listReport.isEmpty())) {
+
+			for (int i = 0; i < listReport.size(); i++) {
+
+				ReportKeyWordPk pk = new ReportKeyWordPk();
+
+				pk.setReportId(listReport.get(i).getId());
+
+				ReportKeyWord repKw = new ReportKeyWord();
+				repKw.setPk(pk);
+
+				List<ReportKeyWord> listRepKw = new ArrayList<ReportKeyWord>();
+				listRepKw = reportKeyWordServ.retrieveList(repKw, "repID");
+
+				if (!(listRepKw.isEmpty())) {
+
+					for (int j = 0; j < listRepKw.size(); j++) {
+						reportKeyWordServ.delete(listRepKw.get(i));
+					}
+
+				}
+
+				reportServ.delete(listReport.get(i));
+			}
+		}
 		projServ.delete(proj);
 	}
 
@@ -460,7 +501,7 @@ public class ProjectFacade implements IProjectFacadeLocal, IProjectFacadeRemote 
 	}
 
 	@Override
-	public boolean lastedSixMonth(int idStudent) {
+	public boolean allawdedPeriodToSubmit(int idStudent, int period) {
 
 		Student st = new Student();
 		st.setId(idStudent);
@@ -478,12 +519,56 @@ public class ProjectFacade implements IProjectFacadeLocal, IProjectFacadeRemote 
 
 		int diffMonth = diffDays / 30;
 
-		if (diffMonth > 5) {
+		if (diffMonth > period) {
 			return true;
 		}
 
 		else {
 			return false;
 		}
+	}
+
+	@Override
+	public List<Project> listProjCoached(int idCoach) {
+		List<Project> listProj = new ArrayList<Project>();
+
+		List<TeacherRole> listrolesCoach = new ArrayList<TeacherRole>();
+		TeacherRole tr = new TeacherRole();
+		tr.setRole(TeacherRoleType.ENCADRANT);
+		TeacherRolePK pk = new TeacherRolePK();
+		pk.setTeacherId(idCoach);
+		tr.setPk(pk);
+		listrolesCoach = teachRoleServ.retrieveList(tr, "RoleAndCoach");
+
+		for (int i = 0; i < listrolesCoach.size(); i++) {
+			Project proj = new Project();
+			proj.setId(listrolesCoach.get(i).getPk().getProjectId());
+			proj = (Project) projServ.retrieve(proj, "ID");
+			listProj.add(proj);
+		}
+
+		return listProj;
+	}
+
+	@Override
+	public List<Project> listProjCorrector(int idCoach) {
+		List<Project> listProj = new ArrayList<Project>();
+
+		List<TeacherRole> listrolesCoach = new ArrayList<TeacherRole>();
+		TeacherRole tr = new TeacherRole();
+		tr.setRole(TeacherRoleType.RAPPORTEUR);
+		TeacherRolePK pk = new TeacherRolePK();
+		pk.setTeacherId(idCoach);
+		tr.setPk(pk);
+		listrolesCoach = teachRoleServ.retrieveList(tr, "RoleAndCoach");
+
+		for (int i = 0; i < listrolesCoach.size(); i++) {
+			Project proj = new Project();
+			proj.setId(listrolesCoach.get(i).getPk().getProjectId());
+			proj = (Project) projServ.retrieve(proj, "ID");
+			listProj.add(proj);
+		}
+
+		return listProj;
 	}
 }

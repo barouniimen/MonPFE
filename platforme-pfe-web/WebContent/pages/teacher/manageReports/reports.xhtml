@@ -5,4 +5,178 @@
 	xmlns:p="http://primefaces.org/ui">
 
 
+	<p:dialog modal="true" widgetVar="statusDialog" header="Status"
+		draggable="false" closable="false" resizable="false">
+		<p:graphicImage name="/resources/images/bar120.gif" />
+	</p:dialog>
+
+	<h:form id="formProfile">
+		<h:panelGrid columns="5" columnClasses="label, value">
+			<h:outputText value="Sélectionnez un profile: "
+				style="font-weight: bold;" />
+			<h:selectOneMenu id="selectProfile"
+				value="#{manageReportsByCoachBean.selectedProfile}">
+				<p:ajax event="change"
+					listener="#{manageReportsByCoachBean.onChangeProfile}"
+					update="formProfile" />
+				<f:selectItem itemLabel="Sélectionnez un profile" itemValue="" />
+				<f:selectItem itemLabel="Encadrant" itemValue="coach" />
+				<f:selectItem itemLabel="Rapporteur" itemValue="corrector" />
+
+			</h:selectOneMenu>
+			<p:spacer width="300" height="0" />
+			<h:outputText value="Sélectionnez un étudiant: "
+				style="font-weight: bold;" />
+			<h:selectOneMenu id="selectStudent"
+				value="#{manageReportsByCoachBean.selectedStudent.id}">
+				<p:ajax event="change"
+					listener="#{manageReportsByCoachBean.onChangeStudent}"
+					update="formProfile" />
+				<f:selectItem itemLabel="Sélectionnez un étudiant" itemValue="-1" />
+				<f:selectItems value="#{manageReportsByCoachBean.studentList}"
+					var="st"
+					itemLabel="#{st.lastName}#{msg['message.espace']}#{st.firstName}"
+					itemValue="#{st.id}" />
+
+			</h:selectOneMenu>
+		</h:panelGrid>
+		<br />
+
+
+
+
+		<h:outputText rendered="#{manageReportsByCoachBean.renderNoReports}"
+			style="color: #DC143C;text-align: center;font-size: medium;font-style: italic;font-weight: bold;"
+			value="L'étudiant(e): #{manageReportsByCoachBean.selectedStudent.lastName}#{msg['message.espace']}#{manageReportsByCoachBean.selectedStudent.firstName}#{msg['message.espace']}n'a téléchargé aucun rapport pour le moment." />
+		<br />
+		<br />
+		<h:panelGrid columns="5">
+			<p:commandButton value="Ajouter une remarque"
+				rendered="#{manageReportsByCoachBean.renderTableReports}"
+				actionListener="#{manageReportsByCoachBean.addComment}"
+				update=":tabView:addCommentDialog" />
+			<p:spacer width="5" />
+			<p:commandButton value="Consulter les remarques"
+				rendered="#{manageReportsByCoachBean.renderTableReports}"
+				actionListener="#{manageReportsByCoachBean.readComment}"
+				update=":tabView:readCommentDialog" />
+
+			<p:commandButton value="Telecharger" ajax="false" title="download"
+				actionListener="#{fileDownloadBean.findPath}"
+				rendered="#{manageReportsByCoachBean.renderTableReports}">
+				<p:fileDownload value="#{fileDownloadBean.file}" />
+			</p:commandButton>
+
+		</h:panelGrid>
+
+
+
+		<br />
+
+		<p:dataTable id="reportsTable" rows="5"
+			rendered="#{manageReportsByCoachBean.renderTableReports}"
+			value="#{manageReportsByCoachBean.listStudentReports}" var="report"
+			rowKey="#{report.id}" emptyMessage="Aucun rapport téléchargé"
+			selection="#{manageReportsByCoachBean.selectedReport}"
+			paginator="true" paginatorPosition="bottom" liveResize="true"
+			style="margin-top:1% !important;">
+
+			<f:facet name="header">
+				<h:outputText
+					rendered="#{manageReportsByCoachBean.renderTableReports}"
+					value="Documents téléchargés par l'étudiant(e) (#{manageReportsByCoachBean.nbreReports})" />
+
+			</f:facet>
+
+			<p:column selectionMode="single" style="width:2%;text-align:center" />
+
+			<p:column headerText="Version" width="5%;">
+				<h:outputText value="#{report.version}" />
+			</p:column>
+			<p:column headerText="Titre du document">
+				<h:outputText value="#{report.fileName}" />
+			</p:column>
+			<p:column headerText="Description">
+				<h:outputText value="#{report.description}"
+					style=" white-space: pre-wrap;" />
+			</p:column>
+			<p:column headerText="Taille (Ko)">
+				<h:outputText value="#{report.size}" />
+			</p:column>
+			<p:column headerText="Etat de validation">
+				<h:outputText value="#{report.state.description}" />
+			</p:column>
+			<p:column headerText="Date de téléchargement">
+				<h:outputText
+					value="#{manageReportsByCoachBean.dateFormate.format(report.uploadDate)}" />
+			</p:column>
+
+		</p:dataTable>
+
+		<div
+			style="display: table !important; border-collapse: separate !important; border-spacing: 20px 0px !important; width: 100%;">
+
+			<div
+				style="display: table-cell !important; vertical-align: top !important; table-layout: auto !important; width: 45%; height: 100%;">
+
+				<p:panel header="Domaines des projets encadrés" styleClass="myPanel"
+					rendered="#{!manageReportsByCoachBean.renderTableReports}"
+					toggleable="true">
+
+					<ui:include src="/pages/teacher/manageReports/coachingData.xhtml" />
+
+				</p:panel>
+			</div>
+
+
+			<div
+				style="display: table-cell !important; vertical-align: top !important; table-layout: auto !important; width: 100%; height: 100%;">
+
+				<p:panel header="Domaines des projets à valider (rapporteur)"
+					styleClass="myPanel" toggleable="true"
+					rendered="#{!manageReportsByCoachBean.renderTableReports}">
+					<ui:include src="/pages/teacher/manageReports/CorrectorData.xhtml" />
+				</p:panel>
+
+			</div>
+
+		</div>
+
+	</h:form>
+
+
+	<script type="text/javascript">
+function start() {
+    PF('statusDialog').show();
+}
+ 
+function stop() {
+    PF('statusDialog').hide();
+}
+</script>
+
+
+	<p:dialog widgetVar="addCommentDialog" header="Ajouter une remarque"
+		width="45%">
+		<p:ajax event="close"
+			listener="#{manageReportsByCoachBean.handleClose}" />
+		<h:form id="addCommentDialog">
+			<ui:include src="/pages/teacher/manageReports/addComment.xhtml" />
+		</h:form>
+
+	</p:dialog>
+
+
+	<p:dialog widgetVar="readCommentDialog"
+		header="Historique des remarques" width="45%">
+		<p:ajax event="close"
+			listener="#{manageReportsByCoachBean.handleClose}" />
+		<h:form id="readCommentDialog">
+			<ui:include src="/pages/teacher/manageReports/readComments.xhtml" />
+		</h:form>
+
+	</p:dialog>
+
+
+
 </ui:composition>

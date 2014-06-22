@@ -7,9 +7,11 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
+import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
+import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.inject.Inject;
 
@@ -97,7 +99,7 @@ public class ProjectsBean implements Serializable {
 		managedProj = new ArrayList<ManagedProjects>();
 
 		managedProj = formatProjList(listprojInProcess, managedProj);
-		dateFormat = new SimpleDateFormat("dd-M-yyyy");
+		dateFormat = new SimpleDateFormat("dd-MM-yyyy");
 
 		// init project domain list
 		projDomainList = new ArrayList<Domain>();
@@ -165,7 +167,8 @@ public class ProjectsBean implements Serializable {
 							.getStudent().getId(), project.getStudent()
 							.getLastName(),
 					project.getStudent().getFirstName(), project.getStudent()
-							.getRegistrationNumber(),project.getFonctionnalitites());
+							.getRegistrationNumber(),
+					project.getFonctionnalitites());
 
 			managedprojList.add(managedproj);
 
@@ -174,7 +177,22 @@ public class ProjectsBean implements Serializable {
 
 	}
 
-	/****************** Listners *********************/
+	/******************************************** Listners *************************************************/
+	public void toDelete(ActionEvent event) {
+		if (selectedProject == null) {
+			FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_ERROR,
+					"Aucune sélection", "Veuillez sélectionner un projet");
+			FacesContext.getCurrentInstance().addMessage(null, msg);
+		} else {
+			try {
+				RequestContext.getCurrentInstance().execute(
+						"confirmationRemove.show();");
+
+			} catch (Exception e) {
+			}
+		}
+	}
+
 	public void handleClose() {
 		int tabIndex;
 		tabIndex = tabViewBean.getTabIndex();
@@ -185,54 +203,44 @@ public class ProjectsBean implements Serializable {
 		tabViewBean.setTabIndex(tabIndex);
 	}
 
-	public void assignCoachMenu() {
-		assignCoachState = new AssignState();
-		assignCoachState = projFacade.findCoachAssignement(selectedProject
-				.getIdPorj());
-
-		if (assignCoachState == null
-				|| assignCoachState.getResponseState().equals(
-						AssignResponseState.CANCELED)
-				|| assignCoachState.getResponseState().equals(
-						AssignResponseState.REFUSED)) {
-
-			dialogHeaderAssignCoach = "Affecter un encadrant";
-			assignedCoach = false;
-			toAssignCoach = true;
-
+	public void assignCoachMenu(ActionEvent event) {
+		
+		if (selectedProject == null) {
+			FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_ERROR,
+					"Aucune sélection", "Veuillez sélectionner un projet");
+			FacesContext.getCurrentInstance().addMessage(null, msg);
 		} else {
+			try {
+				RequestContext.getCurrentInstance().execute(
+						"CoachDialog.show();");
+				assignCoachState = new AssignState();
+				assignCoachState = projFacade
+						.findCoachAssignement(selectedProject.getIdPorj());
 
-			dialogHeaderAssignCoach = "Etat d'affectation - Encadrant";
-			assignedCoach = true;
-			toAssignCoach = false;
+				if (assignCoachState == null
+						|| assignCoachState.getResponseState().equals(
+								AssignResponseState.CANCELED)
+						|| assignCoachState.getResponseState().equals(
+								AssignResponseState.REFUSED)) {
+
+					dialogHeaderAssignCoach = "Affecter un encadrant";
+					assignedCoach = false;
+					toAssignCoach = true;
+
+				} else {
+
+					dialogHeaderAssignCoach = "Etat d'affectation - Encadrant";
+					assignedCoach = true;
+					toAssignCoach = false;
+				}
+
+			} catch (Exception e) {
+			}
 		}
+
 	}
 
-	public void assignCorrectorMenu() {
-
-		// Corrector Assignement state
-		assignCorrectorState = new AssignState();
-
-		assignCorrectorState = projFacade
-				.findCorrectorAssignement(selectedProject.getIdPorj());
-
-		if (assignCorrectorState == null
-				|| assignCorrectorState.getResponseState().equals(
-						AssignResponseState.CANCELED)
-				|| assignCorrectorState.getResponseState().equals(
-						AssignResponseState.REFUSED)) {
-			setDialogHeaderAssignCorrector("Affecter un rapporteur");
-			setAssignedCorrector(false);
-			setToAssignCorrector(true);
-
-		} else {
-
-			setDialogHeaderAssignCorrector("Etat d'affectation - Rapporteur");
-			setAssignedCorrector(true);
-			setToAssignCorrector(false);
-		}
-	}
-
+	
 	public void findDomainList(ActionEvent event) {
 		Project proj = new Project();
 		proj.setId(selectedProject.getIdPorj());

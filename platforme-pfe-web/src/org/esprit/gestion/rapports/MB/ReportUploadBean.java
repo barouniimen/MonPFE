@@ -11,6 +11,8 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
+
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
@@ -25,6 +27,7 @@ import org.esprit.gestion.rapports.persistence.KeyWordCategory;
 import org.esprit.gestion.rapports.persistence.Report;
 import org.esprit.gestion.rapports.persistence.ReportState;
 import org.esprit.gestion.rapports.persistence.Student;
+import org.esprit.gestion.rapports.persistence.SubmissionEvent;
 import org.esprit.gestion.rapports.services.facades.Interfaces.IKeyWordFacadeLocal;
 import org.esprit.gestion.rapports.services.facades.Interfaces.IProjectFacadeLocal;
 import org.esprit.gestion.rapports.services.facades.Interfaces.IReportFacadeLocal;
@@ -64,8 +67,8 @@ public class ReportUploadBean {
 	private boolean newKeyWord;
 	private String newCategoryToAdmin;
 	private String newKeyWordToAdmin;
-	private boolean submitSessionOpened;
-	private boolean lastedSixMonth;
+	private SubmissionEvent submitSessionOpened;
+	private boolean allowdedPeriodToSubmit;
 
 	// MBean-------------------------------------------
 	@ManagedProperty(value = "#{tabViewIndexBean}")
@@ -83,7 +86,7 @@ public class ReportUploadBean {
 
 	@EJB
 	ISubmissionFacadeLocal submissionFacade;
-	
+
 	@EJB
 	IProjectFacadeLocal projFacad;
 
@@ -110,7 +113,7 @@ public class ReportUploadBean {
 		listReports = reportFacade.listStudentReports(authBean.getUser()
 				.getId());
 
-		setDateFormat(new SimpleDateFormat("dd/mm/yyyy"));
+		setDateFormat(new SimpleDateFormat("dd-MM-yyyy"));
 		selectedCategory = new KeyWordCategory();
 		listKeyWordSource = new ArrayList<String>();
 		listKeyWordTarget = new ArrayList<String>();
@@ -122,7 +125,8 @@ public class ReportUploadBean {
 		newKeyWord = false;
 
 		submitSessionOpened = submissionFacade.sessionOpened();
-		lastedSixMonth = projFacad.lastedSixMonth(authBean.getUser().getId());
+		allowdedPeriodToSubmit = projFacad.allawdedPeriodToSubmit(authBean.getUser().getId(),
+				submitSessionOpened.getMinPeriodToSubmit());
 	}
 
 	/*********************** listeners ********************************/
@@ -197,7 +201,7 @@ public class ReportUploadBean {
 	}
 
 	public void confirmFinalVersion(ActionEvent event) {
-		if (submitSessionOpened && lastedSixMonth) {
+		if ((submitSessionOpened != null) && allowdedPeriodToSubmit) {
 			/*
 			 * markAsFinal=true if button marquer comme finale is pressed and
 			 * not on upload new file
@@ -214,19 +218,19 @@ public class ReportUploadBean {
 		}
 
 		else {
-			
-			if(!submitSessionOpened){
-			FacesMessage msg = new FacesMessage(
-					FacesMessage.SEVERITY_WARN,
-					"Pas de session",
-					"Aucune session de dépôt n'est ouverte en ce moment, vous ne pouvez pas déposer une version finale!");
-			FacesContext.getCurrentInstance().addMessage(null, msg);
-			}
-			if(!lastedSixMonth){
+
+			if (submitSessionOpened == null) {
 				FacesMessage msg = new FacesMessage(
 						FacesMessage.SEVERITY_WARN,
-						"Moins de 6 mois",
-						"Votre projet a duré moins que 6 mois, vous ne pouvez pas le déposer maintenant!");
+						"Pas de session",
+						"Aucune session de dépôt n'est ouverte en ce moment, vous ne pouvez pas déposer une version finale!");
+				FacesContext.getCurrentInstance().addMessage(null, msg);
+			}
+			if (!allowdedPeriodToSubmit) {
+				FacesMessage msg = new FacesMessage(
+						FacesMessage.SEVERITY_WARN,
+						"Moins de" +submitSessionOpened.getMinPeriodToSubmit()+ "mois",
+						"Votre projet a duré moins que "+submitSessionOpened.getMinPeriodToSubmit()+" mois, vous ne pouvez pas le déposer maintenant!");
 				FacesContext.getCurrentInstance().addMessage(null, msg);
 			}
 			markAsFinal = false;
@@ -235,7 +239,6 @@ public class ReportUploadBean {
 
 		markAsFinal = false;
 		onUpload = false;
-		
 
 	}
 
@@ -282,15 +285,15 @@ public class ReportUploadBean {
 
 	public void doUpload(ActionEvent event) {
 		// TODO clear tmp directory
-		
+
 		/*
 		 * String tmpDestination =
 		 * "C:\\PFE_Tools\\jboss-as-7.1.1.Final\\tmpUpload"; File tmpDirectory =
 		 * new File(tmpDestination); try {
 		 * FileUtils.cleanDirectory(tmpDirectory);
 		 * System.out.println("did clear!!!!!!!!!!!"); } catch (IOException e1)
-		 * { System.out.println("didnt clear!!!!!!!!!!!!"); 
-		 * Auto-generated catch block e1.printStackTrace(); }
+		 * { System.out.println("didnt clear!!!!!!!!!!!!"); Auto-generated catch
+		 * block e1.printStackTrace(); }
 		 */
 
 		int tabIndex;
@@ -300,7 +303,10 @@ public class ReportUploadBean {
 				listKeyWordToDB);
 		Student student = new Student();
 		student = (Student) authBean.getUser();
-		String destination = "C:\\PFE_Tools\\jboss-as-7.1.1.Final\\UploadedFiles\\"
+		String destination = StringUtils.substringBefore(FacesContext
+				.getCurrentInstance().getExternalContext().getRealPath(""),
+				"standalone");
+		destination = destination + "standalone\\documents\\"
 				+ student.getRegistrationNumber() + "\\";
 
 		try {
@@ -377,9 +383,11 @@ public class ReportUploadBean {
 	public String copyFile(String fileName, InputStream in, UploadedFile file) {
 		Student student = new Student();
 		student = (Student) authBean.getUser();
-		String destination = "C:\\PFE_Tools\\jboss-as-7.1.1.Final\\UploadedFiles\\"
+		String destination = StringUtils.substringBefore(FacesContext
+				.getCurrentInstance().getExternalContext().getRealPath(""),
+				"standalone");
+		destination = destination + "standalone\\documents\\"
 				+ student.getRegistrationNumber() + "\\";
-
 		File folderLocation = new File(destination);
 
 		if (folderLocation.exists()) {
@@ -686,20 +694,29 @@ public class ReportUploadBean {
 		this.newKeyWordToAdmin = newKeyWordToAdmin;
 	}
 
-	public boolean isSubmitSessionOpened() {
-		return submitSessionOpened;
-	}
-
-	public void setSubmitSessionOpened(boolean submitSessionOpened) {
-		this.submitSessionOpened = submitSessionOpened;
-	}
 
 	public boolean isLastedSixMonth() {
-		return lastedSixMonth;
+		return allowdedPeriodToSubmit;
 	}
 
 	public void setLastedSixMonth(boolean lastedSixMonth) {
-		this.lastedSixMonth = lastedSixMonth;
+		this.allowdedPeriodToSubmit = lastedSixMonth;
+	}
+
+	public boolean isAllowdedPeriodToSubmit() {
+		return allowdedPeriodToSubmit;
+	}
+
+	public void setAllowdedPeriodToSubmit(boolean allowdedPeriodToSubmit) {
+		this.allowdedPeriodToSubmit = allowdedPeriodToSubmit;
+	}
+
+	public SubmissionEvent getSubmitSessionOpened() {
+		return submitSessionOpened;
+	}
+
+	public void setSubmitSessionOpened(SubmissionEvent submitSessionOpened) {
+		this.submitSessionOpened = submitSessionOpened;
 	}
 
 }

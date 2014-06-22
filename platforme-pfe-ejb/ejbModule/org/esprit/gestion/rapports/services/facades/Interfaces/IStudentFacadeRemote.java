@@ -31,4 +31,8 @@ public interface IStudentFacadeRemote {
 	public boolean hasCoach(int idStudent);
 	
 	public Teacher findCoach(int idStudent);
+	
+	public List<Student> listCoachStudents(int idCoach);
+	
+	public List<Student> listCorrectorStudents(int idCoach);
 }

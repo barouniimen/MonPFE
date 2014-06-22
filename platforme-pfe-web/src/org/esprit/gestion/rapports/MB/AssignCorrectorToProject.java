@@ -30,8 +30,8 @@ public class AssignCorrectorToProject {
 	private List<Domain> selectedProjDom;
 	private String cancel;
 
-	@ManagedProperty(value = "#{projectsBean}")
-	private ProjectsBean projectBean;
+	@ManagedProperty(value = "#{submissionEventBean}")
+	private SubmissionEventBean projectBean;
 	@ManagedProperty(value = "#{authenticationBean}")
 	private AuthenticationBean authBean;
 
@@ -43,9 +43,6 @@ public class AssignCorrectorToProject {
 
 	@EJB
 	IDomainFacadeLocal domainFacade;
-	
-	@ManagedProperty(value = "#{tabViewIndexBean}")
-	private TabViewIndexBean tabViewBean;
 
 	/******************************** init method ************************************/
 	@PostConstruct
@@ -60,14 +57,15 @@ public class AssignCorrectorToProject {
 	/****************************** action listeners *******************************************/
 
 	public void renderSameDom() {
-
+	
 		if (sameDom) {
 			// same dom teachers
 
 			// init list of domains to render
 			Project project = new Project();
-			project.setId(projectBean.getSelectedProject().getIdPorj());
+			project.setId(projectBean.getSelectedReport().getProject().getId());
 			setSelectedProjDom(domainFacade.listProjectDomain(project));
+			
 			// init project domains to search teacher by
 			List<String> projDomToSearch = new ArrayList<String>();
 			for (int i = 0; i < selectedProjDom.size(); i++) {
@@ -75,7 +73,7 @@ public class AssignCorrectorToProject {
 			}
 			// find potentional correctors
 			listPotentionalCorrectors = correctorFacade
-					.listCorrectorsSameDom(projDomToSearch);
+					.listCorrectorsSameDom(projDomToSearch,projectBean.getSelectedReport().getProject().getId());
 
 			if (listPotentionalCorrectors == null) {
 				FacesMessage msg = new FacesMessage(
@@ -102,8 +100,7 @@ public class AssignCorrectorToProject {
 	}
 
 	public void assignCorrectorToProj(ActionEvent event) {
-		int tabIndex = tabViewBean.getTabIndex();
-		
+		System.out.println("on assign corrector");
 		if (selectedCorrector.getId() == -1) {
 			FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_ERROR,
 					"Donnée manquante!!",
@@ -114,7 +111,7 @@ public class AssignCorrectorToProject {
 		else {
 
 			projFacade.assignCorrectorToProject(selectedCorrector, projectBean
-					.getSelectedProject().getIdPorj(), authBean.getUser());
+					.getSelectedReport().getProject().getId(), authBean.getUser());
 
 			FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO,
 					"Enseignant notifié!!",
@@ -123,28 +120,25 @@ public class AssignCorrectorToProject {
 
 			try {
 				RequestContext.getCurrentInstance().execute(
-						"location.reload();");
+						"CorrectorDialog.hide();");
 			} catch (Exception e) {
 			}
-			
-			tabViewBean.setTabIndex(tabIndex);
+
 		}
 	}
 
+	public void cancelCorrectorAssign() {
 
-	public void cancelCorrectorAssign(){
-
-		int tabIndex= tabViewBean.getTabIndex();
-		
 		if (cancel.equals("true")) {
 			Teacher corrector = new Teacher();
-			corrector.setId(projectBean.getAssignCorrectorState().getIdTeacher());
+			corrector.setId(projectBean.getAssignCorrectorState()
+					.getIdTeacher());
 
 			Project proj = new Project();
 			proj.setId(projectBean.getAssignCorrectorState().getIdProj());
 
-			projFacade.cancelCorrectorToProject(corrector, proj, authBean.getUser()
-					.getId());
+			projFacade.cancelCorrectorToProject(corrector, proj, authBean
+					.getUser().getId());
 			try {
 				RequestContext.getCurrentInstance().execute(
 						"CorrectorDialog.hide();");
@@ -154,17 +148,17 @@ public class AssignCorrectorToProject {
 		} else if (cancel.equals("false")) {
 			try {
 				RequestContext.getCurrentInstance().execute(
-						"location.reload();");
+						"CorrectorDialog.hide();");
 			} catch (Exception e) {
 			}
-			
-			tabViewBean.setTabIndex(tabIndex);
+
 		}
 	}
+
 	/************************************* constructor *****************************************/
 	public AssignCorrectorToProject() {
 		super();
-	
+
 	}
 
 	/*********************************** getter & setter *************************************/
@@ -202,7 +196,7 @@ public class AssignCorrectorToProject {
 		this.selectedProjDom = selectedProjDom;
 	}
 
-	public void setProjectBean(ProjectsBean projectBean) {
+	public void setProjectBean(SubmissionEventBean projectBean) {
 		this.projectBean = projectBean;
 	}
 

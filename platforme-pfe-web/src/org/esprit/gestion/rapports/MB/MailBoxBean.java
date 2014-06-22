@@ -89,10 +89,10 @@ public class MailBoxBean implements Serializable {
 	public void init() {
 		sent = false;
 		seen = false;
-		toRead = false;
+		toRead = true;
 		msgStats = new MessageStats();
 		msgStats = msgFacade.listNbrMsg(authBean.getUser().getId());
-		dateFormat = new SimpleDateFormat("dd-M-yyyy");
+		dateFormat = new SimpleDateFormat("dd-MM-yyyy");
 
 		assignConfirmation = false;
 
@@ -466,7 +466,12 @@ public class MailBoxBean implements Serializable {
 
 		if (sender instanceof Administrator) {
 			senderName = "Direction des stages et PFE";
-		} else {
+		} 
+		
+		else if(msg.getIdSender() == -1){
+			senderName = "Message automatique";
+		}		
+		else {
 			senderName = sender.getLastName() + " " + sender.getFirstName();
 		}
 

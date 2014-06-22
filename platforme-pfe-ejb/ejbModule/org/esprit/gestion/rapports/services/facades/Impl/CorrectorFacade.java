@@ -32,50 +32,48 @@ import org.esprit.gestion.rapports.services.facades.Interfaces.ICorrectorFacadeR
 import org.esprit.gestion.rapports.services.facades.Interfaces.IMessageFacadeLocal;
 
 @Stateless
-public class CorrectorFacade implements ICorrectorFacadeLocal, ICorrectorFacadeRemote{
+public class CorrectorFacade implements ICorrectorFacadeLocal,
+		ICorrectorFacadeRemote {
 
 	@Inject
 	@TecherRoleQualifier
 	IServiceLocal<TeacherRole> roleServ;
-	
+
 	@Inject
 	@DomainQualifier
 	IServiceLocal<Domain> domainServ;
-	
+
 	@Inject
 	@MessagesQualifier
 	IServiceLocal<Message> msgServ;
-	
+
 	@Inject
 	@TeacherQualifier
 	IServiceLocal<Teacher> teacherServ;
-	
+
 	@Inject
 	@ProjectQualifier
 	IServiceLocal<Project> projServ;
-	
+
 	@Inject
 	@UserMessageQualifier
 	IServiceLocal<UserMessage> userMsgServ;
-	
+
 	@EJB
 	IMessageFacadeLocal msgFacade;
-	
-	
-	
+
 	@Override
 	public List<Teacher> listerCorrectorDisponibles() {
 		List<Teacher> teacherList;
 		Teacher teacher = new Teacher();
 		teacherList = teacherServ.retrieveList(teacher, "ALL");
 		return teacherList;
-		
+
 	}
-	
-	
+
 	@Override
 	public void CorrectorProjectAccept(int idCorrector, int idMsg) {
-	// retrieve msg
+		// retrieve msg
 		Message msg = new Message();
 		msg.setId(idMsg);
 		msg = (Message) msgServ.retrieve(msg, "ID");
@@ -113,86 +111,112 @@ public class CorrectorFacade implements ICorrectorFacadeLocal, ICorrectorFacadeR
 		// get student
 		Student student = project.getStudent();
 
-		msgFacade.sendCorrectorAccept(projectId, corrector.getId(), student.getId(),msg.getIdSender());
+		msgFacade.sendCorrectorAccept(projectId, corrector.getId(),
+				student.getId(), msg.getIdSender());
 
-		
 	}
-	
-	public List<Teacher> listCorrectorsSameDom(List<String> projectDomains){
-		
+
+	public List<Teacher> listCorrectorsSameDom(List<String> projectDomains,
+			int idProj) {
+
 		List<Teacher> filtredList = new ArrayList<Teacher>();
 		int nbTeacherFiltred = 0;
 		List<Teacher> teacherList = new ArrayList<Teacher>();
 
-	
 		// search teachears having less then coachingHoursMax
 		teacherList = teacherServ.retrieveList(null, "ALL");
 		if (teacherList.isEmpty()) {
 
 			return null;
 		}
-		
-		else{
-		
+
+		else {
+
 			/**************** filter par teaching unit (domain coach = domain project) *********************/
 
-// ******parcourir la liste des teacher disponibles
-				for (int teacherIt = 0; teacherIt < teacherList.size(); teacherIt++) {
-					Teacher t = teacherList.get(teacherIt);
-					// ****recuperer tous les domaines du teacher (selon unit)
-					TeachingUnit teachingUnit = new TeachingUnit();
-					teachingUnit = t.getTeachingUnit();
+			// ******parcourir la liste des teacher disponibles
+			for (int teacherIt = 0; teacherIt < teacherList.size(); teacherIt++) {
+				Teacher t = teacherList.get(teacherIt);
+				// ****recuperer tous les domaines du teacher (selon unit)
+				TeachingUnit teachingUnit = new TeachingUnit();
+				teachingUnit = t.getTeachingUnit();
 
-					if (teachingUnit == null) {
-						filtredList.add(t);
-						nbTeacherFiltred = nbTeacherFiltred + 1;
-					} else {
+				if (teachingUnit == null) {
+					filtredList.add(t);
+					nbTeacherFiltred = nbTeacherFiltred + 1;
+				} else {
 
-						List<TeachingUnitDomain> teacherDomains = teachingUnit
-								.getTeachingUnitDomains();
+					List<TeachingUnitDomain> teacherDomains = teachingUnit
+							.getTeachingUnitDomains();
 
-	// ****parcourir les domaine du teacher, si egale au domaine duprojet, ajouter a  la filtered list
-						for (int teacherDomIt = 0; teacherDomIt < teacherDomains
-								.size(); teacherDomIt++) {
-							
-							TeachingUnitDomain teachDomCx = teacherDomains
-									.get(teacherDomIt);
+					// ****parcourir les domaine du teacher, si egale au domaine
+					// duprojet, ajouter a  la filtered list
+					for (int teacherDomIt = 0; teacherDomIt < teacherDomains
+							.size(); teacherDomIt++) {
 
-							for (int projDomIt = 0; projDomIt < projectDomains
-									.size(); projDomIt++) {
+						TeachingUnitDomain teachDomCx = teacherDomains
+								.get(teacherDomIt);
 
-								String projDom = projectDomains.get(projDomIt);
+						for (int projDomIt = 0; projDomIt < projectDomains
+								.size(); projDomIt++) {
 
-								// chercher le nom du domaine du teacher
-								Domain domt = new Domain();
-								domt.setId(teachDomCx.getPk().getDomainId());
-								domt = (Domain) domainServ.retrieve(domt, "ID");
-								String teachDom = domt.getDomainName();
+							String projDom = projectDomains.get(projDomIt);
 
-								if (projDom == teachDom) {
-									filtredList.add(t);
-									nbTeacherFiltred = nbTeacherFiltred + 1;
-								}
+							// chercher le nom du domaine du teacher
+							Domain domt = new Domain();
+							domt.setId(teachDomCx.getPk().getDomainId());
+							domt = (Domain) domainServ.retrieve(domt, "ID");
+							String teachDom = domt.getDomainName();
+
+							if (projDom == teachDom) {
+								filtredList.add(t);
+								nbTeacherFiltred = nbTeacherFiltred + 1;
 							}
 						}
 					}
 				}
-				if (nbTeacherFiltred == 0) {
-					return null;
+			}
+
+			// find coach
+			Teacher coach = new Teacher();
+			Project proj = new Project();
+			proj.setId(idProj);
+			proj = (Project) projServ.retrieve(proj, "ID");
+
+			TeacherRole tr = new TeacherRole();
+			TeacherRolePK pk = new TeacherRolePK();
+			pk.setProjectId(idProj);
+
+			tr.setPk(pk);
+			tr.setRole(TeacherRoleType.ENCADRANT);
+
+			tr = (TeacherRole) roleServ.retrieve(tr, "roleAndProj");
+			if (tr != null) {
+				coach.setId(tr.getPk().getTeacherId());
+				coach = (Teacher) teacherServ.retrieve(coach, "ID");
+				for (int i = 0; i < filtredList.size(); i++) {
+					if(filtredList.get(i).getId() == coach.getId());
+					filtredList.remove(i);
+					nbTeacherFiltred = nbTeacherFiltred -1;
 				}
 
 			}
-		
-		return filtredList;
-		
-	}
 
+			if (nbTeacherFiltred == 0) {
+				return null;
+			}
+
+		}
+
+		return filtredList;
+
+	}
 
 	@Override
 	public void correctorDeclineAssign(int id, int includedRef,
 			String declineCause, int idAdmin, int idAssignMsg) {
 		throw new UnsupportedOperationException("isn't implemented!!!!!!!");
-		
+
 	}
 
 }

@@ -1,10 +1,12 @@
 package org.esprit.gestion.rapports.services.CRUD.Impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
 
 import org.esprit.gestion.rapports.persistence.ReportKeyWord;
 import org.esprit.gestion.rapports.services.CRUD.Interfaces.IServiceLocal;
@@ -32,7 +34,20 @@ public class ReportKeyWordServ implements IServiceLocal<ReportKeyWord>,
 
 	@Override
 	public List<ReportKeyWord> retrieveList(Object object, String searchBy) {
-		throw new UnsupportedOperationException("isn't implemented!!!!!!!");
+		List<ReportKeyWord> found = new ArrayList<ReportKeyWord>();
+		
+		if(searchBy.equals("repID")){
+			
+			TypedQuery<ReportKeyWord> query = em.createNamedQuery(
+					"ReportKeyWord.findByreportId",ReportKeyWord.class);
+			
+			query.setParameter("reportId",((ReportKeyWord) object).getPk().getReportId());
+			
+				found = query.getResultList();
+			
+		}
+		
+		return found;
 	}
 
 	@Override
@@ -48,7 +63,7 @@ public class ReportKeyWordServ implements IServiceLocal<ReportKeyWord>,
 
 	@Override
 	public void delete(Object object) {
-		throw new UnsupportedOperationException("isn't implemented!!!!!!!");
+		em.refresh(object);
 
 	}
 

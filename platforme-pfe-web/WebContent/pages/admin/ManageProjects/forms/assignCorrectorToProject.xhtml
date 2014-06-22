@@ -11,7 +11,7 @@
 	<h:outputText value="Filtrer selon les domaines du projet? "
 		style="font-weight: bold;" />
 	<p:selectBooleanCheckbox value="#{assignCorrectorToProject.sameDom}">
-		<p:ajax update="addCorrectorForm"
+		<p:ajax update=":tabView:dialogCorrector"
 			listener="#{assignCorrectorToProject.renderSameDom}" />
 	</p:selectBooleanCheckbox>
 
@@ -29,20 +29,16 @@
 	</h:selectOneMenu>
 
 
-	
+
 	<br />
 	<br />
 	<br />
+
 	<p:commandButton value="Affecter"
 		actionListener="#{assignCorrectorToProject.assignCorrectorToProj}" />
 
-	<p:commandButton value="Annuler" onclick="location.reload();" />
 
-
-
-
-
-
+	<p:commandButton value="Annuler" onclick="CorrectorDialog.hide();" />
 
 
 

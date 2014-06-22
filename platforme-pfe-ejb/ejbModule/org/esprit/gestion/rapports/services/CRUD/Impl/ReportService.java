@@ -1,10 +1,12 @@
 package org.esprit.gestion.rapports.services.CRUD.Impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
 
 import org.esprit.gestion.rapports.persistence.Report;
 import org.esprit.gestion.rapports.services.CRUD.Interfaces.IServiceLocal;
@@ -13,14 +15,15 @@ import org.esprit.gestion.rapports.services.CRUD.Util.ReportQualifier;
 
 @ReportQualifier
 @Stateless
-public class ReportService implements IServiceLocal<Report>, IServiceRemote<Report> {
+public class ReportService implements IServiceLocal<Report>,
+		IServiceRemote<Report> {
 
 	@PersistenceContext
 	EntityManager em;
-	
+
 	@Override
 	public void delete(Object object) {
-		throw new UnsupportedOperationException("isn't implemented!!!!!!!");
+		em.remove(object);
 	}
 
 	@Override
@@ -30,7 +33,18 @@ public class ReportService implements IServiceLocal<Report>, IServiceRemote<Repo
 
 	@Override
 	public Object retrieve(Object object, String searchBy) {
-		throw new UnsupportedOperationException("isn't implemented!!!!!!!");
+		Report report = new Report();
+
+		if (searchBy.equals("ID")) {
+
+			TypedQuery<Report> query = em.createNamedQuery("Report.findById",
+					Report.class);
+			query.setParameter("id", ((Report) object).getId());
+
+			report = query.getSingleResult();
+		}
+		
+		return report;
 	}
 
 	@Override
@@ -43,10 +57,20 @@ public class ReportService implements IServiceLocal<Report>, IServiceRemote<Repo
 		throw new UnsupportedOperationException("isn't implemented!!!!!!!");
 	}
 
-	
 	@Override
 	public List<Report> retrieveList(Object object, String searchBy) {
-		throw new UnsupportedOperationException("isn't implemented!!!!!!!");
-	}
+		List<Report> returnList = new ArrayList<Report>();
 
+		/*************************** search ALL *************************************/
+		if (searchBy == "state") {
+			TypedQuery<Report> query = em.createNamedQuery(
+					"Report.findByState", Report.class);
+			query.setParameter("state", ((Report) object).getState());
+
+			returnList = query.getResultList();
+
+		}
+
+		return returnList;
+	}
 }
